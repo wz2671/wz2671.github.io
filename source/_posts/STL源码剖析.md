@@ -6,7 +6,7 @@ tags: 笔记
 
 求一个好offer！ 继续加油！！
 
-![good_offer](https://raw.githubusercontent.com/wz2671/wz2671.github.io/master/static/images/blog/good_offer.jpeg)
+![good_offer](https://github.com/wz2671/wz2671.github.io/blob/master/static/images/blog/good_offer.jpeg)
 
 
 <!--more -->
