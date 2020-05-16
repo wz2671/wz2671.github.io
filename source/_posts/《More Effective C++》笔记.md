@@ -1,7 +1,7 @@
 ---
 title: 《More Effective C++》笔记
 date: 2019-08-3 00:04:59
-tags: 笔记
+tags: CS笔记
 ---
 
 这是《More Effective C++》一书的笔记，好书啊！

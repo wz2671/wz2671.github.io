@@ -6,7 +6,6 @@ tags: python笔记
 
 最近在阅读《编写高质量代码改善python程序的91个建议》，感觉挺有帮助，做些笔记。  
 
-![不想学习](https://raw.githubusercontent.com/wz2671/wz2671.github.io/master/static/images/blog/cmxxrjxs.jpg)  
 
 
 <!-- more -->
