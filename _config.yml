@@ -3,11 +3,11 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: wz
+title: Wenzhou's blog
 subtitle: 
 description: 生活不止眼前和苟且，还有warning和error
 keywords:
-author: Wen Zhou
+author: WenZhou
 language:
 timezone:
 
@@ -73,7 +73,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: lite
+theme: landscape
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
