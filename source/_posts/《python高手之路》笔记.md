@@ -10,7 +10,7 @@ tags: python笔记
 人民邮电出版社出版发行  
 
 
-![飞得更高](images/pythonfly.jpeg)
+![飞得更高](/images/pythonfly.jpeg)
 
 <!-- more -->
 

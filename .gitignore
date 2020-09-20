@@ -5,3 +5,6 @@ db.json
 node_modules/
 public/
 .deploy*/
+
+# pycharm
+source/_clipping_explorer/.idea
