@@ -27,7 +27,7 @@ index_widgets:
 # widget behavior
 archive_type: 'monthly'
 show_count: false
-recent_posts_limits: 5
+recent_posts_limits: 3
 
 # Miscellaneous
 google_analytics:

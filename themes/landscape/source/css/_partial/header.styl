@@ -7,13 +7,16 @@
     position: absolute
     left: 0
     right: 0
-    height: 40px
+    filter: blur(10px)
+    height: 50px
   &:before
     top: 0
-    background: linear-gradient(rgba(0, 0, 0, 0.2), transparent)
+    background: rgba(255, 245, 238, 0.7)
   &:after
-    bottom: 0
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.2))
+    bottom 0
+    // background: linear-gradient(transparent, rgba(255, 245, 238, 1))
+    background: rgba(255, 245, 238, 0.7)
+    background-size: cover
 
 #header-outer
   height: 100%
@@ -29,8 +32,9 @@
   left: 0
   width: 100%
   height: 100%
-  background: url(banner-url) center #000
-  background-size: cover
+  // background: url(banner-url) center #000 // 背景图片
+  // background-size: cover
+  // background: color-background
   z-index: -1
 
 #header-title
@@ -44,8 +48,8 @@
 $logo-text
   text-decoration: none
   color: #fff
-  font-weight: 300
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3)
+  font-weight: 400
+  text-shadow: 0 1px 4px rgba(139, 101, 8, 1)
 
 #logo
   @extend $logo-text
@@ -65,13 +69,14 @@ $logo-text
 #main-nav
   float: left
   margin-left: -15px
+  margin-top: -5px
 
 $nav-link
   float: left
-  color: #fff
-  opacity: 0.6
+  color: #000
+  opacity: 0.8
   text-decoration: none
-  text-shadow: 0 1px rgba(0, 0, 0, 0.2)
+  // text-shadow: 0 1px rgba(0, 0, 0, 0.7)
   transition: opacity 0.2s
   display: block
   padding: 20px 15px
@@ -91,7 +96,7 @@ $nav-link
 
 .main-nav-link
   @extend $nav-link
-  font-weight: 300
+  font-weight: 600
   letter-spacing: 1px
   @media mq-mobile
     display: none

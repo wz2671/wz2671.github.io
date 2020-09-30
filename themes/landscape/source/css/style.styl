@@ -33,9 +33,9 @@ body
 
 .outer
   clearfix()
-  max-width: (column-width + gutter-width) * columns + gutter-width
+  // max-width: (column-width + gutter-width) * columns + gutter-width
   margin: 0 auto
-  padding: 0 gutter-width
+  padding: 0 80px
 
 .inner
   column(columns)
@@ -53,17 +53,19 @@ body
   position: relative
 
 .mobile-nav-on
-  overflow: hidden
+  overflow: scroll
 
 #wrap
-  height: 100%
+  // height: 50%  # 未填满部分会留白
   width: 100%
   position: absolute
   top: 0
   left: 0
   transition: 0.2s ease-out
   z-index: 1
-  background: color-background
+  // background: color-background
+  background: url(banner-url) fixed 
+  background-size: cover 
   .mobile-nav-on &
     left: mobile-nav-width
 

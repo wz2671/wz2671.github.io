@@ -43,14 +43,14 @@ render_drafts: false
 post_asset_folder: false
 relative_link: false
 future: true
-highlight:
+highlight:      # 代码块的设置:https://hexo.io/docs/syntax-highlight#Highlight-js
   enable: true
   line_number: true
   auto_detect: false
   tab_replace: ''
   wrap: true
   hljs: false
-prismjs:
+prismjs:    # https://hexo.io/docs/syntax-highlight#PrismJS
   enable: false
   preprocess: true
   line_number: true
