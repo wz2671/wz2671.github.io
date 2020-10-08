@@ -15,19 +15,22 @@
   @media mq-tablet
     column-count: 2
   @media mq-normal
-    column-count: 3
+    column-count: 2
 
 .archive-article
   avoid-column-break()
 
 .archive-article-inner
   @extend $block
-  padding: 10px
-  margin-bottom: 15px
+  text-align: center
+  background: color-widget-background
+  padding: 12px
+  margin-bottom: 25px
 
 .archive-article-title
   text-decoration: none
   font-weight: bold
+  font-size: 18px
   color: color-default
   transition: color 0.2s
   line-height: line-height
@@ -38,7 +41,7 @@
   margin-top: 1em
 
 .archive-article-date
-  color: color-grey
+  color: color-footer-text
   text-decoration: none
   font-size: 0.85em
   line-height: 1em
@@ -48,10 +51,11 @@
 #page-nav
   clearfix()
   margin: block-margin auto
-  background: #fff
+  background: rgba(255, 218, 185, 0.4)
+  // filter: blur(10px)
   box-shadow: 1px 2px 3px #ddd
   border: 1px solid color-border
-  border-radius: 3px
+  border-radius: 10px
   text-align: center
   color: color-grey
   overflow: hidden
@@ -60,11 +64,12 @@
     line-height: 1
     height: 2ex
   a
-    color: color-grey
+    // color: color-grey
+    color: color-footer-text   // 第几页数字的颜色
     text-decoration: none
     &:hover
-      background: color-grey
-      color: #fff
+      background: color-hover-background
+      color: color-default
   .prev
     float: left
   .next

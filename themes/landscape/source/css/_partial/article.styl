@@ -4,7 +4,7 @@
 .article-inner
   @extend $block
   overflow: hidden
-  background:  rgba(190, 190, 190, 0.8)    // 主内容背景色
+  background:  color-article-inner 
 
 .article-meta
   clearfix()
@@ -102,7 +102,7 @@
       margin-right: 0.5em
       margin-left: 1em
   .caption
-    color: color-grey
+    color: color-footer-text
     display: block
     font-size: 0.9em
     margin-top: 0.5em
@@ -129,7 +129,7 @@
   border-radius: 15px
   background: color-background
   color: color-gre
-  text-shadow: 0 1px #fff
+  // text-shadow: 0 1px #fff
   text-decoration: none
   &:hover
     background: color-link
@@ -188,14 +188,14 @@
 
 .article-nav-link-wrap
   text-decoration: none
-  text-shadow: 0 1px #fff
+  // text-shadow: 0 1px #fff
   color: color-grey
   box-sizing: border-box
   margin-top: block-margin
   text-align: center
   display: block
   &:hover
-    color: color-default
+    color: #fff
   @media mq-normal
     width: 50%
     margin-top: 0

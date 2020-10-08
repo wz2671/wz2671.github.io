@@ -26,8 +26,8 @@ index_widgets:
 
 # widget behavior
 archive_type: 'monthly'
-show_count: false
-recent_posts_limits: 3
+show_count: true
+recent_posts_limits: 5
 
 # Miscellaneous
 google_analytics:
@@ -46,6 +46,6 @@ valine:
   verify: false # valine verify code (true/false)
   pageSize: 10 # comment list page size
   avatar: mm # gravatar style https://valine.js.org/#/avatar
-  lang: zh-cn # i18n: zh-cn/en
+  lang: zh-CN # i18n: zh-cn/en
   placeholder: Just go go # valine comment input placeholder(like: Please leave your footprints )
   guest_info: nick,mail,link #valine comment header info
