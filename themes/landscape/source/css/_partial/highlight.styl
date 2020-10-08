@@ -1,19 +1,19 @@
 // https://github.com/chriskempson/tomorrow-theme
-highlight-background = #F0F8FF      // 这是背景颜色
+highlight-background = rgba(240, 248, 255, 0.4)      // 这是背景颜色
 highlight-current-line = #393939
 highlight-selection = #7D26CD
 highlight-foreground = #1C1C1C      // 这是一般文字颜色
 highlight-comment = #999999
 highlight-red = #f2777a
-highlight-orange = #f99157
+highlight-orange = #f5aa47
 highlight-yellow = #ffcc66
-highlight-green = #99cc99
+highlight-green = #42b983
 highlight-aqua = #66cccc
-highlight-blue = #6699cc
-highlight-purple = #cc99cc
+highlight-blue = #0092db
+highlight-purple = #8e5ab5
 
 $code-block
-  background: color-background
+  background: highlight-background
   margin: 0 article-padding * -1
   padding: 15px article-padding
   border-style: solid
@@ -109,8 +109,9 @@ $line-numbers
 
 pre
   .comment
-  .title
     color: highlight-comment
+  .title
+    color: highlight-red
   .variable
   .attribute
   .tag
