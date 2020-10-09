@@ -1,5 +1,5 @@
 // https://github.com/chriskempson/tomorrow-theme
-highlight-background = rgba(240, 248, 255, 0.4)      // 这是背景颜色
+highlight-background = rgba(240, 248, 255, 0.6)      // 这是背景颜色
 highlight-current-line = #393939
 highlight-selection = #7D26CD
 highlight-foreground = #1C1C1C      // 这是一般文字颜色
@@ -14,10 +14,11 @@ highlight-purple = #8e5ab5
 
 $code-block
   background: highlight-background
-  margin: 0 article-padding * -1
-  padding: 15px article-padding
+  margin: 10px 0px
+  padding: 10px article-padding
   border-style: solid
   border-color: color-border
+  border-radius: 3px
   border-width: 1px 0
   overflow: auto
   color: highlight-foreground
@@ -33,7 +34,9 @@ $line-numbers
   code
     background: color-background
     // text-shadow: 0 1px #fff
-    padding: 0 0.3em
+    margin-left: 0.2em
+    margin-right: 0.2em
+    padding: 0 0
   pre
     // @extend $code-block
     code
@@ -50,6 +53,7 @@ $line-numbers
       margin: 0
       width: auto
     td
+      text-align: left    // 为什么代码段也是个表格？
       border: none
       padding: 0
     figcaption

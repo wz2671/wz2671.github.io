@@ -39,12 +39,11 @@ tags: python笔记
 #### 1. 利用`str.fromat()`进行字符串格式化
 
 ```python
-	print '{greet} from {language}.'.format(greet = 'Hello world', language = 'Python')
+print '{greet} from {language}.'.format(greet = 'Hello world', language = 'Python')
 
-	point = [1, 2, 3]
-	s = 'x:{0[0]};y:{0[1]};z:{0[2]}'.format(point)
-```  
-
+point = [1, 2, 3]
+s = 'x:{0[0]};y:{0[1]};z:{0[2]}'.format(point)
+```
 
 ***
 
@@ -56,13 +55,13 @@ C/C++/JAVA形式
 
 ```c
 	C?X:Y
-```  
+```
 
 python中实现  
 
 ```python
-	X if C else Y
-```  
+X if C else Y
+```
 
 
 ***
@@ -98,7 +97,7 @@ sys.modules[__name__] = _const()
 import const
 const.MY_CONSTANT = 1
 const.MY_SECOND_CONSTANT = 'a'
-```  
+```
 
 当在其他模块中引用这些常量时，按照如下方式进行即可：
 
@@ -106,7 +105,7 @@ const.MY_SECOND_CONSTANT = 'a'
 from constant import const
 print const.MY_CONSTANT
 print const.MY_SECOND_CONSTANT*2
-```  
+```
 
 ***
 
@@ -120,15 +119,15 @@ print const.MY_SECOND_CONSTANT*2
 例：生成器表达式实现斐波那契数列  
 
 ```python
-	def fib():
-		a, b = 0, 1
-		while True:
-			yield a
-			a, b = b, a+b
+def fib():
+	a, b = 0, 1
+	while True:
+		yield a
+		a, b = b, a+b
 
-	from itertools import islice
-	print list(islice(fib(), 5))
-```  
+from itertools import islice
+print list(islice(fib(), 5))
+```
 
 ***  
 
@@ -137,37 +136,37 @@ print const.MY_SECOND_CONSTANT*2
 * 1. **使用类属性**  
 
 ```python
-	class Seasons:
-		spring = 0
-		Summer = 1
-		Autumn = 2
-		Winter = 3
-```  
+class Seasons:
+	spring = 0
+	Summer = 1
+	Autumn = 2
+	Winter = 3
+```
 
  也可以写成  
 	
 ```python
-	class Seasons:
-		spring, summer, autumn, winter = range(4)
-```  
+class Seasons:
+	spring, summer, autumn, winter = range(4)
+```
 
 * 2. **借助函数**  
 
 ```python
-	def enum(*posarg, **keysarg):
-		return type("Enum", (object,), dict(zip(posarg, range(len(posarg))), **keysarg))
+def enum(*posarg, **keysarg):
+	return type("Enum", (object,), dict(zip(posarg, range(len(posarg))), **keysarg))
 
-	Seasons = enum("Spring", "Summer", "Autumn", Winter = 1)
-	Seasons.Spring  
-```  
+Seasons = enum("Spring", "Summer", "Autumn", Winter = 1)
+Seasons.Spring  
+```
 
 * 3. **使用`collections.nameduple`**  
 
 ```python
-	Seasons = nameduple('Seasons','Spring Summer Autumn Winter')._make(range(4))
-	
-	print Seasons.Spring
-```  
+Seasons = nameduple('Seasons','Spring Summer Autumn Winter')._make(range(4))
+
+print Seasons.Spring
+```
 
 **不合理之处**  
 * 1. 允许枚举值重复  
@@ -192,8 +191,8 @@ print const.MY_SECOND_CONSTANT*2
 `eval()`函数将字符串str当成有效的表达式来求值并返回计算结果。  
 
 ```python
-	eval(expression[, globals[, lacals]])
-```  
+eval(expression[, globals[, lacals]])
+```
 
 **存在问题：** 可能会被有不良目的的人恶意利用。  
 **解决方法：**如果使用对象不是信任源，避免使用eval，在需要使用的地方用安全性更好的`ast.literal_eval`替代。  
@@ -203,30 +202,30 @@ print const.MY_SECOND_CONSTANT*2
 #### 8. 使用`enumerate()`获取序列迭代的索引和值  
 
 ```python
-	li = ['a', 'b', 'c', 'd', 'e']
-	for i, e in enumerate(li):
-		print "index:", i, "element:", e
-```  
+li = ['a', 'b', 'c', 'd', 'e']
+for i, e in enumerate(li):
+	print "index:", i, "element:", e
+```
 
 使用`enumerate()`可使代码清晰简洁，可读性最好，具有一定的惰性。（获取索引以及对应值）  
 
 `enumerate(sequence, start = 0)`函数的内部实现:  
 
 ```python
-	def enumerate(sequence, start = 0)
-		n = start
-		for elem in sequence:
-			yield n, elem
-			n += 1
-```  
+def enumerate(sequence, start = 0)
+	n = start
+	for elem in sequence:
+		yield n, elem
+		n += 1
+```
 
 对于字典的迭代循环，`enumerate()`函数并不适合（默认转换成了序列进行处理）。  
 要获取迭代过程中字典的key和value，应该使用`iteritems()`方法。  
   
 ```python
-	for k, v in personinfo.iteritems():
-		print k, ":", v
-```  
+for k, v in personinfo.iteritems():
+	print k, ":", v
+```
 
 ***  
 
@@ -236,9 +235,9 @@ print const.MY_SECOND_CONSTANT*2
 `with`语句的语法：  
 
 ```python
-	with 表达式 [as 目标]:
-		代码块
-```  
+with 表达式 [as 目标]:
+	代码块
+```
 
 `with`语句可以在代码块执行完毕后还原进入该代码块时的现场。其执行过程如下：  
 1. 计算表达式的值，返回一个上下文管理器对象。
@@ -253,9 +252,9 @@ print const.MY_SECOND_CONSTANT*2
 利用`with`语句自动关闭文件：  
 
 ```python
-	with open('test.txt', 'w') as f:
-		f.write("test")
-```  
+with open('test.txt', 'w') as f:
+	f.write("test")
+```
 
 **上下文管理器：**  
 
@@ -264,27 +263,27 @@ print const.MY_SECOND_CONSTANT*2
 用户可以定义子集的上下文管理器来控制程序的运行，只需要实现上下文协议便能够和`with`语句一起使用。  
 
 ```python
-	class MyContextManager(object):
-		def __enter__(self):
-			print "entering..."
-		def __exit__(self, exception_type, exception_value, traceback):
-			print "leaving..."
-			if exception_type is None:
-				print "no exceptions!"
-				return Fasle
-			elif exception_type is ValueError:
-				print "value error!"
-				return True
-			else：
-				print "other error"
-				return True
-```  
+class MyContextManager(object):
+	def __enter__(self):
+		print "entering..."
+	def __exit__(self, exception_type, exception_value, traceback):
+		print "leaving..."
+		if exception_type is None:
+			print "no exceptions!"
+			return Fasle
+		elif exception_type is ValueError:
+			print "value error!"
+			return True
+		else：
+			print "other error"
+			return True
+```
 
 ```python
-	with MyContextManger():
-		print "Testing..."
-		raise(ValueError)
-```  
+with MyContextManger():
+	print "Testing..."
+	raise(ValueError)
+```
 
 ***
 
@@ -295,14 +294,14 @@ print const.MY_SECOND_CONSTANT*2
   例：查找素数
 
 ```python
-	def print_prime2(n):
-		for i in range(2, n):
-			for j in range(2, i):
-				if i % j == 0:
-					break
-			else:
-				print '%d is a prime number'%i
-```  
+def print_prime2(n):
+	for i in range(2, n):
+		for j in range(2, i):
+			if i % j == 0:
+				break
+		else:
+			print '%d is a prime number'%i
+```
 
 `while`语句中的`else`子句语意一致。
 
@@ -311,17 +310,17 @@ print const.MY_SECOND_CONSTANT*2
   例：写数据入文件 
 
 ```python
-	def save(db, obj):
-		try:
-			# save attr1
-			db.execute('a aql stmt', obj.attr1)
-			# save attr2
-			db.execute('another sql stmt', obj.attr2)
-		except DBError:
-			db.rollback()
-		else:
-			db.commit()
-```  
+def save(db, obj):
+	try:
+		# save attr1
+		db.execute('a aql stmt', obj.attr1)
+		# save attr2
+		db.execute('another sql stmt', obj.attr2)
+	except DBError:
+		db.rollback()
+	else:
+		db.commit()
+```
 
 
 ***
@@ -333,14 +332,14 @@ print const.MY_SECOND_CONSTANT*2
 * 而当用`join()`方法连接字符串的时候，会首先计算需要申请的总的内存空间，然后一次性申请所需的内存并将序列中的每一个元素复制到内存中去。所以`join()`操作的时间复杂度近似为O(n)。  
 
 ```python
-	str1, str2, str3 = 'testing ', 'string ', 'concatenation '
-	str1 + str2 + str3
-```  
+str1, str2, str3 = 'testing ', 'string ', 'concatenation '
+str1 + str2 + str3
+```
 
 ```python
-	str1, str2, str3 = 'testing ', 'string ', 'concatenation '
-	''.join([str1, str2, str3])
-```  
+str1, str2, str3 = 'testing ', 'string ', 'concatenation '
+''.join([str1, str2, str3])
+```
 
 ***
 
@@ -353,42 +352,42 @@ print const.MY_SECOND_CONSTANT*2
 
 1. **支持多重嵌套**  
 ```python
-	nested_list = [['Hello', 'World'], ['Goodbye', 'World']]
-	nested_list = [[s.upper() for s in xs] for xi in nested_list]
-	print(nested_list)
-```  
+nested_list = [['Hello', 'World'], ['Goodbye', 'World']]
+nested_list = [[s.upper() for s in xs] for xi in nested_list]
+print(nested_list)
+```
 ```python
-	[['HELLO', 'WORLD'], ['GOODBYE', 'WORLD']]
-```  
+[['HELLO', 'WORLD'], ['GOODBYE', 'WORLD']]
+```
 
 2. **支持多重迭代**  
 ```python
-	[(a, b) for a in ['a', '1', 1, 2] for b in ['1', 3, 4, 'b'] if a != b]
-```  
+[(a, b) for a in ['a', '1', 1, 2] for b in ['1', 3, 4, 'b'] if a != b]
+```
 ```python
-	[('a', '1'), ('a', 3), ('a', 4), ('a', 'b'), ('1', 3), ('1', 4), ('1', 'b'), \
-		(1, '1'), (1, 3), (1, 4), (1, 'b'), (2, '1'), (2, 3), (2, 4), (2, 'b')]
-```  
+[('a', '1'), ('a', 3), ('a', 4), ('a', 'b'), ('1', 3), ('1', 4), ('1', 'b'), \
+	(1, '1'), (1, 3), (1, 4), (1, 'b'), (2, '1'), (2, 3), (2, 4), (2, 'b')]
+```
 
 3. **列表解析语法中的表达式可以是简单表达式，复杂表达式，函数**  
 ```python
-	def f(v):
-		if v%2 == 0:
-			v = v ** 2
-		else:
-			v = v + 1
-	[f(v) for v in [2, 3, 4, -1] if v>0]
-```  
+def f(v):
+	if v%2 == 0:
+		v = v ** 2
+	else:
+		v = v + 1
+[f(v) for v in [2, 3, 4, -1] if v>0]
+```
 ```python
-	[v**2 if v%2 == 0 else v+1 for v in [2, 3, 4, -1] if v > 0]
-```  
+[v**2 if v%2 == 0 else v+1 for v in [2, 3, 4, -1] if v > 0]
+```
 
 4. **列表解析语法中的`iterable`可以是任意可迭代对象**  
 ```python
-	fh = open("test.txt", "r")
-	result = [i for i in fh if "abc" in i]
-	print(result)
-```  
+fh = open("test.txt", "r")
+result = [i for i in fh if "abc" in i]
+print(result)
+```
 
 **优势**  
 * 使用列表解析更为直观清晰，代码更为简洁  
@@ -428,15 +427,15 @@ python函数参数传递为**对象**或**对象的引用**。
 可以用`find()`方法，推荐使用`in`和`not in`操作符。  
 
 ```python
-	str = "Test if a string contains some special substrings"
-	if str.find("some") != -1: # 使用find方法进行判断
-		print("Yes, it contains")
-```  
+str = "Test if a string contains some special substrings"
+if str.find("some") != -1: # 使用find方法进行判断
+	print("Yes, it contains")
+```
 
 ```python
-	if "some" in str: # 使用in方法也可以判断
-		print(Yes, it contains using in)
-```  
+if "some" in str: # 使用in方法也可以判断
+	print(Yes, it contains using in)
+```
 
 **`split()`的使用**  
 `split([sep [,maxsplit]])`，参数`maxsplit`是最大分切次数。  
@@ -451,9 +450,9 @@ python函数参数传递为**对象**或**对象的引用**。
 
 两者的**函数形式**：  
 ```python
-	sorted(iterable[, cmp[, key[, reverse]]])
-	s.sort([cmp[, key[, reverse]]])
-```  
+sorted(iterable[, cmp[, key[, reverse]]])
+s.sort([cmp[, key[, reverse]]])
+```
 
 **参数**  
 
@@ -475,31 +474,31 @@ python函数参数传递为**对象**或**对象的引用**。
   * 对字典进行排序  
   
     ```python
-	    phonebook = {'Li': '77', 'Bo': '93', 'Ca': '58'}
-		from operator import itemgetter
-		sorted_pd = sorted(phonebook.items(), key=itemgetter(1))
-	```  
+	phonebook = {'Li': '77', 'Bo': '93', 'Ca': '58'}
+	from operator import itemgetter
+	sorted_pd = sorted(phonebook.items(), key=itemgetter(1))
+	```
 
   * 多维`list`排序  
 	
 	```python
-		from operator improt itemgetter
-		gameresult = [['Bob',95.00,'A'],['Alan',86.0,'C'], \
-			['Mandy',82.5,'A'],['Rob',86,'E']]
-		print(sorted(gamersult, key=itemgetter(2, 1)))
-	```  
+	from operator improt itemgetter
+	gameresult = [['Bob',95.00,'A'],['Alan',86.0,'C'], \
+		['Mandy',82.5,'A'],['Rob',86,'E']]
+	print(sorted(gamersult, key=itemgetter(2, 1)))
+	```
 		
   * 字典中混合`list`排序  
 
 	```python
-		dict = {'Li':['M',7],
-		'Zhang':['E',2],
-		'Wang':['P',3],
-		'Du':['C',2],
-		'Ma':['C',9],
-		'Zhe':['H',7]}
-		print(sorted(dict.items(), key=lambda k: k[1][0]))
-	```  
+	dict = {'Li':['M',7],
+	'Zhang':['E',2],
+	'Wang':['P',3],
+	'Du':['C',2],
+	'Ma':['C',9],
+	'Zhe':['H',7]}
+	print(sorted(dict.items(), key=lambda k: k[1][0]))
+	```
 
   * `List`中混合字典排序
   
@@ -554,18 +553,18 @@ python函数参数传递为**对象**或**对象的引用**。
 2. python语言本身的动态性决定了使用`self`能狗带来一些便利。  
   例：  
 	```python  
-		def len(point):
-			return math.sqrt(point.X **2 + point.Y **2)
-			
-		class RTriangle(object):
-			def __init__(self, right_angle_sideX, right_angle_sideY):
-				self.right_angle_sideX = right_angle_sideX
-				self.right_angle_sideY = right_angle_sideY
+	def len(point):
+		return math.sqrt(point.X **2 + point.Y **2)
 		
-		RTriangle.len = len
-		rt = RTriangle(3, 4)
-		rt.len()  
-	```  
+	class RTriangle(object):
+		def __init__(self, right_angle_sideX, right_angle_sideY):
+			self.right_angle_sideX = right_angle_sideX
+			self.right_angle_sideY = right_angle_sideY
+	
+	RTriangle.len = len
+	rt = RTriangle(3, 4)
+	rt.len()  
+	```
 3. 在存在同名的局部变量以及实例变量的情况下，使用`self`使得实例变量更容易被区分。  
 
 ***
@@ -576,10 +575,10 @@ python函数参数传递为**对象**或**对象的引用**。
 2. 将显式循环改为隐式循环。  
 例：求等差数列1,2,...,n的和
 	```python  
-		sum = 0
-		for i in range(n+1):
-			sum = sum+i  
-	```  
+	sum = 0
+	for i in range(n+1):
+		sum = sum+i  
+	```
 也可以直接计算：`n*(n+1)/2`  
 3. 在循环中尽量引用局部变量。 （因为在命名空间中局部变量优先搜索）  
 4. 关注内层嵌套循环。 （尽量将内层循环的计算往上层移）  
