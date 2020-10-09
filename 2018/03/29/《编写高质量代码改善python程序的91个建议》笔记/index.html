@@ -14,7 +14,7 @@
 <meta property="og:description" content="最近在阅读《编写高质量代码改善python程序的91个建议》，感觉挺有帮助，做些笔记。">
 <meta property="og:locale">
 <meta property="article:published_time" content="2018-03-29T07:33:31.000Z">
-<meta property="article:modified_time" content="2020-09-19T07:44:40.206Z">
+<meta property="article:modified_time" content="2020-10-09T15:54:09.622Z">
 <meta property="article:author" content="WenZhou">
 <meta property="article:tag" content="python笔记">
 <meta name="twitter:card" content="summary">
@@ -64,10 +64,10 @@
         
           <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
       </div>
     </div>
   </div>
@@ -122,16 +122,17 @@
 <li>掌握循环优化的基本技巧   </li>
 </ul>
 <hr>
-<h4 id="1-利用str-fromat-进行字符串格式化"><a href="#1-利用str-fromat-进行字符串格式化" class="headerlink" title="1. 利用str.fromat()进行字符串格式化"></a>1. 利用<code>str.fromat()</code>进行字符串格式化</h4><pre><code class="python">    print &#39;&#123;greet&#125; from &#123;language&#125;.&#39;.format(greet = &#39;Hello world&#39;, language = &#39;Python&#39;)
+<h4 id="1-利用str-fromat-进行字符串格式化"><a href="#1-利用str-fromat-进行字符串格式化" class="headerlink" title="1. 利用str.fromat()进行字符串格式化"></a>1. 利用<code>str.fromat()</code>进行字符串格式化</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">print</span> <span class="string">&#x27;&#123;greet&#125; from &#123;language&#125;.&#x27;</span>.format(greet = <span class="string">&#x27;Hello world&#x27;</span>, language = <span class="string">&#x27;Python&#x27;</span>)</span><br><span class="line"></span><br><span class="line">point = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">s = <span class="string">&#x27;x:&#123;0[0]&#125;;y:&#123;0[1]&#125;;z:&#123;0[2]&#125;&#x27;</span>.format(point)</span><br></pre></td></tr></table></figure>
 
-    point = [1, 2, 3]
-    s = &#39;x:&#123;0[0]&#125;;y:&#123;0[1]&#125;;z:&#123;0[2]&#125;&#39;.format(point)</code></pre>
 <hr>
 <h4 id="2-三元操作符"><a href="#2-三元操作符" class="headerlink" title="2. 三元操作符?:"></a>2. 三元操作符<code>?:</code></h4><p>在传统c/c++/java中支持的三元操作符<code>?:</code>可以用<code>if...else...</code>形式实现。</p>
 <p>C/C++/JAVA形式  </p>
-<pre><code class="c">    C?X:Y</code></pre>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C?X:Y</span><br></pre></td></tr></table></figure>
+
 <p>python中实现  </p>
-<pre><code class="python">    X if C else Y</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X <span class="keyword">if</span> C <span class="keyword">else</span> Y</span><br></pre></td></tr></table></figure>
+
+
 <hr>
 <h4 id="3-常量管理"><a href="#3-常量管理" class="headerlink" title="3. 常量管理"></a>3. 常量管理</h4><ul>
 <li><ol>
@@ -147,27 +148,11 @@
 </ol>
 </li>
 </ul>
-<pre><code class="python">class _onst:
-    class ConstError(TypeError): pass
-    class ConstCaseError(ConstError): pass
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_onst</span>:</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">ConstError</span>(<span class="params">TypeError</span>):</span> <span class="keyword">pass</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">ConstCaseError</span>(<span class="params">ConstError</span>):</span> <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__setattr__</span>(<span class="params">self, name, value</span>)</span></span><br><span class="line"><span class="function">		<span class="title">if</span> <span class="title">self</span>.<span class="title">__dict__</span>.<span class="title">has_key</span>(<span class="params">name</span>):</span></span><br><span class="line">            <span class="keyword">raise</span> self.ConstError, <span class="string">&quot;Can&#x27;t change const.%s&quot;</span> % name</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> name.isupper():</span><br><span class="line">            <span class="keyword">raise</span> self.ConstCaseError, \</span><br><span class="line">                <span class="string">&#x27;const name &quot;%s&quot; is not all uppercase&#x27;</span> %name</span><br><span class="line">        self.__dict__[name] = value</span><br><span class="line">    </span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.modules[__name__] = _const()</span><br><span class="line"><span class="keyword">import</span> const</span><br><span class="line">const.MY_CONSTANT = <span class="number">1</span></span><br><span class="line">const.MY_SECOND_CONSTANT = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure>
 
-    def __setattr__(self, name, value)
-        if self.__dict__.has_key(name):
-            raise self.ConstError, &quot;Can&#39;t change const.%s&quot; % name
-        if not name.isupper():
-            raise self.ConstCaseError, \
-                &#39;const name &quot;%s&quot; is not all uppercase&#39; %name
-        self.__dict__[name] = value
-
-import sys
-sys.modules[__name__] = _const()
-import const
-const.MY_CONSTANT = 1
-const.MY_SECOND_CONSTANT = &#39;a&#39;</code></pre>
 <p>当在其他模块中引用这些常量时，按照如下方式进行即可：</p>
-<pre><code class="python">from constant import const
-print const.MY_CONSTANT
-print const.MY_SECOND_CONSTANT*2</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> constant <span class="keyword">import</span> const</span><br><span class="line"><span class="keyword">print</span> const.MY_CONSTANT</span><br><span class="line"><span class="keyword">print</span> const.MY_SECOND_CONSTANT*<span class="number">2</span></span><br></pre></td></tr></table></figure>
+
 <hr>
 <h4 id="4-利用lazy-evaluation特性"><a href="#4-利用lazy-evaluation特性" class="headerlink" title="4. 利用lazy evaluation特性"></a>4. 利用lazy evaluation特性</h4><p><strong>好处</strong>  </p>
 <ul>
@@ -181,14 +166,8 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
 </li>
 </ul>
 <p>例：生成器表达式实现斐波那契数列  </p>
-<pre><code class="python">    def fib():
-        a, b = 0, 1
-        while True:
-            yield a
-            a, b = b, a+b
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fib</span>():</span></span><br><span class="line">    a, b = <span class="number">0</span>, <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">yield</span> a</span><br><span class="line">        a, b = b, a+b</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> itertools <span class="keyword">import</span> islice</span><br><span class="line"><span class="keyword">print</span> list(islice(fib(), <span class="number">5</span>))</span><br></pre></td></tr></table></figure>
 
-    from itertools import islice
-    print list(islice(fib(), 5))</code></pre>
 <hr>
 <h4 id="5-枚举的替代实现"><a href="#5-枚举的替代实现" class="headerlink" title="5. 枚举的替代实现"></a>5. 枚举的替代实现</h4><ul>
 <li><ol>
@@ -196,34 +175,27 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
 </ol>
 </li>
 </ul>
-<pre><code class="python">    class Seasons:
-        spring = 0
-        Summer = 1
-        Autumn = 2
-        Winter = 3</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Seasons</span>:</span></span><br><span class="line">    spring = <span class="number">0</span></span><br><span class="line">    Summer = <span class="number">1</span></span><br><span class="line">    Autumn = <span class="number">2</span></span><br><span class="line">    Winter = <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
 <p> 也可以写成  </p>
-<pre><code class="python">    class Seasons:
-        spring, summer, autumn, winter = range(4)</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Seasons</span>:</span></span><br><span class="line">    spring, summer, autumn, winter = range(<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li><ol start="2">
 <li><strong>借助函数</strong>  </li>
 </ol>
 </li>
 </ul>
-<pre><code class="python">    def enum(*posarg, **keysarg):
-        return type(&quot;Enum&quot;, (object,), dict(zip(posarg, range(len(posarg))), **keysarg))
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">enum</span>(<span class="params">*posarg, **keysarg</span>):</span></span><br><span class="line">    <span class="keyword">return</span> type(<span class="string">&quot;Enum&quot;</span>, (object,), dict(zip(posarg, range(len(posarg))), **keysarg))</span><br><span class="line"></span><br><span class="line">Seasons = enum(<span class="string">&quot;Spring&quot;</span>, <span class="string">&quot;Summer&quot;</span>, <span class="string">&quot;Autumn&quot;</span>, Winter = <span class="number">1</span>)</span><br><span class="line">Seasons.Spring  </span><br></pre></td></tr></table></figure>
 
-    Seasons = enum(&quot;Spring&quot;, &quot;Summer&quot;, &quot;Autumn&quot;, Winter = 1)
-    Seasons.Spring  </code></pre>
 <ul>
 <li><ol start="3">
 <li><strong>使用<code>collections.nameduple</code></strong>  </li>
 </ol>
 </li>
 </ul>
-<pre><code class="python">    Seasons = nameduple(&#39;Seasons&#39;,&#39;Spring Summer Autumn Winter&#39;)._make(range(4))
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Seasons = nameduple(<span class="string">&#x27;Seasons&#x27;</span>,<span class="string">&#x27;Spring Summer Autumn Winter&#x27;</span>)._make(range(<span class="number">4</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> Seasons.Spring</span><br></pre></td></tr></table></figure>
 
-    print Seasons.Spring</code></pre>
 <p><strong>不合理之处</strong>  </p>
 <ul>
 <li><ol>
@@ -260,26 +232,23 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
 </ul>
 <hr>
 <h4 id="7-eval-函数的使用"><a href="#7-eval-函数的使用" class="headerlink" title="7. eval()函数的使用"></a>7. <code>eval()</code>函数的使用</h4><p><code>eval()</code>函数将字符串str当成有效的表达式来求值并返回计算结果。  </p>
-<pre><code class="python">    eval(expression[, globals[, lacals]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval(expression[, globals[, lacals]])</span><br></pre></td></tr></table></figure>
+
 <p><strong>存在问题：</strong> 可能会被有不良目的的人恶意利用。<br><strong>解决方法：</strong>如果使用对象不是信任源，避免使用eval，在需要使用的地方用安全性更好的<code>ast.literal_eval</code>替代。  </p>
 <hr>
-<h4 id="8-使用enumerate-获取序列迭代的索引和值"><a href="#8-使用enumerate-获取序列迭代的索引和值" class="headerlink" title="8. 使用enumerate()获取序列迭代的索引和值"></a>8. 使用<code>enumerate()</code>获取序列迭代的索引和值</h4><pre><code class="python">    li = [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;, &#39;e&#39;]
-    for i, e in enumerate(li):
-        print &quot;index:&quot;, i, &quot;element:&quot;, e</code></pre>
+<h4 id="8-使用enumerate-获取序列迭代的索引和值"><a href="#8-使用enumerate-获取序列迭代的索引和值" class="headerlink" title="8. 使用enumerate()获取序列迭代的索引和值"></a>8. 使用<code>enumerate()</code>获取序列迭代的索引和值</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">li = [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;d&#x27;</span>, <span class="string">&#x27;e&#x27;</span>]</span><br><span class="line"><span class="keyword">for</span> i, e <span class="keyword">in</span> enumerate(li):</span><br><span class="line">    <span class="keyword">print</span> <span class="string">&quot;index:&quot;</span>, i, <span class="string">&quot;element:&quot;</span>, e</span><br></pre></td></tr></table></figure>
+
 <p>使用<code>enumerate()</code>可使代码清晰简洁，可读性最好，具有一定的惰性。（获取索引以及对应值）  </p>
 <p><code>enumerate(sequence, start = 0)</code>函数的内部实现:  </p>
-<pre><code class="python">    def enumerate(sequence, start = 0)
-        n = start
-        for elem in sequence:
-            yield n, elem
-            n += 1</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">enumerate</span>(<span class="params">sequence, start = <span class="number">0</span></span>)</span></span><br><span class="line">    n = start</span><br><span class="line">    <span class="keyword">for</span> elem <span class="keyword">in</span> sequence:</span><br><span class="line">        <span class="keyword">yield</span> n, elem</span><br><span class="line">        n += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
 <p>对于字典的迭代循环，<code>enumerate()</code>函数并不适合（默认转换成了序列进行处理）。<br>要获取迭代过程中字典的key和value，应该使用<code>iteritems()</code>方法。  </p>
-<pre><code class="python">    for k, v in personinfo.iteritems():
-        print k, &quot;:&quot;, v</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> k, v <span class="keyword">in</span> personinfo.iteritems():</span><br><span class="line">    <span class="keyword">print</span> k, <span class="string">&quot;:&quot;</span>, v</span><br></pre></td></tr></table></figure>
+
 <hr>
 <h4 id="9-使用with自动关闭资源"><a href="#9-使用with自动关闭资源" class="headerlink" title="9. 使用with自动关闭资源"></a>9. 使用<code>with</code>自动关闭资源</h4><p><code>with</code>语句的语法：  </p>
-<pre><code class="python">    with 表达式 [as 目标]:
-        代码块</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> 表达式 [<span class="keyword">as</span> 目标]:</span><br><span class="line">    代码块</span><br></pre></td></tr></table></figure>
+
 <p><code>with</code>语句可以在代码块执行完毕后还原进入该代码块时的现场。其执行过程如下：  </p>
 <ol>
 <li>计算表达式的值，返回一个上下文管理器对象。</li>
@@ -291,53 +260,28 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
 <li>如果步骤5中代码执行过程中发生异常，调用上下文管理器对象的<code>__exit__()</code>方法，并将异常类型、值及traceback信息作为参数传递给<code>__exit__()</code>方法。如果<code>__exit__()</code>返回值为false，则异常会被重新抛出；如果返回值为true,异常值被挂起，程序继续执行。  </li>
 </ol>
 <p>利用<code>with</code>语句自动关闭文件：  </p>
-<pre><code class="python">    with open(&#39;test.txt&#39;, &#39;w&#39;) as f:
-        f.write(&quot;test&quot;)</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;test.txt&#x27;</span>, <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="string">&quot;test&quot;</span>)</span><br></pre></td></tr></table></figure>
+
 <p><strong>上下文管理器：</strong>  </p>
 <p>它定义程序运行时需要建立的上下文，处理程序的进入和退出，实现了上下文管理协议，即在对象中定义<code>__enter__()</code>和<code>__exit__()</code>方法。  </p>
 <p>用户可以定义子集的上下文管理器来控制程序的运行，只需要实现上下文协议便能够和<code>with</code>语句一起使用。  </p>
-<pre><code class="python">    class MyContextManager(object):
-        def __enter__(self):
-            print &quot;entering...&quot;
-        def __exit__(self, exception_type, exception_value, traceback):
-            print &quot;leaving...&quot;
-            if exception_type is None:
-                print &quot;no exceptions!&quot;
-                return Fasle
-            elif exception_type is ValueError:
-                print &quot;value error!&quot;
-                return True
-            else：
-                print &quot;other error&quot;
-                return True</code></pre>
-<pre><code class="python">    with MyContextManger():
-        print &quot;Testing...&quot;
-        raise(ValueError)</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyContextManager</span>(<span class="params">object</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__enter__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;entering...&quot;</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__exit__</span>(<span class="params">self, exception_type, exception_value, traceback</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;leaving...&quot;</span></span><br><span class="line">        <span class="keyword">if</span> exception_type <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">&quot;no exceptions!&quot;</span></span><br><span class="line">            <span class="keyword">return</span> Fasle</span><br><span class="line">        <span class="keyword">elif</span> exception_type <span class="keyword">is</span> ValueError:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">&quot;value error!&quot;</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">        <span class="keyword">else</span>：</span><br><span class="line">            <span class="keyword">print</span> <span class="string">&quot;other error&quot;</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> MyContextManger():</span><br><span class="line">    <span class="keyword">print</span> <span class="string">&quot;Testing...&quot;</span></span><br><span class="line">    <span class="keyword">raise</span>(ValueError)</span><br></pre></td></tr></table></figure>
+
 <hr>
 <h4 id="10-else子句的使用"><a href="#10-else子句的使用" class="headerlink" title="10. else子句的使用"></a>10. <code>else</code>子句的使用</h4><ul>
 <li><strong>循环中的<code>else</code>:</strong><br>当循环“自然”终结时，<code>else</code>从句会被执行一次，而当循环是由<code>break</code>语句中断时，<code>else</code>子句就不会被执行。<br>例：查找素数</li>
 </ul>
-<pre><code class="python">    def print_prime2(n):
-        for i in range(2, n):
-            for j in range(2, i):
-                if i % j == 0:
-                    break
-            else:
-                print &#39;%d is a prime number&#39;%i</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_prime2</span>(<span class="params">n</span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, n):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">2</span>, i):</span><br><span class="line">            <span class="keyword">if</span> i % j == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">&#x27;%d is a prime number&#x27;</span>%i</span><br></pre></td></tr></table></figure>
+
 <p><code>while</code>语句中的<code>else</code>子句语意一致。</p>
 <ul>
 <li><strong>异常处理中的<code>else</code>:</strong><br><code>try</code>块没有抛出任何一异常时，执行<code>else</code>块。<br>例：写数据入文件 </li>
 </ul>
-<pre><code class="python">    def save(db, obj):
-        try:
-            # save attr1
-            db.execute(&#39;a aql stmt&#39;, obj.attr1)
-            # save attr2
-            db.execute(&#39;another sql stmt&#39;, obj.attr2)
-        except DBError:
-            db.rollback()
-        else:
-            db.commit()</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">save</span>(<span class="params">db, obj</span>):</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="comment"># save attr1</span></span><br><span class="line">        db.execute(<span class="string">&#x27;a aql stmt&#x27;</span>, obj.attr1)</span><br><span class="line">        <span class="comment"># save attr2</span></span><br><span class="line">        db.execute(<span class="string">&#x27;another sql stmt&#x27;</span>, obj.attr2)</span><br><span class="line">    <span class="keyword">except</span> DBError:</span><br><span class="line">        db.rollback()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        db.commit()</span><br></pre></td></tr></table></figure>
+
+
 <hr>
 <h4 id="11-优先使用join而不是-连接字符串"><a href="#11-优先使用join而不是-连接字符串" class="headerlink" title="11. 优先使用join而不是+连接字符串"></a>11. 优先使用<code>join</code>而不是<code>+</code>连接字符串</h4><ul>
 <li><p>当用操作符<code>+</code>连接字符串时，由于字符串时不可变对象，执行一次<code>+</code>操作便会在内存中申请一块新的内存空间，并将上一次操作的结果和本次操作的右操作数复制到新申请的内存空间。所以字符串的连接时间复杂度近似为O(n^2)。</p>
@@ -345,37 +289,28 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
 <li><p>而当用<code>join()</code>方法连接字符串的时候，会首先计算需要申请的总的内存空间，然后一次性申请所需的内存并将序列中的每一个元素复制到内存中去。所以<code>join()</code>操作的时间复杂度近似为O(n)。  </p>
 </li>
 </ul>
-<pre><code class="python">    str1, str2, str3 = &#39;testing &#39;, &#39;string &#39;, &#39;concatenation &#39;
-    str1 + str2 + str3</code></pre>
-<pre><code class="python">    str1, str2, str3 = &#39;testing &#39;, &#39;string &#39;, &#39;concatenation &#39;
-    &#39;&#39;.join([str1, str2, str3])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">str1, str2, str3 = <span class="string">&#x27;testing &#x27;</span>, <span class="string">&#x27;string &#x27;</span>, <span class="string">&#x27;concatenation &#x27;</span></span><br><span class="line">str1 + str2 + str3</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">str1, str2, str3 = <span class="string">&#x27;testing &#x27;</span>, <span class="string">&#x27;string &#x27;</span>, <span class="string">&#x27;concatenation &#x27;</span></span><br><span class="line"><span class="string">&#x27;&#x27;</span>.join([str1, str2, str3])</span><br></pre></td></tr></table></figure>
+
 <hr>
 <h4 id="12-列表解析"><a href="#12-列表解析" class="headerlink" title="12. 列表解析"></a>12. 列表解析</h4><p>列表解析的语法为： <code>[expr for iter_item in iterable if cond_expr]</code><br>它迭代<code>iterable</code>中的每一个元素，当条件满足时便根据表达式<code>expr</code>计算的内容生成一个元素并放入新的列表中，依次类推，并最终返回整个列表。<br>如果没有条件表达式，就直接将<code>expr</code>中计算出的元素加入<code>List</code>中。  </p>
 <ol>
 <li><p><strong>支持多重嵌套</strong>  </p>
-<pre><code class="python"> nested_list = [[&#39;Hello&#39;, &#39;World&#39;], [&#39;Goodbye&#39;, &#39;World&#39;]]
- nested_list = [[s.upper() for s in xs] for xi in nested_list]
- print(nested_list)</code></pre>
-<pre><code class="python"> [[&#39;HELLO&#39;, &#39;WORLD&#39;], [&#39;GOODBYE&#39;, &#39;WORLD&#39;]]</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nested_list = [[<span class="string">&#x27;Hello&#x27;</span>, <span class="string">&#x27;World&#x27;</span>], [<span class="string">&#x27;Goodbye&#x27;</span>, <span class="string">&#x27;World&#x27;</span>]]</span><br><span class="line">nested_list = [[s.upper() <span class="keyword">for</span> s <span class="keyword">in</span> xs] <span class="keyword">for</span> xi <span class="keyword">in</span> nested_list]</span><br><span class="line">print(nested_list)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[<span class="string">&#x27;HELLO&#x27;</span>, <span class="string">&#x27;WORLD&#x27;</span>], [<span class="string">&#x27;GOODBYE&#x27;</span>, <span class="string">&#x27;WORLD&#x27;</span>]]</span><br></pre></td></tr></table></figure>
 </li>
 <li><p><strong>支持多重迭代</strong>  </p>
-<pre><code class="python"> [(a, b) for a in [&#39;a&#39;, &#39;1&#39;, 1, 2] for b in [&#39;1&#39;, 3, 4, &#39;b&#39;] if a != b]</code></pre>
-<pre><code class="python"> [(&#39;a&#39;, &#39;1&#39;), (&#39;a&#39;, 3), (&#39;a&#39;, 4), (&#39;a&#39;, &#39;b&#39;), (&#39;1&#39;, 3), (&#39;1&#39;, 4), (&#39;1&#39;, &#39;b&#39;), \
-     (1, &#39;1&#39;), (1, 3), (1, 4), (1, &#39;b&#39;), (2, &#39;1&#39;), (2, 3), (2, 4), (2, &#39;b&#39;)]</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[(a, b) <span class="keyword">for</span> a <span class="keyword">in</span> [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="number">1</span>, <span class="number">2</span>] <span class="keyword">for</span> b <span class="keyword">in</span> [<span class="string">&#x27;1&#x27;</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="string">&#x27;b&#x27;</span>] <span class="keyword">if</span> a != b]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;1&#x27;</span>), (<span class="string">&#x27;a&#x27;</span>, <span class="number">3</span>), (<span class="string">&#x27;a&#x27;</span>, <span class="number">4</span>), (<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>), (<span class="string">&#x27;1&#x27;</span>, <span class="number">3</span>), (<span class="string">&#x27;1&#x27;</span>, <span class="number">4</span>), (<span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;b&#x27;</span>), \</span><br><span class="line">    (<span class="number">1</span>, <span class="string">&#x27;1&#x27;</span>), (<span class="number">1</span>, <span class="number">3</span>), (<span class="number">1</span>, <span class="number">4</span>), (<span class="number">1</span>, <span class="string">&#x27;b&#x27;</span>), (<span class="number">2</span>, <span class="string">&#x27;1&#x27;</span>), (<span class="number">2</span>, <span class="number">3</span>), (<span class="number">2</span>, <span class="number">4</span>), (<span class="number">2</span>, <span class="string">&#x27;b&#x27;</span>)]</span><br></pre></td></tr></table></figure>
 </li>
 <li><p><strong>列表解析语法中的表达式可以是简单表达式，复杂表达式，函数</strong>  </p>
-<pre><code class="python"> def f(v):
-     if v%2 == 0:
-         v = v ** 2
-     else:
-         v = v + 1
- [f(v) for v in [2, 3, 4, -1] if v&gt;0]</code></pre>
-<pre><code class="python"> [v**2 if v%2 == 0 else v+1 for v in [2, 3, 4, -1] if v &gt; 0]</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">v</span>):</span></span><br><span class="line">    <span class="keyword">if</span> v%<span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">        v = v ** <span class="number">2</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        v = v + <span class="number">1</span></span><br><span class="line">[f(v) <span class="keyword">for</span> v <span class="keyword">in</span> [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">-1</span>] <span class="keyword">if</span> v&gt;<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[v**<span class="number">2</span> <span class="keyword">if</span> v%<span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> v+<span class="number">1</span> <span class="keyword">for</span> v <span class="keyword">in</span> [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">-1</span>] <span class="keyword">if</span> v &gt; <span class="number">0</span>]</span><br></pre></td></tr></table></figure>
 </li>
 <li><p><strong>列表解析语法中的<code>iterable</code>可以是任意可迭代对象</strong>  </p>
-<pre><code class="python"> fh = open(&quot;test.txt&quot;, &quot;r&quot;)
- result = [i for i in fh if &quot;abc&quot; in i]
- print(result)</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fh = open(<span class="string">&quot;test.txt&quot;</span>, <span class="string">&quot;r&quot;</span>)</span><br><span class="line">result = [i <span class="keyword">for</span> i <span class="keyword">in</span> fh <span class="keyword">if</span> <span class="string">&quot;abc&quot;</span> <span class="keyword">in</span> i]</span><br><span class="line">print(result)</span><br></pre></td></tr></table></figure>
+
 </li>
 </ol>
 <p><strong>优势</strong>  </p>
@@ -403,17 +338,16 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
 </ol>
 <hr>
 <h4 id="15-字符串的基本用法"><a href="#15-字符串的基本用法" class="headerlink" title="15. 字符串的基本用法"></a>15. 字符串的基本用法</h4><p><strong>判定是否包含字串</strong><br>可以用<code>find()</code>方法，推荐使用<code>in</code>和<code>not in</code>操作符。  </p>
-<pre><code class="python">    str = &quot;Test if a string contains some special substrings&quot;
-    if str.find(&quot;some&quot;) != -1: # 使用find方法进行判断
-        print(&quot;Yes, it contains&quot;)</code></pre>
-<pre><code class="python">    if &quot;some&quot; in str: # 使用in方法也可以判断
-        print(Yes, it contains using in)</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">str = <span class="string">&quot;Test if a string contains some special substrings&quot;</span></span><br><span class="line"><span class="keyword">if</span> str.find(<span class="string">&quot;some&quot;</span>) != <span class="number">-1</span>: <span class="comment"># 使用find方法进行判断</span></span><br><span class="line">    print(<span class="string">&quot;Yes, it contains&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="string">&quot;some&quot;</span> <span class="keyword">in</span> str: <span class="comment"># 使用in方法也可以判断</span></span><br><span class="line">    print(Yes, it contains using <span class="keyword">in</span>)</span><br></pre></td></tr></table></figure>
+
 <p><strong><code>split()</code>的使用</strong><br><code>split([sep [,maxsplit]])</code>，参数<code>maxsplit</code>是最大分切次数。  </p>
 <p>对于字符串<code>s</code>，<code>s.split()</code>、<code>s.split(&#39;&#39;)</code>的返回值是不同的。<br><code>s.split()</code>先去除字符串两端的空白符，然后以任意长度的空白符串作为界定符分切字符串。<br><code>s.split(&#39;&#39;)</code>认为两个连续的<code>sep</code>之间存在一个空字符串。  </p>
 <hr>
 <h4 id="16-sort-和sorted-的用法"><a href="#16-sort-和sorted-的用法" class="headerlink" title="16. sort()和sorted()的用法"></a>16. <code>sort()</code>和<code>sorted()</code>的用法</h4><p>两者的<strong>函数形式</strong>：  </p>
-<pre><code class="python">    sorted(iterable[, cmp[, key[, reverse]]])
-    s.sort([cmp[, key[, reverse]]])</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sorted(iterable[, cmp[, key[, reverse]]])</span><br><span class="line">s.sort([cmp[, key[, reverse]]])</span><br></pre></td></tr></table></figure>
+
 <p><strong>参数</strong>  </p>
 <ul>
 <li><code>cmp</code>为用户定义比较函数  </li>
@@ -431,24 +365,13 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
 <li><p><code>sorted()</code>函数功能非常强大，使用它可以方便地针对不同的数据结构进行排序。</p>
 <ul>
 <li><p>对字典进行排序  </p>
-<pre><code class="python">   phonebook = &#123;&#39;Li&#39;: &#39;77&#39;, &#39;Bo&#39;: &#39;93&#39;, &#39;Ca&#39;: &#39;58&#39;&#125;
-   from operator import itemgetter
-   sorted_pd = sorted(phonebook.items(), key=itemgetter(1))</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">phonebook = &#123;<span class="string">&#x27;Li&#x27;</span>: <span class="string">&#x27;77&#x27;</span>, <span class="string">&#x27;Bo&#x27;</span>: <span class="string">&#x27;93&#x27;</span>, <span class="string">&#x27;Ca&#x27;</span>: <span class="string">&#x27;58&#x27;</span>&#125;</span><br><span class="line"><span class="keyword">from</span> operator <span class="keyword">import</span> itemgetter</span><br><span class="line">sorted_pd = sorted(phonebook.items(), key=itemgetter(<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>多维<code>list</code>排序  </p>
-<pre><code class="python">   from operator improt itemgetter
-   gameresult = [[&#39;Bob&#39;,95.00,&#39;A&#39;],[&#39;Alan&#39;,86.0,&#39;C&#39;], \
-       [&#39;Mandy&#39;,82.5,&#39;A&#39;],[&#39;Rob&#39;,86,&#39;E&#39;]]
-   print(sorted(gamersult, key=itemgetter(2, 1)))</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> operator improt itemgetter</span><br><span class="line">gameresult = [[<span class="string">&#x27;Bob&#x27;</span>,<span class="number">95.00</span>,<span class="string">&#x27;A&#x27;</span>],[<span class="string">&#x27;Alan&#x27;</span>,<span class="number">86.0</span>,<span class="string">&#x27;C&#x27;</span>], \</span><br><span class="line">    [<span class="string">&#x27;Mandy&#x27;</span>,<span class="number">82.5</span>,<span class="string">&#x27;A&#x27;</span>],[<span class="string">&#x27;Rob&#x27;</span>,<span class="number">86</span>,<span class="string">&#x27;E&#x27;</span>]]</span><br><span class="line">print(sorted(gamersult, key=itemgetter(<span class="number">2</span>, <span class="number">1</span>)))</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>字典中混合<code>list</code>排序  </p>
-<pre><code class="python">   dict = &#123;&#39;Li&#39;:[&#39;M&#39;,7],
-   &#39;Zhang&#39;:[&#39;E&#39;,2],
-   &#39;Wang&#39;:[&#39;P&#39;,3],
-   &#39;Du&#39;:[&#39;C&#39;,2],
-   &#39;Ma&#39;:[&#39;C&#39;,9],
-   &#39;Zhe&#39;:[&#39;H&#39;,7]&#125;
-   print(sorted(dict.items(), key=lambda k: k[1][0]))</code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">dict = &#123;<span class="string">&#x27;Li&#x27;</span>:[<span class="string">&#x27;M&#x27;</span>,<span class="number">7</span>],</span><br><span class="line"><span class="string">&#x27;Zhang&#x27;</span>:[<span class="string">&#x27;E&#x27;</span>,<span class="number">2</span>],</span><br><span class="line"><span class="string">&#x27;Wang&#x27;</span>:[<span class="string">&#x27;P&#x27;</span>,<span class="number">3</span>],</span><br><span class="line"><span class="string">&#x27;Du&#x27;</span>:[<span class="string">&#x27;C&#x27;</span>,<span class="number">2</span>],</span><br><span class="line"><span class="string">&#x27;Ma&#x27;</span>:[<span class="string">&#x27;C&#x27;</span>,<span class="number">9</span>],</span><br><span class="line"><span class="string">&#x27;Zhe&#x27;</span>:[<span class="string">&#x27;H&#x27;</span>,<span class="number">7</span>]&#125;</span><br><span class="line">print(sorted(dict.items(), key=<span class="keyword">lambda</span> k: k[<span class="number">1</span>][<span class="number">0</span>]))</span><br></pre></td></tr></table></figure>
 </li>
 <li><p><code>List</code>中混合字典排序</p>
 <p><code>lue</code></p>
@@ -484,27 +407,14 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
 <li><p>python再当初设计的时候借鉴了其他语言的一些特性，如Moudla-3中方法会显式地再参数列表中传入<code>self</code>  </p>
 </li>
 <li><p>python语言本身的动态性决定了使用<code>self</code>能狗带来一些便利。<br>例：  </p>
-<pre><code class="python">    def len(point):
-        return math.sqrt(point.X **2 + point.Y **2)
-
-    class RTriangle(object):
-        def __init__(self, right_angle_sideX, right_angle_sideY):
-            self.right_angle_sideX = right_angle_sideX
-            self.right_angle_sideY = right_angle_sideY
-
-    RTriangle.len = len
-    rt = RTriangle(3, 4)
-    rt.len()  </code></pre>
-</li>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">len</span>(<span class="params">point</span>):</span></span><br><span class="line">    <span class="keyword">return</span> math.sqrt(point.X **<span class="number">2</span> + point.Y **<span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RTriangle</span>(<span class="params">object</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, right_angle_sideX, right_angle_sideY</span>):</span></span><br><span class="line">        self.right_angle_sideX = right_angle_sideX</span><br><span class="line">        self.right_angle_sideY = right_angle_sideY</span><br><span class="line"></span><br><span class="line">RTriangle.len = len</span><br><span class="line">rt = RTriangle(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">rt.len()  </span><br></pre></td></tr></table></figure></li>
 <li><p>在存在同名的局部变量以及实例变量的情况下，使用<code>self</code>使得实例变量更容易被区分。  </p>
 </li>
 </ol>
 <hr>
 <h4 id="20-掌握循环优化的基本技巧"><a href="#20-掌握循环优化的基本技巧" class="headerlink" title="20. 掌握循环优化的基本技巧"></a>20. 掌握循环优化的基本技巧</h4><ol>
 <li>减少内部循环的计算。  </li>
-<li>将显式循环改为隐式循环。<br>例：求等差数列1,2,…,n的和<pre><code class="python">    sum = 0
-    for i in range(n+1):
-        sum = sum+i  </code></pre>
+<li>将显式循环改为隐式循环。<br>例：求等差数列1,2,…,n的和 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sum = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n+<span class="number">1</span>):</span><br><span class="line">    sum = sum+i  </span><br></pre></td></tr></table></figure>
 也可以直接计算：<code>n*(n+1)/2</code>  </li>
 <li>在循环中尽量引用局部变量。 （因为在命名空间中局部变量优先搜索）  </li>
 <li>关注内层嵌套循环。 （尽量将内层循环的计算往上层移）  </li>
@@ -515,7 +425,7 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/03/29/%E3%80%8A%E7%BC%96%E5%86%99%E9%AB%98%E8%B4%A8%E9%87%8F%E4%BB%A3%E7%A0%81%E6%94%B9%E5%96%84python%E7%A8%8B%E5%BA%8F%E7%9A%8491%E4%B8%AA%E5%BB%BA%E8%AE%AE%E3%80%8B%E7%AC%94%E8%AE%B0/" data-id="ckg0u440j000frgh769071ytq" data-title="《编写高质量代码改善python程序的91个建议》笔记" class="article-share-link">Teilen</a>
+      <a data-url="http://yoursite.com/2018/03/29/%E3%80%8A%E7%BC%96%E5%86%99%E9%AB%98%E8%B4%A8%E9%87%8F%E4%BB%A3%E7%A0%81%E6%94%B9%E5%96%84python%E7%A8%8B%E5%BA%8F%E7%9A%8491%E4%B8%AA%E5%BB%BA%E8%AE%AE%E3%80%8B%E7%AC%94%E8%AE%B0/" data-id="ckg2fqwtp000frkh7c7widiwm" data-title="《编写高质量代码改善python程序的91个建议》笔记" class="article-share-link">Share</a>
       
       
       
@@ -528,7 +438,7 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
 <nav id="article-nav">
   
     <a href="/2018/07/10/%E3%80%8Apython%E9%AB%98%E6%89%8B%E4%B9%8B%E8%B7%AF%E3%80%8B%E7%AC%94%E8%AE%B0/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+      <strong class="article-nav-caption">上一篇</strong>
       <div class="article-nav-title">
         
           《python高手之路》笔记
@@ -538,7 +448,7 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
   
   
     <a href="/2018/03/25/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
+      <strong class="article-nav-caption">下一篇</strong>
       <div class="article-nav-title">Hello World</div>
     </a>
   
@@ -576,7 +486,7 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li></ul>
     </div>
@@ -586,7 +496,7 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">letzter Beitrag</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
         
@@ -620,7 +530,7 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
       </div>
       <footer id="footer">
   
-  <div class="outer">
+  <div class="footer-outer">
     <div id="footer-info" class="inner">
       &copy; 2020 WenZhou<br>
       Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
@@ -654,6 +564,16 @@ print const.MY_SECOND_CONSTANT*2</code></pre>
 
 
 
+
+
+<!-- 处理mermaid流程图 -->
+
+  <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'base'});
+    }
+  </script>
 
   </div>
 </body>

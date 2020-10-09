@@ -6,15 +6,15 @@
   
   <title>秋招笔记 | Wenzhou&#39;s blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="C&#x2F;C++ 操作系统 计算机网络 数据库 设计模式">
+  <meta name="description" content="C&#x2F;C++ 操作系统 计算机网络 数据库 设计模式    mermaid的画出来的贼丑，格式也不美观，暂时还不知如何调整，等有空再来琢磨。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="秋招笔记">
 <meta property="og:url" content="http://yoursite.com/2019/10/10/%E7%A7%8B%E6%8B%9B%E7%AC%94%E8%AE%B0/index.html">
 <meta property="og:site_name" content="Wenzhou&#39;s blog">
-<meta property="og:description" content="C&#x2F;C++ 操作系统 计算机网络 数据库 设计模式">
+<meta property="og:description" content="C&#x2F;C++ 操作系统 计算机网络 数据库 设计模式    mermaid的画出来的贼丑，格式也不美观，暂时还不知如何调整，等有空再来琢磨。">
 <meta property="og:locale">
 <meta property="article:published_time" content="2019-10-10T10:15:53.000Z">
-<meta property="article:modified_time" content="2020-09-19T07:44:40.207Z">
+<meta property="article:modified_time" content="2020-10-09T15:54:59.522Z">
 <meta property="article:author" content="WenZhou">
 <meta property="article:tag" content="CS笔记">
 <meta name="twitter:card" content="summary">
@@ -64,10 +64,10 @@
         
           <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
       </div>
     </div>
   </div>
@@ -103,6 +103,9 @@
 <li>计算机网络</li>
 <li>数据库</li>
 <li>设计模式</li>
+</ul>
+<ul>
+<li><input disabled="" type="checkbox"> <code>mermaid</code>的画出来的贼丑，格式也不美观，暂时还不知如何调整，等有空再来琢磨。</li>
 </ul>
 <a id="more"></a>
 
@@ -268,33 +271,41 @@
 <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u013176681/article/details/39256191">抢占时任务调度与非抢占式的区别</a>（什么时候我也能这么能吹）</li>
 </ol>
 <h2 id="2-4-存储管理"><a href="#2-4-存储管理" class="headerlink" title="2.4 存储管理"></a>2.4 存储管理</h2><h2 id="2-5-文件系统"><a href="#2-5-文件系统" class="headerlink" title="2.5 文件系统"></a>2.5 文件系统</h2><h2 id="2-6-并发程序设计"><a href="#2-6-并发程序设计" class="headerlink" title="2.6 并发程序设计"></a>2.6 并发程序设计</h2><ol>
-<li>特性：<ul>
+<li><p>特性：</p>
+<ul>
 <li>并发性：多个进程并行执行，提高了计算效率。</li>
 <li>共享性：多个进程共享软件资源。</li>
 <li>交往性：制约，有难度。</li>
 </ul>
 </li>
-<li>互斥与同步<ul>
+<li><p>互斥与同步</p>
+<ul>
 <li>互斥：相互争夺独占性资源</li>
 <li>同步：为完成共同任务 协调执行先后关系</li>
 </ul>
 </li>
-<li>信号量<ul>
-<li>记录型信号量<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">semaphore</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> vales;  <span class="comment">//信号量值</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">pcb</span> *<span class="title">list</span>;</span> <span class="comment">//信号量等待进程队列指针</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
-<li>P、V操作原语<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">procedure <span class="title">P</span><span class="params">(semaphore:s)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    s -= <span class="number">1</span>;     <span class="comment">//信号量-1</span></span><br><span class="line">    <span class="keyword">if</span> (s&lt;<span class="number">0</span>) W(s);<span class="comment">//若信号量小于0，则调用进程被置成等待信号量s的状态</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">procedure <span class="title">V</span><span class="params">(semaphore:s)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    s += <span class="number">1</span>;     <span class="comment">//信号量+1</span></span><br><span class="line">    <span class="keyword">if</span> (s&lt;=<span class="number">0</span>) R(s); <span class="comment">//// 若信号量小于等于0，则释放一个等待信号量s的进程</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>信号量</p>
+<ul>
+<li><p>记录型信号量</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">semaphore</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">int</span> vales;  <span class="comment">//信号量值</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">pcb</span> *<span class="title">list</span>;</span> <span class="comment">//信号量等待进程队列指针</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>P、V操作原语  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">procedure <span class="title">P</span><span class="params">(semaphore:s)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    s -= <span class="number">1</span>;     <span class="comment">//信号量-1</span></span><br><span class="line">    <span class="keyword">if</span> (s&lt;<span class="number">0</span>) W(s);<span class="comment">//若信号量小于0，则调用进程被置成等待信号量s的状态</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">procedure <span class="title">V</span><span class="params">(semaphore:s)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    s += <span class="number">1</span>;     <span class="comment">//信号量+1</span></span><br><span class="line">    <span class="keyword">if</span> (s&lt;=<span class="number">0</span>) R(s); <span class="comment">//// 若信号量小于等于0，则释放一个等待信号量s的进程</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
 </ul>
 </li>
-<li>管程<br> 把分散在各个进程中互斥地访问公共变量地临界区集中起来管理，它局部变量只能由该管程的过程存取。<br> 管程的条件变量：<ul>
+<li><p>管程<br> 把分散在各个进程中互斥地访问公共变量地临界区集中起来管理，它局部变量只能由该管程的过程存取。<br> 管程的条件变量：</p>
+<ul>
 <li>条件变量(condition variables):当调用管程过程的进程无法运行时，用于阻塞进程的信号量。</li>
 <li>同步原语wait：没有资源-&gt;阻塞进程</li>
 <li>同步原语signal:释放条件变量上阻塞的进程</li>
 </ul>
 </li>
-<li>进程通信</li>
+<li><p>进程通信</p>
+</li>
 </ol>
 <h2 id="2-7-面试常问"><a href="#2-7-面试常问" class="headerlink" title="2.7 面试常问"></a>2.7 面试常问</h2><ol>
-<li>进程线程</li>
-</ol>
+<li><p>进程线程</p>
 <ul>
 <li><p>进程通信方式有：共享内存，信号，信号量，消息队列，套接字，管道</p>
 </li>
@@ -302,19 +313,15 @@
 </li>
 <li><p>消息队列：异步，解耦，消峰</p>
 </li>
-<li><p>共享内存：<br>创建一个逻辑内存可以让不同的进程去访问同一个逻辑内存，sys/shm.h</p>
+<li><p>共享内存：<br>  创建一个逻辑内存可以让不同的进程去访问同一个逻辑内存，sys/shm.h<br>  1). 创建共享内存。2). 连接共享内存到当前进程的地址空间。3). 分离共享内存。4). 控制共享内存。</p>
 </li>
-</ul>
-<p>1). 创建共享内存。2). 连接共享内存到当前进程的地址空间。3). 分离共享内存。4). 控制共享内存。</p>
-<ul>
 <li><p><em>同步与互斥</em>: 互斥锁，信号量，自旋锁，读写锁，条件变量</p>
 </li>
 <li><p><em>死锁条件</em>： 互斥访问，环路等待，请求和保持，不可剥夺</p>
 </li>
 </ul>
-<ol start="2">
-<li>I/O优化的方式：</li>
-</ol>
+</li>
+<li><p>I/O优化的方式：</p>
 <ul>
 <li><p>所谓I/O,就是从内核中获取数据的过程（例如从磁盘中载入数据到内存）<br>  分为阻塞和非阻塞两种，阻塞指调用者一直再等待事件的发生，而非阻塞会去做其他事情。<br>  主要的历程：采用多线程=&gt;采用线程池=&gt;采用非阻塞接口=&gt;采用多路复用I/O=&gt;异步I/O。</p>
 </li>
@@ -325,6 +332,8 @@
 <li><p><em>异步I/O</em>：<br>  用户进程发起read操作之后，就去做其他事情了，等到内核准备完数据并拷贝到用户内存之后，再通知用户进程。</p>
 </li>
 </ul>
+</li>
+</ol>
 <hr>
 <h1 id="三、-计算机网络"><a href="#三、-计算机网络" class="headerlink" title="三、 计算机网络"></a>三、 计算机网络</h1><p>参考资料: 《TCP/IP详解，卷1：协议》《计算机网络》<a target="_blank" rel="noopener" href="https://b23.tv/av9876107/p68">视频教程</a></p>
 <h2 id="3-1-概述"><a href="#3-1-概述" class="headerlink" title="3.1 概述"></a>3.1 概述</h2><ol>
@@ -395,7 +404,34 @@
 
 
 <p><strong>数据封装</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">subgraph data</span><br><span class="line">    appd&#x3D;&#x3D;&gt;transd</span><br><span class="line">    transd&#x3D;&#x3D;&gt;netd</span><br><span class="line">    netd&#x3D;&#x3D;&gt;dlld</span><br><span class="line">    dlld&#x3D;&#x3D;&gt;phyd</span><br><span class="line">    appd[上层数据]</span><br><span class="line">    transd[TCP首部+上层数据]</span><br><span class="line">    netd[IP首部+TCP+上层数据]</span><br><span class="line">    dlld[MAC首部+IP+TCP+上层数据+FCS]</span><br><span class="line">    phyd[比特流]</span><br><span class="line">end</span><br><span class="line">subgraph layer</span><br><span class="line">    app&#x3D;&#x3D;&gt;trans</span><br><span class="line">    trans&#x3D;&#x3D;&gt;net</span><br><span class="line">    net&#x3D;&#x3D;&gt;dll</span><br><span class="line">    dll&#x3D;&#x3D;&gt;phy</span><br><span class="line">    app[应用,表示,会话层]</span><br><span class="line">    trans[传输层]</span><br><span class="line">    net[网络层]</span><br><span class="line">    dll[数据链路层]</span><br><span class="line">    phy[物理层]</span><br><span class="line">end</span><br><span class="line">app -.-&gt; appd</span><br><span class="line">trans -.数据段.-&gt; transd</span><br><span class="line">net -.数据报.-&gt; netd</span><br><span class="line">dll -.数据帧.-&gt; dlld</span><br><span class="line">phy -.Bit.-&gt; phyd</span><br></pre></td></tr></table></figure>
+<pre class="mermaid">graph TD
+subgraph data
+    appd==>transd
+    transd==>netd
+    netd==>dlld
+    dlld==>phyd
+    appd[上层数据]
+    transd[TCP首部+上层数据]
+    netd[IP首部+TCP+上层数据]
+    dlld[MAC首部+IP+TCP+上层数据+FCS]
+    phyd[比特流]
+end
+subgraph layer
+    app==>trans
+    trans==>net
+    net==>dll
+    dll==>phy
+    app[应用,表示,会话层]
+    trans[传输层]
+    net[网络层]
+    dll[数据链路层]
+    phy[物理层]
+end
+app -.-> appd
+trans -.数据段.-> transd
+net -.数据报.-> netd
+dll -.数据帧.-> dlld
+phy -.Bit.-> phyd</pre>
 
 
 <h2 id="3-3-物理层"><a href="#3-3-物理层" class="headerlink" title="3.3 物理层"></a>3.3 物理层</h2><p>网络设备的机械特性，电气特性，功能特性，过程特性。<br>数据通行的基础知识：数字信号，模拟信号<br>充分利用带宽：频分多路复用，时分多路复用</p>
@@ -488,9 +524,11 @@
 <li><code>pathping</code>跟踪数据包路径，计算丢包情况</li>
 <li><code>tracert</code> 查看经过的路由器</li>
 </ul>
-<h3 id="3-5-5-通信方式"><a href="#3-5-5-通信方式" class="headerlink" title="3.5.5 通信方式"></a>3.5.5 通信方式</h3><blockquote>
-<p>单播：点到点通信<br>组播（多播）：使用多播IP地址（一组计算机可以接收数据）<br>广播：目标地址为全F，交换机会将数据发送给本局域网内所有主机，但不可跨网段。</p>
-</blockquote>
+<h3 id="3-5-5-通信方式"><a href="#3-5-5-通信方式" class="headerlink" title="3.5.5 通信方式"></a>3.5.5 通信方式</h3><ul>
+<li>单播：点到点通信</li>
+<li>组播（多播）：使用多播IP地址（一组计算机可以接收数据）</li>
+<li>广播：目标地址为全F，交换机会将数据发送给本局域网内所有主机，但不可跨网段。</li>
+</ul>
 <h3 id="3-5-6-IGMP"><a href="#3-5-6-IGMP" class="headerlink" title="3.5.6 IGMP"></a>3.5.6 IGMP</h3><p>用于组播的协议，配置在路由器接口上，路由器会周期性地扫描本网段中哪些主机绑定了多播地址，如果没有主机绑定了多播地址，再决定是否要求上级了路由器发送数据包过来。</p>
 <h2 id="3-6-传输层"><a href="#3-6-传输层" class="headerlink" title="3.6 传输层"></a>3.6 传输层</h2><ol>
 <li>ARP：是从ip地址中解析出mac地址的一种协议。</li>
@@ -650,7 +688,6 @@
 </ol>
 <hr>
 <h1 id="四、数据库"><a href="#四、数据库" class="headerlink" title="四、数据库"></a>四、数据库</h1><p>参考资料：<br>《高性能MySQL》<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/sharpest/p/10390035.html">博客</a><br><a target="_blank" rel="noopener" href="https://b23.tv/av29072634/p1">视频教程</a>  </p>
-<p>其中<code>mermaid</code>的支持还有问题，等有空再来琢磨。</p>
 <h2 id="4-1-基础知识"><a href="#4-1-基础知识" class="headerlink" title="4.1 基础知识"></a>4.1 基础知识</h2><h2 id="4-2-MySQL优化技巧"><a href="#4-2-MySQL优化技巧" class="headerlink" title="4.2 MySQL优化技巧"></a>4.2 MySQL优化技巧</h2><p>参考《高性能MySQL》，<a target="_blank" rel="noopener" href="https://www.cnblogs.com/sharpest/p/10390035.html">博客</a>，<a target="_blank" rel="noopener" href="https://b23.tv/av29072634/p1">视频教程</a></p>
 <hr>
 <h3 id="4-2-1-总览："><a href="#4-2-1-总览：" class="headerlink" title="4.2.1 总览："></a>4.2.1 总览：</h3><ul>
@@ -662,7 +699,26 @@
 <hr>
 <h3 id="4-2-2-存储引擎"><a href="#4-2-2-存储引擎" class="headerlink" title="4.2.2 存储引擎"></a>4.2.2 存储引擎</h3><ul>
 <li><p>MySQL逻辑分层</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">select --&gt; link</span><br><span class="line">subgraph client</span><br><span class="line">		select((Select * from xxx))</span><br><span class="line">end</span><br><span class="line">subgraph server</span><br><span class="line">	link--&gt;serve</span><br><span class="line">	serve-.-&gt;serve2</span><br><span class="line">	serve2--&gt; engineer</span><br><span class="line">	subgraph 连接层</span><br><span class="line">	link[提供与客户端连接的服务]</span><br><span class="line">	end</span><br><span class="line">	subgraph 服务层</span><br><span class="line">   serve[提供各种用户使用的接口] </span><br><span class="line">   serve2[提供SQL优化器]</span><br><span class="line">	end</span><br><span class="line">	subgraph 引擎层</span><br><span class="line">	engineer[提供了各种数据存储方式]</span><br><span class="line">	end</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+  <pre class="mermaid">    graph TD
+  select --> link
+  subgraph client
+          select((Select * from xxx))
+  end
+  subgraph server
+      link-->serve
+      serve-.->serve2
+      serve2--> engineer
+      subgraph 连接层
+      link[提供与客户端连接的服务]
+      end
+      subgraph 服务层
+      serve[提供各种用户使用的接口] 
+      serve2[提供SQL优化器]
+      end
+      subgraph 引擎层
+      engineer[提供了各种数据存储方式]
+      end
+  end</pre>
 </li>
 <li><p><code>create table tablename() engine = myisam | innodb;</code><br>  存储引擎是myisam或innodb。读写锁，行级锁，表级锁。  </p>
 </li>
@@ -778,7 +834,7 @@
 <li>查看加锁的表：<code>show open tables;</code></li>
 <li>会话：<code>session</code>，每一个访问数据的命令行，客户端工具都可以称为一个会话。</li>
 <li>表锁<ul>
-<li>读锁  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">lock</span> <span class="keyword">table</span> tablelock <span class="keyword">read</span>;</span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> tablellock;                   <span class="comment">--读，可以</span></span><br><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> tablelock <span class="keyword">where</span> <span class="keyword">id</span>=<span class="number">1</span>;   <span class="comment">--写，不可以</span></span><br><span class="line"><span class="keyword">unlock</span> <span class="keyword">tables</span>;      <span class="comment">-- 也可以通过事务解锁</span></span><br></pre></td></tr></table></figure>
+<li>读锁  <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">lock</span> <span class="keyword">table</span> tablelock <span class="keyword">read</span>;</span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> tablellock;           <span class="comment">--读，可以</span></span><br><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> tablelock <span class="keyword">where</span> <span class="keyword">id</span>=<span class="number">1</span>;   <span class="comment">--写，不可以</span></span><br><span class="line"><span class="keyword">unlock</span> <span class="keyword">tables</span>;                      <span class="comment">-- 也可以通过事务解锁</span></span><br></pre></td></tr></table></figure>
   某个会话如果对A表加了读锁，那么这个会话只能对A进行读操作，不能写A以及对其他表进行操作。<br>  其他会话可以对A表进行读操作，但是写操作回一直等待上述会话释放锁，其他表不受影响。</li>
 <li>写锁<br>  <code>lock table tablelock write;</code><br>  当前会话可以对加了写锁的表进行任何操作（增删改查），但是不能对其他表进行操作。其他会话对加锁的表操作需要锁被释放。MyISAM会根据操作自动加锁。</li>
 </ul>
@@ -799,7 +855,26 @@
 </ul>
 </li>
 </ul>
-<h3 id="4-2-7-主从复制"><a href="#4-2-7-主从复制" class="headerlink" title="4.2.7 主从复制"></a>4.2.7 主从复制</h3><p>主从复制就是指MySQL数据从一个主节点复制到多从节点上。<br>    <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">ioth --read--&gt; binlog</span><br><span class="line">ioth --write--&gt; relog</span><br><span class="line">sqlth --read--&gt; relog</span><br><span class="line">sqlth --执行更新--&gt; database2</span><br><span class="line"></span><br><span class="line">subgraph master</span><br><span class="line">	database1 --data changes--&gt; binlog</span><br><span class="line">   </span><br><span class="line">	database1(MySQL数据库1)</span><br><span class="line">	binlog[binary log 二进制日志]  </span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">subgraph slave    </span><br><span class="line">	ioth&gt;IO线程] </span><br><span class="line">	sqlth&gt;SQL线程]</span><br><span class="line">	database2(MySQL数据库2)</span><br><span class="line">	relog[Relay log 中继日志]</span><br><span class="line">end</span><br></pre></td></tr></table></figure></p>
+<h3 id="4-2-7-主从复制"><a href="#4-2-7-主从复制" class="headerlink" title="4.2.7 主从复制"></a>4.2.7 主从复制</h3><p>主从复制就是指MySQL数据从一个主节点复制到多从节点上。</p>
+<pre class="mermaid">graph TD
+ioth --read--> binlog
+ioth --write--> relog
+sqlth --read--> relog
+sqlth --执行更新--> database2
+
+subgraph master
+    database1 --data changes--> binlog
+    database1(MySQL数据库1)
+    binlog[binary log 二进制日志]  
+end
+
+subgraph slave    
+    ioth>IO线程] 
+    sqlth>SQL线程]
+    database2(MySQL数据库2)
+    relog[Relay log 中继日志]
+end</pre>
+
 <ul>
 <li>步骤<ul>
 <li>master服务器将<code>sql</code>操作记录在本地的<code>binary log</code>中（二进制日志事件）</li>
@@ -867,7 +942,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/10/10/%E7%A7%8B%E6%8B%9B%E7%AC%94%E8%AE%B0/" data-id="ckg0u440r000lrgh74pb30gu2" data-title="秋招笔记" class="article-share-link">Teilen</a>
+      <a data-url="http://yoursite.com/2019/10/10/%E7%A7%8B%E6%8B%9B%E7%AC%94%E8%AE%B0/" data-id="ckg2fqwtt000lrkh7h0lyf4kd" data-title="秋招笔记" class="article-share-link">Share</a>
       
       
       
@@ -880,7 +955,7 @@
 <nav id="article-nav">
   
     <a href="/2019/12/22/%E3%80%8A%E7%9B%B8%E5%AF%B9%E8%AE%BA%E3%80%8B%E6%91%98%E6%8A%84/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
+      <strong class="article-nav-caption">上一篇</strong>
       <div class="article-nav-title">
         
           《相对论》摘抄
@@ -890,7 +965,7 @@
   
   
     <a href="/2019/08/20/%E3%80%8A%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9C%9F%E8%B1%A1%E8%BF%98%E5%8E%9F%E3%80%8B%E7%AC%94%E8%AE%B0/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Älter</strong>
+      <strong class="article-nav-caption">下一篇</strong>
       <div class="article-nav-title">《操作系统真象还原》笔记</div>
     </a>
   
@@ -928,7 +1003,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archives</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li></ul>
     </div>
@@ -938,7 +1013,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">letzter Beitrag</h3>
+    <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
         
@@ -972,7 +1047,7 @@
       </div>
       <footer id="footer">
   
-  <div class="outer">
+  <div class="footer-outer">
     <div id="footer-info" class="inner">
       &copy; 2020 WenZhou<br>
       Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
@@ -1006,6 +1081,16 @@
 
 
 
+
+
+<!-- 处理mermaid流程图 -->
+
+  <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'base'});
+    }
+  </script>
 
   </div>
 </body>
