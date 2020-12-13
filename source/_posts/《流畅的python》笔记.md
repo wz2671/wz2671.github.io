@@ -73,3 +73,56 @@ date: 2020-12-13 17:23:59
     
         key = property(_getkey, _setkey, _delkey, 'key function')
     ```
+
+### 2. 内置序列类型
+
+* 容器序列：`list`, `tuple`和`collections.deque`，这些序列能存放不同类型的数据。(存放的是他们包含对象的引用)
+* 扁平序列：`str`, `bytes`, `bytearray`, `memoryview`, `array.array`， 这类序列只能容纳一种类型。(实质上是一段连续的内存空间)
+
+* 可变序列：`list`, `bytearray`, `array.array`, `collections.deque`和`memoryview`。
+* 不可变序列: `tuple`, `str`, `bytes`。
+
+* 一般序列都包含方法`__contains__`, `__iter__`, `__len__`方法。
+* 不可变序列还包含`__getitem__`, `__reversed__`, `index`, `count`等方法。
+* 可变序列在不可变序列的基础上，还包含`__setitem__`, `__delitem__`, `insert`, `append`, `reverse`, `extend`, `pop`, `remove`, `__iadd__`等操作方法。
+
+### 3. 列表推导和生成器表达式
+
+* 列表推导(list comprehension)应当只用于**生成新的列表**。
+* 在python2.x中会有变量泄露的问题，但python3中不会。
+* **生成器表达式** 和列表推导类似，只需要将`[]`换成`()`即可，我测试了一下，返回的确实是一个*生成器*
+    ```python
+    >>> (int(x) for x in range(10))
+    <generator object <genexpr> at 0x0000017A0C9416D0>
+    ```
+* 元组拆包可以应用到任何可迭代对象上，唯一的硬性要求是，被可迭代对象中的元素数量必须要跟接受这些元素的元组的空挡数一致。(但可以用`*`来表示忽略多余的元素)， 例如`a, b, c, *d = range(10)`
+* 还要注意，生成器被迭代过一次就没了，例如：
+    ```python
+    >>> b = (int(x) for x in range(10))
+    >>> e, f, g, *rest = b
+    >>> e, f, g, rest
+    (0, 1, 2, [3, 4, 5, 6, 7, 8, 9])
+    >>> e, f, g, *rest = b
+    Traceback (most recent call last):
+        File "<stdin>", line 1, in <module>
+    ValueError: not enough values to unpack (expected at least 3, got 0)
+    >>> list(b)
+    []
+    ```
+
+### 4. 元组
+* 包含位置信息，和不可变两个特性
+* 具名元组`collections.namedtuple`是一个工厂函数，可以用来构建一个带字段名的元组，和一个有名字的类。
+*    
+    ```python
+    from collections import namedtuple
+    City = namedtuple('City', 'name country population')        # 参数可以以空格分隔的字符串传入
+    tokto = City('Tokyo', 'JP', 36)                             # 创建一个对象
+    tokto.population                                            # 可以通过字段名取值
+    tokto[1]                                                    # 可通过位置索引值
+    ```
+* 具名元组还有专有属性`_fields`, `_make(iterable)`(类方法), `_asdict()`(实例方法)。
+    * `_fields`返回这个类所有字段名称
+    * `_make`接受可迭代对象，生成一个实例
+    * `_asdict`将具名元组以`collections.OrderedDict`的形式返回
+* 和列表相比，没有增减元素等相关方法
