@@ -14,7 +14,7 @@
 <meta property="og:description" content="参考书籍：《流畅的python》(Fluent Python） 更新中">
 <meta property="og:locale">
 <meta property="article:published_time" content="2020-12-13T09:23:59.000Z">
-<meta property="article:modified_time" content="2020-12-13T09:32:37.986Z">
+<meta property="article:modified_time" content="2020-12-13T12:28:18.041Z">
 <meta property="article:author" content="WenZhou">
 <meta property="article:tag" content="python笔记">
 <meta name="twitter:card" content="summary">
@@ -130,7 +130,45 @@
 <h1 id="二、序列构成的数组"><a href="#二、序列构成的数组" class="headerlink" title="二、序列构成的数组"></a>二、序列构成的数组</h1><h3 id="1-大佬-Raymond-hettinger-实现了一个排序集合模块"><a href="#1-大佬-Raymond-hettinger-实现了一个排序集合模块" class="headerlink" title="1. 大佬(Raymond hettinger)实现了一个排序集合模块"></a>1. 大佬(Raymond hettinger)实现了一个<a target="_blank" rel="noopener" href="http://code.activestate.com/recipes/577197-sortedcollection">排序集合模块</a></h3><ul>
 <li><code>itemgetter</code>的用法，在<code>operator</code>模块中，可以方便实现从字典中取值，<code>itemgetter(&#39;key&#39;)</code>相当于<code>lambda bdict: bdict[&#39;key&#39;]</code>，所以它还是个可调用的东西。</li>
 <li><code>property</code>函数，可以免去装饰器的声明，直接将函数作为参数传入。（应该）只是换了一种写法。  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">collection</span>(<span class="params">object</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_getkey</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_setkey</span>(<span class="params">self, key</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_delkey</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    key = property(_getkey, _setkey, _delkey, <span class="string">&#x27;key function&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
 </li>
+</ul>
+<h3 id="2-内置序列类型"><a href="#2-内置序列类型" class="headerlink" title="2. 内置序列类型"></a>2. 内置序列类型</h3><ul>
+<li><p>容器序列：<code>list</code>, <code>tuple</code>和<code>collections.deque</code>，这些序列能存放不同类型的数据。(存放的是他们包含对象的引用)</p>
+</li>
+<li><p>扁平序列：<code>str</code>, <code>bytes</code>, <code>bytearray</code>, <code>memoryview</code>, <code>array.array</code>， 这类序列只能容纳一种类型。(实质上是一段连续的内存空间)</p>
+</li>
+<li><p>可变序列：<code>list</code>, <code>bytearray</code>, <code>array.array</code>, <code>collections.deque</code>和<code>memoryview</code>。</p>
+</li>
+<li><p>不可变序列: <code>tuple</code>, <code>str</code>, <code>bytes</code>。</p>
+</li>
+<li><p>一般序列都包含方法<code>__contains__</code>, <code>__iter__</code>, <code>__len__</code>方法。</p>
+</li>
+<li><p>不可变序列还包含<code>__getitem__</code>, <code>__reversed__</code>, <code>index</code>, <code>count</code>等方法。</p>
+</li>
+<li><p>可变序列在不可变序列的基础上，还包含<code>__setitem__</code>, <code>__delitem__</code>, <code>insert</code>, <code>append</code>, <code>reverse</code>, <code>extend</code>, <code>pop</code>, <code>remove</code>, <code>__iadd__</code>等操作方法。</p>
+</li>
+</ul>
+<h3 id="3-列表推导和生成器表达式"><a href="#3-列表推导和生成器表达式" class="headerlink" title="3. 列表推导和生成器表达式"></a>3. 列表推导和生成器表达式</h3><ul>
+<li>列表推导(list comprehension)应当只用于<strong>生成新的列表</strong>。</li>
+<li>在python2.x中会有变量泄露的问题，但python3中不会。</li>
+<li><strong>生成器表达式</strong> 和列表推导类似，只需要将<code>[]</code>换成<code>()</code>即可，我测试了一下，返回的确实是一个<em>生成器</em>  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>(int(x) <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">10</span>))</span><br><span class="line">&lt;generator object &lt;genexpr&gt; at <span class="number">0x0000017A0C9416D0</span>&gt;</span><br></pre></td></tr></table></figure></li>
+<li>元组拆包可以应用到任何可迭代对象上，唯一的硬性要求是，被可迭代对象中的元素数量必须要跟接受这些元素的元组的空挡数一致。(但可以用<code>*</code>来表示忽略多余的元素)， 例如<code>a, b, c, *d = range(10)</code></li>
+<li>还要注意，生成器被迭代过一次就没了，例如：  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = (int(x) <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">10</span>))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>e, f, g, *rest = b</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>e, f, g, rest</span><br><span class="line">(<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>e, f, g, *rest = b</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">    File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">ValueError: <span class="keyword">not</span> enough values to unpack (expected at least <span class="number">3</span>, got <span class="number">0</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>list(b)</span><br><span class="line">[]</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="4-元组"><a href="#4-元组" class="headerlink" title="4. 元组"></a>4. 元组</h3><ul>
+<li>包含位置信息，和不可变两个特性</li>
+<li>具名元组<code>collections.namedtuple</code>是一个工厂函数，可以用来构建一个带字段名的元组，和一个有名字的类。</li>
+<li><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> namedtuple</span><br><span class="line">City = namedtuple(<span class="string">&#x27;City&#x27;</span>, <span class="string">&#x27;name country population&#x27;</span>)        <span class="comment"># 参数可以以空格分隔的字符串传入</span></span><br><span class="line">tokto = City(<span class="string">&#x27;Tokyo&#x27;</span>, <span class="string">&#x27;JP&#x27;</span>, <span class="number">36</span>)                             <span class="comment"># 创建一个对象</span></span><br><span class="line">tokto.population                                            <span class="comment"># 可以通过字段名取值</span></span><br><span class="line">tokto[<span class="number">1</span>]                                                    <span class="comment"># 可通过位置索引值</span></span><br></pre></td></tr></table></figure></li>
+<li>具名元组还有专有属性<code>_fields</code>, <code>_make(iterable)</code>(类方法), <code>_asdict()</code>(实例方法)。<ul>
+<li><code>_fields</code>返回这个类所有字段名称</li>
+<li><code>_make</code>接受可迭代对象，生成一个实例</li>
+<li><code>_asdict</code>将具名元组以<code>collections.OrderedDict</code>的形式返回</li>
+</ul>
+</li>
+<li>和列表相比，没有增减元素等相关方法</li>
 </ul>
 
       
