@@ -14,7 +14,7 @@
 <meta property="og:description" content="参考书籍：《流畅的python》(Fluent Python） 更新中">
 <meta property="og:locale">
 <meta property="article:published_time" content="2020-12-13T09:23:59.000Z">
-<meta property="article:modified_time" content="2020-12-13T12:28:18.041Z">
+<meta property="article:modified_time" content="2020-12-19T06:00:35.997Z">
 <meta property="article:author" content="WenZhou">
 <meta property="article:tag" content="python笔记">
 <meta name="twitter:card" content="summary">
@@ -159,7 +159,7 @@
 </li>
 </ul>
 <h3 id="4-元组"><a href="#4-元组" class="headerlink" title="4. 元组"></a>4. 元组</h3><ul>
-<li>包含位置信息，和不可变两个特性</li>
+<li>包含<font color="red">位置</font>信息，和<font color="red">不可变</font>两个特性</li>
 <li>具名元组<code>collections.namedtuple</code>是一个工厂函数，可以用来构建一个带字段名的元组，和一个有名字的类。</li>
 <li><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> namedtuple</span><br><span class="line">City = namedtuple(<span class="string">&#x27;City&#x27;</span>, <span class="string">&#x27;name country population&#x27;</span>)        <span class="comment"># 参数可以以空格分隔的字符串传入</span></span><br><span class="line">tokto = City(<span class="string">&#x27;Tokyo&#x27;</span>, <span class="string">&#x27;JP&#x27;</span>, <span class="number">36</span>)                             <span class="comment"># 创建一个对象</span></span><br><span class="line">tokto.population                                            <span class="comment"># 可以通过字段名取值</span></span><br><span class="line">tokto[<span class="number">1</span>]                                                    <span class="comment"># 可通过位置索引值</span></span><br></pre></td></tr></table></figure></li>
 <li>具名元组还有专有属性<code>_fields</code>, <code>_make(iterable)</code>(类方法), <code>_asdict()</code>(实例方法)。<ul>
@@ -170,6 +170,74 @@
 </li>
 <li>和列表相比，没有增减元素等相关方法</li>
 </ul>
+<h3 id="5-切片"><a href="#5-切片" class="headerlink" title="5. 切片"></a>5. 切片</h3><ul>
+<li>切片和区间会忽略最后一个元素<ol>
+<li>当只有最后一个位置信息时，可以快速看出有几个元素，例：<code>my_list[:3]</code></li>
+<li>可以快速计算出切片和区间的长度</li>
+<li>可以用一个下标将序列分成两个不重叠的部分。例如：<code>my_list[:3]</code>和<code>my_list[3:]</code></li>
+</ol>
+</li>
+<li>可以用<code>s[a:b:c]</code>的形式对<code>s</code>在<code>a</code>和<code>b</code>之间以<code>c</code>为间隔取值，<code>c</code>可以为负。</li>
+<li><code>a:b:c</code>是一个切片，作为<strong>索引</strong>或<strong>下标</strong>用在<code>[]</code>中会返回切片对象<code>slice(a, b, c)</code>。</li>
+<li>当执行<code>seq[start:stop:step]</code>求值时，本质上会调用<code>seq.__getitem__(slice(start, stop, step))</code>。</li>
+<li>也可以对切片对象取名来提高复用性。  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>one2five = slice(<span class="number">1</span>, <span class="number">5</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="string">&#x27;abcdefg&#x27;</span>[one2five]</span><br><span class="line"><span class="string">&#x27;bcde&#x27;</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>range(<span class="number">10</span>)[one2five]</span><br><span class="line">range(<span class="number">1</span>, <span class="number">5</span>)</span><br></pre></td></tr></table></figure></li>
+<li>可以在对象的特殊方法<code>__getitem__</code>和<code>__setitem__</code>实现里以<font color="red">元组</font>的形式接收<code>a[i, j]</code>来实现多维切片。也就是<code>a[i, j]</code>本质上是调用的<code>a.__getitem__((i, j))</code>方法。</li>
+<li><code>...</code>在python解析器中是一个符号，是<code>Ellipsis</code>对象的别名。可以用在函数的参数清单中<code>f(a, ..., z)</code>或<code>a[i: ...]</code>。如果<code>x</code>是四维数组，那么<code>x[i, ....]</code>就是<code>x[i, :, :, :]</code></li>
+<li>还可以给切片赋值，如下，就很强。  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>l = list(range(<span class="number">10</span>))</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>l</span><br><span class="line">[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>l[<span class="number">2</span>:<span class="number">5</span>] = [<span class="number">23</span>, <span class="number">34</span>]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>l</span><br><span class="line">[<span class="number">0</span>, <span class="number">1</span>, <span class="number">23</span>, <span class="number">34</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>]</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="6-序列操作"><a href="#6-序列操作" class="headerlink" title="6. 序列操作"></a>6. 序列操作</h3><ul>
+<li>对序列使用<code>+</code>和<code>*</code>进行操作时，不会修改原有的操作对象，而是会构造一个全新的序列。</li>
+<li>子序列只会拷贝相应的引用，例如：<code>my_list = [[&#39;_&#39;] * 3] * 3</code>中三个<code>[&#39;_&#39;, &#39;_&#39;, &#39;_&#39;]</code>指向同一个列表。如果希望创建三个不同的列表，应当使用列表推导，例如<code>[[&#39;_&#39;] * 3 for i in range(3)]</code></li>
+<li><code>+=</code>和<code>*=</code>本质上调用了<code>__iadd__</code>和<code>__imul__</code>，如果一个类没有实现这两个方法，python会退一步调用<code>__add__</code>之类的方法，此时<code>a += b</code>的效果就和<code>a = a + b</code>时一样的了（会产生新的对象）。</li>
+<li>元组中若包含可变对象，会赋值成功，但同时也会报错，例如:  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>t = (<span class="number">1</span>, <span class="number">2</span>, [<span class="number">30</span>, <span class="number">40</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t[<span class="number">2</span>] += [<span class="number">50</span>, <span class="number">60</span>]</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">TypeError: <span class="string">&#x27;tuple&#x27;</span> object does <span class="keyword">not</span> support item assignment</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>t</span><br><span class="line">(<span class="number">1</span>, <span class="number">2</span>, [<span class="number">30</span>, <span class="number">40</span>, <span class="number">50</span>, <span class="number">60</span>])</span><br></pre></td></tr></table></figure></li>
+<li><font color="red">查看python字节码</font>可通过<code>dis.dis</code>方法查看，例如上述指令<code>dis.dis(&#39;t[2] += [50, 60]&#39;)</code>的字节码如下(虽然并不能看懂)：  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>dis.dis(<span class="string">&#x27;t[2] += [50, 60]&#x27;</span>)</span><br><span class="line"><span class="number">1</span>           <span class="number">0</span> LOAD_NAME                <span class="number">0</span> (t)</span><br><span class="line">            <span class="number">2</span> LOAD_CONST               <span class="number">0</span> (<span class="number">2</span>)</span><br><span class="line">            <span class="number">4</span> DUP_TOP_TWO</span><br><span class="line">            <span class="number">6</span> BINARY_SUBSCR</span><br><span class="line">            <span class="number">8</span> LOAD_CONST               <span class="number">1</span> (<span class="number">50</span>)</span><br><span class="line">            <span class="number">10</span> LOAD_CONST               <span class="number">2</span> (<span class="number">60</span>)</span><br><span class="line">            <span class="number">12</span> BUILD_LIST               <span class="number">2</span></span><br><span class="line">            <span class="number">14</span> INPLACE_ADD</span><br><span class="line">            <span class="number">16</span> ROT_THREE</span><br><span class="line">            <span class="number">18</span> STORE_SUBSCR</span><br><span class="line">            <span class="number">20</span> LOAD_CONST               <span class="number">3</span> (<span class="literal">None</span>)</span><br><span class="line">            <span class="number">22</span> RETURN_VALUE</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="7-排序"><a href="#7-排序" class="headerlink" title="7. 排序"></a>7. 排序</h3><ul>
+<li><code>list.sort</code>方法会就地排序列表，不会重新将列表复制一份，返回值为<code>None</code>。</li>
+<li>内置函数<code>sorted</code>会创建一个新列表作为返回值。(如果有返回值就可以串联调用，形成连贯接口(fluent interface))。</li>
+<li>排序方法有两个关键字参数，<code>reverse</code>和<code>key</code>。<ul>
+<li><code>reverse</code>默认为<code>False</code>，会升序排序，若为<code>True</code>则降序排序。</li>
+<li><code>key</code>接收只有一个参数的函数，会被应用在序列的每一个元素上，例可以使用<code>str.lower</code>来实现忽略大小写的排序。</li>
+<li>可以采用<code>operator.itemgetter</code>函数来轻松实现取出多个字段的值。以下实现是等价的。  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>b = operator.itemgetter(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = <span class="keyword">lambda</span> x: (x[<span class="number">1</span>], x[<span class="number">0</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>b(<span class="string">&#x27;abcdefg&#x27;</span>)</span><br><span class="line">(<span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;a&#x27;</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c(<span class="string">&#x27;abcdefg&#x27;</span>)</span><br><span class="line">(<span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;a&#x27;</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><code>bisect</code>可以管理已排序的序列。<ul>
+<li><code>bisect.bisect(haystack, needle)</code>可在<code>haystack</code>(干草垛)里搜索<code>needle</code>(针)的位置。若有相同的<code>needle</code>，则会找到它之后的位置。</li>
+<li><code>bisect.bisect_left</code>会返回之前的索引，所以上面的<code>bisect.bisect</code>可以理解为<code>bisect.bisect_right</code>。</li>
+<li>上面这两个函数还具有可选参数<code>lo</code>(起始位置)和<code>hi</code>(序列的长度)，可以用来缩小范围。</li>
+<li><code>bisect.insort(seq, item)</code>可把变量<code>item</code>插入有序序列<code>seq</code>，并能保持<code>seq</code>升序顺序。同时也有个变体叫做<code>bisect.insort_left</code>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="8-其他序列"><a href="#8-其他序列" class="headerlink" title="8. 其他序列"></a>8. 其他序列</h3><ul>
+<li>如果要存放1000万个浮点数的话，<code>array</code>数组的效果要高得多。</li>
+<li>如果频繁对序列做先进先出的操作，<code>deque</code>(双端队列)的速度会更快。</li>
+<li>如果要检查一个元素是否出现在一个集合中，<code>set</code>会更合适。</li>
+<li><code>memoryview</code>(<font color="red">内存视图</font>)是个高级的东西，能让用户不在复制内容的情况下操作同一个数组的不同切片。<ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/4845418/when-should-a-memoryview-be-used/">When should a memoryview be used?</a></li>
+<li><blockquote>
+<p>内存视图其实是泛化和去数学化的NumPy数组。它让你在不需要复制内容的前提下，在数据结构之间共享内存。其中数据结构可以是任何形式，比如PIL图片、SQLite数据库和Numpy数组，等。这个功能在处理大型数据集合的时候非常重要。<br>  – Travis Oliphant</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><code>NumPy</code>和<code>SciPy</code>也很优秀。</li>
+<li><code>collections.deque</code>类(双向队列)是一个线程安全、可以快速从两端添加或删除元素的数据类型。也使用于存放”最近用到的几个元素”。<ul>
+<li>可以指定<code>maxlen</code>，从某一端添加元素时，会反向删除多余的元素。</li>
+<li>只可以从头尾添加或删除元素：<code>s.extend(i)</code>, <code>s.extendleft(i)</code>, <code>s.pop()</code>, <code>s.popleft()</code></li>
+<li>当在调用<code>deque</code>的<code>extendleft(iter)</code>方法时会把迭代器里的元素逐个添加到双向队列的左边，迭代器里的元素会逆序出现在队列里。  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>dq = deque(range(<span class="number">10</span>), maxlen=<span class="number">10</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>dq</span><br><span class="line">deque([<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>], maxlen=<span class="number">10</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>dq.extendleft([<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>])</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>dq</span><br><span class="line">deque([<span class="number">40</span>, <span class="number">30</span>, <span class="number">20</span>, <span class="number">10</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>], maxlen=<span class="number">10</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><code>Queue</code>提供了线程安全类<code>Queue</code>、<code>LifoQueue</code>和<code>PriorityQueue</code>。不同的线程可以利用这些数据类型来交换信息。</li>
+<li>当队列满了，会被锁住知道另外的线程移除了某个元素而腾出了位置，很适合用来控制<font color="red">活跃的线程的数量</font>。</li>
+<li><code>heapq</code>没有队列类，而是提供了<code>heappush</code>和<code>heappop</code>方法，可以当作堆队列或者优先队列来使用。</li>
+<li>更多内容可参考<a target="_blank" rel="noopener" href="https://docs.python.org/3/library/collections.html">collections-Container datatypes</a></li>
+</ul>
+<hr>
 
       
     </div>
