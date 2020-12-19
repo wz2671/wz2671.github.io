@@ -160,4 +160,81 @@ date: 2020-12-13 17:23:59
 * 对序列使用`+`和`*`进行操作时，不会修改原有的操作对象，而是会构造一个全新的序列。
 * 子序列只会拷贝相应的引用，例如：`my_list = [['_'] * 3] * 3`中三个`['_', '_', '_']`指向同一个列表。如果希望创建三个不同的列表，应当使用列表推导，例如`[['_'] * 3 for i in range(3)]`
 * `+=`和`*=`本质上调用了`__iadd__`和`__imul__`，如果一个类没有实现这两个方法，python会退一步调用`__add__`之类的方法，此时`a += b`的效果就和`a = a + b`时一样的了（会产生新的对象）。
-* 
+* 元组中若包含可变对象，会赋值成功，但同时也会报错，例如:
+    ```python
+    >>> t = (1, 2, [30, 40])
+    >>> t[2] += [50, 60]
+    Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+    TypeError: 'tuple' object does not support item assignment
+    >>> t
+    (1, 2, [30, 40, 50, 60])
+    ```
+* <font color="red">查看python字节码</font>可通过`dis.dis`方法查看，例如上述指令`dis.dis('t[2] += [50, 60]')`的字节码如下(虽然并不能看懂)：
+    ```python
+    >>> dis.dis('t[2] += [50, 60]')
+    1           0 LOAD_NAME                0 (t)
+                2 LOAD_CONST               0 (2)
+                4 DUP_TOP_TWO
+                6 BINARY_SUBSCR
+                8 LOAD_CONST               1 (50)
+                10 LOAD_CONST               2 (60)
+                12 BUILD_LIST               2
+                14 INPLACE_ADD
+                16 ROT_THREE
+                18 STORE_SUBSCR
+                20 LOAD_CONST               3 (None)
+                22 RETURN_VALUE
+    ```
+
+### 7. 排序
+* `list.sort`方法会就地排序列表，不会重新将列表复制一份，返回值为`None`。
+* 内置函数`sorted`会创建一个新列表作为返回值。(如果有返回值就可以串联调用，形成连贯接口(fluent interface))。
+* 排序方法有两个关键字参数，`reverse`和`key`。
+    * `reverse`默认为`False`，会升序排序，若为`True`则降序排序。
+    * `key`接收只有一个参数的函数，会被应用在序列的每一个元素上，例可以使用`str.lower`来实现忽略大小写的排序。
+    * 可以采用`operator.itemgetter`函数来轻松实现取出多个字段的值。以下实现是等价的。
+        ```python
+        >>> b = operator.itemgetter(1, 0)
+        >>> c = lambda x: (x[1], x[0])
+        >>> b('abcdefg')
+        ('b', 'a')
+        >>> c('abcdefg')
+        ('b', 'a')
+        ```
+* `bisect`可以管理已排序的序列。
+    * `bisect.bisect(haystack, needle)`可在`haystack`(干草垛)里搜索`needle`(针)的位置。若有相同的`needle`，则会找到它之后的位置。
+    * `bisect.bisect_left`会返回之前的索引，所以上面的`bisect.bisect`可以理解为`bisect.bisect_right`。
+    * 上面这两个函数还具有可选参数`lo`(起始位置)和`hi`(序列的长度)，可以用来缩小范围。
+    * `bisect.insort(seq, item)`可把变量`item`插入有序序列`seq`，并能保持`seq`升序顺序。同时也有个变体叫做`bisect.insort_left`。
+
+### 8. 其他序列
+* 如果要存放1000万个浮点数的话，`array`数组的效果要高得多。
+* 如果频繁对序列做先进先出的操作，`deque`(双端队列)的速度会更快。
+* 如果要检查一个元素是否出现在一个集合中，`set`会更合适。
+* `memoryview`(<font color="red">内存视图</font>)是个高级的东西，能让用户不在复制内容的情况下操作同一个数组的不同切片。
+    * [When should a memoryview be used?](https://stackoverflow.com/questions/4845418/when-should-a-memoryview-be-used/)
+    * 
+        > 内存视图其实是泛化和去数学化的NumPy数组。它让你在不需要复制内容的前提下，在数据结构之间共享内存。其中数据结构可以是任何形式，比如PIL图片、SQLite数据库和Numpy数组，等。这个功能在处理大型数据集合的时候非常重要。
+        -- Travis Oliphant
+* `NumPy`和`SciPy`也很优秀。
+* `collections.deque`类(双向队列)是一个线程安全、可以快速从两端添加或删除元素的数据类型。也使用于存放"最近用到的几个元素"。
+    * 可以指定`maxlen`，从某一端添加元素时，会反向删除多余的元素。
+    * 只可以从头尾添加或删除元素：`s.extend(i)`, `s.extendleft(i)`, `s.pop()`, `s.popleft()`
+    * 当在调用`deque`的`extendleft(iter)`方法时会把迭代器里的元素逐个添加到双向队列的左边，迭代器里的元素会逆序出现在队列里。
+        ```python
+        >>> from collections import deque
+        >>> dq = deque(range(10), maxlen=10)
+        >>> dq
+        deque([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], maxlen=10)
+        >>> dq.extendleft([10, 20, 30, 40])
+        >>> dq
+        deque([40, 30, 20, 10, 0, 1, 2, 3, 4, 5], maxlen=10)
+        ```
+* `Queue`提供了线程安全类`Queue`、`LifoQueue`和`PriorityQueue`。不同的线程可以利用这些数据类型来交换信息。
+* 当队列满了，会被锁住知道另外的线程移除了某个元素而腾出了位置，很适合用来控制<font color="red">活跃的线程的数量</font>。
+* `heapq`没有队列类，而是提供了`heappush`和`heappop`方法，可以当作堆队列或者优先队列来使用。
+* 更多内容可参考[collections-Container datatypes](https://docs.python.org/3/library/collections.html)
+
+***
+
