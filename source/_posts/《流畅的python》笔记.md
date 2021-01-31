@@ -6,6 +6,8 @@ date: 2020-12-13 17:23:59
 
 参考书籍：《流畅的python》(Fluent Python）
 
+![封面](/images/geimangluzhedetiantiwulixue.jpg)
+
 **更新中**
 
 <!--more -->
