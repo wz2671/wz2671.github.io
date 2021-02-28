@@ -172,6 +172,7 @@ body {
   transition: 0.2s ease-out;
   z-index: 1;
   background: url("/images/t01b079bc5131c99a6b.jpg") fixed;
+  background-position: center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   background-size: cover;
