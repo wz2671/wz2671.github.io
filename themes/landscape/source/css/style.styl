@@ -56,15 +56,16 @@ body
   overflow: scroll
 
 #wrap
-  // height: 50%  # 未填满部分会留白
+  // height: 100%  // 未填满部分会留白
   width: 100%
   position: absolute
   top: 0
   left: 0
   transition: 0.2s ease-out
   z-index: 1
-  // background: color-background
   background: url(banner-url) fixed 
+  background-position: center 
+  // background-attachment: fixed
   background-size: cover 
   .mobile-nav-on &
     left: mobile-nav-width
