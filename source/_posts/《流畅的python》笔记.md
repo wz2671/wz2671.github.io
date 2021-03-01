@@ -240,3 +240,42 @@ date: 2020-12-13 17:23:59
 
 ***
 
+
+
+# 三、字典和集合
+
+
+### 1. 泛映射类型
+
+* `collections.abc`中有`Maping`和`MutableMapping`两个抽象基类，主要作用是作为形式化的文档。一般直接对`dict`和`collections.User.Dict`进行扩展。
+* 可以利用`isinstance({}, abc.Mapping)`用来判断某个数据是否是广义上的映射类型。
+* 只有**可散列**的数据类型才可以作为映射里的键。
+    * 可散列对象的散列值，在对象的生命周期中，都是不变的。对象需要实现`__hash__()`和`__qe__()`方法。
+    * 原子不可变数据类型（`str`、`bytes`和数值类型）都是可散列类型。
+    * `frozenset`是可散列的，它只能容纳可散列类型，当`tuple`的所有元素都是可散列类型，那么元组也可以散列。
+    * 一般用户自定义的类型的对象都是可散列的，散列值是`id()`函数的返回值。
+
+
+### 2. 创建字典
+
+```python
+a = dict(one=1, two=2, three=3)
+b = {'one': 1, 'two': 2, 'three': 3}
+c = dict(zip(['one', 'two', 'three'], [1, 2, 3]))
+d = dict({'one': 1, 'two': 2, 'three': 3})
+e = {_s: _i for _s, _i in [('one', 1), ('two', 2), ('three', 3)]}
+```
+
+### 3. 映射类型的方法
+
+* `d.default_factory`在`__missing__`函数中被调用的函数，用来给未找到的元素设置值。
+* `d.setdefault`某些情况下可以减少查询次数。
+    ```python
+    my_dict.setdefault(key, []).append(new_value)
+    # 等价于以下
+    if key not in my_dict:
+        my_dict[key] = []
+    my_dictp[key].append(new_value)
+    ```
+
+### 4. 映射的弹性键查询
