@@ -159,7 +159,7 @@ body {
   position: relative;
 }
 .mobile-nav-on {
-  overflow: scroll;
+  overflow: hidden;
 }
 #wrap {
   width: 100%;
@@ -178,7 +178,7 @@ body {
   background-size: cover;
 }
 .mobile-nav-on #wrap {
-  left: 280px;
+  left: 220px;
 }
 @media screen and (min-width: 768px) {
   #main {
@@ -1299,9 +1299,8 @@ pre .javascript .function {
     position: absolute;
     top: 0;
     left: 0;
-    width: 280px;
-    height: 100%;
-    background: #191919;
+    width: 220px;
+    background: rgba(178,77,152,0.1);
     border-right: 1px solid #fff;
   }
 }
