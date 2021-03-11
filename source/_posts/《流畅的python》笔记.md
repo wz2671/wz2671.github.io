@@ -277,5 +277,143 @@ e = {_s: _i for _s, _i in [('one', 1), ('two', 2), ('three', 3)]}
         my_dict[key] = []
     my_dictp[key].append(new_value)
     ```
+* `d.fromkeys(it, [initial])`将迭代器`it`里的元素设置为键，`initial`为对应的value
 
 ### 4. 映射的弹性键查询
+
+* 当某个键不存在时，如果希望它还能提供一个默认值，有两种方法：使用`defaultdict`或实现`__miss__`方法。
+* `collections.defaultdict`在创建时需要配置一个创造默认值的方法。**它只会在__getitem__**之中起作用。
+    ```python
+    >>> import collections
+    >>> index = collections.defaultdict(list)
+    >>> index[1].append(1)
+    >>> index
+    defaultdict(<class 'list'>, {1: [1]})
+    >>> index.get(2)
+    >>> index.get(1)
+    [1]
+    ```
+* `__miss__`所有的映射类型在处理找不到键的时候，都会调用它。同时，它也只会在`__getitem__`中起作用，`__contains__`和`get`方法都不起作用。
+    ```python
+    class StrKeyDict(dict):
+
+        def __missing__(self, key):
+            if isinstance(key, str):
+                raise KeyError(key)     # 避免的找不到时会无限递归调用__miss__
+            return self[str(key)]
+
+        def get(self, key, default=None):
+            try:
+                return self[key]
+            except KeyError:
+                return default      # __miss__失效
+
+        def __contains__(self, key):
+            return key in self.keys() or str(key) in self.keys()        # in self.keys()避免了递归调用__contains__
+    ```
+
+
+### 5. 其他映射类型
+
+* `collections.OrderedDict`: 会保持顺序，迭代次序总是一直，`popitem`默认删除最后一个元素，`popitem(last=False)`会删除第一个
+* `collections.ChainMap`: 没有很懂
+* `collections.Counter`：整数计数器
+    ```pyhton
+    >>> ct = collections.Counter('abracadabra')
+    >>> ct
+    Counter({'a': 5, 'b': 2, 'r': 2, 'c': 1, 'd': 1})
+    >>> ct.update('aaaaazz')
+    >>> ct
+    Counter({'a': 10, 'b': 2, 'r': 2, 'z': 2, 'c': 1, 'd': 1})
+    >>> ct.most_common(2)
+    [('a', 10), ('b', 2)]
+    ```
+* `collections.UserDict`使用纯`python`实现了遍`dict`，想要创造自定义映射类型，更推荐以`UserDict`为基类。
+    * `dict`某些实现会走捷径，使我们不得不重写。
+    * `UserDict`最终存放数据是一个叫做`data`的属性，是`dict`的实例，可以在实现`__setitem__`和`__contains__`等之类的方法，避免不必要的递归。
+    ```python
+    class StrKeyDict(collections.UserDict):
+
+        def __missing__(self, key):
+            if isinstance(key, str):
+                raise KeyError(key)     # 避免的找不到时会无限递归调用__miss__
+            return self[str(key)]
+
+        def __contains__(self, key):
+            return str(key) in self.data        # 直接检查
+
+        def __setitem__(self, key, item):
+            self.data[str(key)] = item
+    ```
+* `types`模块中有一个`MappingProxyType`，可以返回一个映射的只读视图，以达到不可变类型效果。
+    ```python
+    >>> from types import MappingProxyType
+    >>> d = {1:'a'}
+    >>> d_proxy = MappingProxyType(d)
+    >>> d_proxy[1]
+    'a'
+    >>> d_proxy
+    mappingproxy({1: 'a'})
+    >>> d[2] = 'b'
+    >>> d_proxy
+    mappingproxy({1: 'a', 2: 'b'})
+    >>> d_proxy[3] = 'c'
+    Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+    TypeError: 'mappingproxy' object does not support item assignment
+    ```
+
+### 6. 集合
+
+集合中的元素必须是可散列的，`set`类型不可散列，但是`frozenset`是可散列的。
+
+* 空集合采用`set()`创建，其余可用`{1, 2, ...}`创建。后者会采用一种叫做`BUILD_SET`的字节码创建集合，比利用`set`调用构造函数更快。
+    ```python
+    >>> dis('{1}')
+    1           0 LOAD_CONST               0 (1)
+                2 BUILD_SET                1
+                4 RETURN_VALUE
+    >>> dis('set([1])')
+    1           0 LOAD_NAME                0 (set)
+                2 LOAD_CONST               0 (1)
+                4 BUILD_LIST               1
+                6 CALL_FUNCTION            1
+                8 RETURN_VALUE
+    >>> {i for i in 'anbcdsaoi'}    // 集合推导
+    {'n', 'c', 'a', 'o', 'i', 's', 'd', 'b'}
+    ```
+* 支持中缀运算符: `|` (合集),`&` (交集), `-` (差集)，需要两侧被操作对象都为集合类型。但是成员方法只要求所传入的参数是可迭代对象。
+* 其余运算符：
+    | | | |
+    | :----:| :----: | :----: |
+    | `s & z` | `s.__and__(z)` | 交集 |
+    | `z & s` | `s.__rand__(z)` 或 `s.intersection(it, ...) ` | 交集 |
+    | `s &= z` |  `s.intersection_update(it, ...) ` | 交集并更新 |
+    | `s \| z` | `s.__or__(z)` | 并集 |
+    | `z \| s` | `s.__ror__(z)` 或 `s.union(it, ...) ` | 并集 |
+    | `s \|= z` | `s.__ior__(z)` 或 `s.update__(it, ...)` | 并集并更新 |
+    | `s - z` | `s.__sub__(z)` | 差集 |
+    | `z - s` | `s.__isub__(z)` 或 `s.difference(it, ...)` | 差集 |
+    | `s ^ z` | `s.__xor__(z)` | 对称差集(`(s\|z)-(s&z)`) |
+    |  | `s.isdisjoint(z)` | 是否不相交 |
+    | `e in s` | `s.__contains__(e)` | `e`是否属于`s` |
+    | `s <= z` | `s.__le__(z)` 或 `s.issubset(it)` | `s`是否是`z`的子集 |
+    | `s >= z` | `s.__ge__(z)` 或 `s.issuperset(it)` | `s`是否是`z`的父级 |
+* 还有个比较陌生的接口`s.discard(e)`，如果`s`里有`e`这个元素的话，把它移除。
+
+### 7. 散列表
+
+![从字典中取值的算法流程图](/images/content_hashtable.png)
+
+* **[dictobject.c源码](/resources/dictobject.c)**
+
+使用散列表给`dict`带来的优势和限制
+* 键必须是可散列的
+    * 支持`hash()`函数，并且通过`__hash__()`方法所得到的散列值是不变的。
+    * 支持通过`__eq__()`方法来检测相等性。
+    * 若`a == b`为真，则`hash(a) == hash(b)`也为真。
+* 内存开销巨大
+* 键查询的速度很快（1000->1000万，时间从0.000163->0.00456）
+* 键的次序取决于添加顺序
+* 往字典里添加新键可能会改变已有键的顺序
+
