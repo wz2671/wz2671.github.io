@@ -173,9 +173,9 @@ body {
   z-index: 1;
   background: url("/images/t01b079bc5131c99a6b.jpg") fixed;
   background-position: center;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  background-size: cover;
+  -webkit-background-size: "100% 100%";
+  -moz-background-size: "100% 100%";
+  background-size: "100% 100%";
 }
 .mobile-nav-on #wrap {
   left: 220px;
