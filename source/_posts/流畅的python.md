@@ -417,3 +417,38 @@ e = {_s: _i for _s, _i in [('one', 1), ('two', 2), ('three', 3)]}
 * 键的次序取决于添加顺序
 * 往字典里添加新键可能会改变已有键的顺序
 
+
+# 六、使用一等函数实现设计模式
+
+
+### 1. 策略模式
+* 例如：对于不同的用户，购买物品时有不同的折扣，具体折扣策略，可以使用策略模式
+    * 第一种方式，定义一个抽象基类作为策略父类`Promotion`，子类继承自父类实现各自的折扣方法`discount`
+        ```python
+        class Promotion(ABC):
+            @abstractmethod
+            def discount(self, order):
+                """ 返回折扣金额 """
+        ```
+    * 第二种方式，定义不同折扣函数，作为参数传入订购对象中，在结算时调用传入的折扣函数
+    * 第二种方式更好，策略函数在Python编辑模块时只会创建一次，可以同时在多个上下文中使用，无状态和额外消耗。
+
+* 计算最佳策略
+    * 将策略函数，添加到一个列表中，遍历执行返回最优结果
+    * 规定模块中全是折扣函数，使用`inspect.getmembers`获取模块中的所有函数，遍历执行
+
+### 2. 命令模式
+* "命令"模式的目的是**解耦调用操作的对象(例如图形应用中的菜单项)和提供实现的对象(例如被编辑的文档)**
+    * 原始实现，定义个`Command`基类，定义`execute`接口，调用者拿到`Command`的实例，执行`command.execute()`
+    * 替代方案，传入可执行函数，或者可调用对象实现`__call__`方法，直接执行`command()`，也可用闭包存储函数的内部状态。
+
+### 3. 总结
+* 很多设计模式无需定义类，实例化对象，就能实现花里胡哨的功能了
+
+
+### 4.python设计模式相关参考资料
+* "Learning Python Design Patterns"
+* 《Python Cookbook (第3版)中文版》 第8.21章节
+* 《Python高级编程》 第14章
+* [EuroPython2011演讲](https://pyvideo.org/europython-2011/python-design-patterns.html)
+* [Design Patterns in Dynamic Languages](/doc/design-patterns.pdf)
