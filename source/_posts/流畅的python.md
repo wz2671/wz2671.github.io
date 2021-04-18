@@ -4,7 +4,7 @@ tags: python笔记
 date: 2020-12-13 17:23:59
 ---
 
-参考书籍：《流畅的python》(Fluent Python）
+参考书籍：[《流畅的python》(Fluent Python）](/doc/流畅的python.pdf)
 
 ![封面](/images/liuchangdepython.jpg)
 
@@ -471,6 +471,7 @@ e = {_s: _i for _s, _i in [('one', 1), ('two', 2), ('three', 3)]}
 * `is`运算符比`==`快，它不能重载，无需查找调用特殊方法，`==`等同于`__eq__()`，大多数内置类型会考虑对象属性的值。
 * 对于元组，元素的标识不能变，但是标识对应的内容可变。
 * 复制列表，默认只会做浅拷贝，如果列表中具有可变元素，可能会有bug
+* 可变对象的`+=`，`*=`运算符会就地修改，不可变对象会创建新的对象再赋值。
     ```python
     l1 = [3, [66, 55, 44], (7, 8, 9)]
     l2 = list(l1)
@@ -528,3 +529,40 @@ e = {_s: _i for _s, _i in [('one', 1), ('two', 2), ('three', 3)]}
 
 
 ### 3. `del`和垃圾回收
+
+* `del`语句删除的是引用，当删除的变量保存的是对象的最后一个引用，或者这无法得到对象(循环引用)对象时，对象才会被垃圾回收。
+* 有个内置方法[`__del__()`](https://docs.python.org/zh-cn/3/reference/datamodel.html#object.__del__)使用这个方法需要小心
+    > 警告 由于调用 `__del__()` 方法时周边状况已不确定，在其执行期间发生的异常将被忽略，改为打印一个警告到`sys.stderr`。特别地：
+    > * `__del__()` 可在任意代码被执行时启用，包括来自任意线程的代码。如果`__del__()`需要接受锁或启用其他阻塞资源，可能会发生死锁，例如该资源已被为执行`__del__()`而中断的代码所获取。
+    > * `__del__()`可以在解释器关闭阶段被执行。因此，它需要访问的全局变量（包含其他模块）可能已被删除或设为`None`。Python会保证先删除模块中名称以单个下划线打头的全局变量再删除其他全局变量；如果已不存在其他对此类全局变量的引用，这有助于确保导入的模块在`__del__()`方法被调用时仍然可用。
+* 正确使用`__del__`的一个[指引](https://emptysqua.re/blog/pypy-garbage-collection-and-a-deadlock/)
+
+### 4. 弱引用
+
+* 弱引用不会增加对象的引用数量，不会妨碍所指对象被当作辣鸡回收。
+* `weakref`[模块](https://docs.python.org/zh-cn/3/library/weakref.html)是底层接口，共高级用途使用，它可以通过弱引用获取对象
+    ```python
+    >>> import weakref
+    >>> a_set = {0, 1}
+    >>> wref = weakref.ref(a_set)
+    >>> wref
+    <weakref at 0x000002928646E630; to 'set' at 0x0000029286497200>
+    >>> wref()
+    {0, 1}
+    >>> a_set = {0, 1, 3}
+    >>> wref
+    <weakref at 0x000002928646E630; dead>
+    >>> wref()
+    ```
+* 实际使用的时候，最好应当使用`weakref`集合和`finalize`，如：`WeakKeyDictionary`, `WeakValueDictionary`, `WeakSet`, 不要自己动手创建并处理`weakref.ref`实例。
+    * `WeakValueDictionary`是一种映射类型，里面的值是对象的弱引用，若引用的对象没了，那么键会自动从里面删除。**需要注意：如果是全局变量，不手动删除的话，该对象一直都在。**
+    * `WeakKeyDictionary`是键为弱引用的字典。它可以在，**不为对象添加引用的情况下，为对象附加额外数据**。
+    * `WeakSet`保存元素弱引用的集合类，元素没有强引用时，集合会把它删除。
+* 弱引用的局限：基本的`list`和`dict`实例不能作为弱引用的所指对象，但可以使用他们的子类。`int`和`tuple`实例不能作为弱引用的所指对象，甚至他们的子类也不行。这些局限是`CPython`内部优化所导致的结果，在其他Python解释器中可能不一致。
+* 对于不可变类型，并不能创建新的对象，例如使用`tuple(t1)`返回的是与`t1`同一个对象，许多字符串常量，小整数会共享同一个对象。这是一种名为驻留(interning)的优化措施。
+* Python对象的类型也可以变，只需要将`__class__`属性指定为其他类。
+
+### 5. 其他参考
+
+* 关于垃圾回收，分代回收可参考[python文档](https://docs.python.org/zh-cn/3/library/gc.html)
+* 关于更多弱引用相关资料，也可参考[python文档](https://docs.python.org/zh-cn/3/library/weakref.html)，[相关论文](/doc/python_gc_final_2012-01-22.pdf) 

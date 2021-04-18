@@ -1,0 +1,32 @@
+{
+    "configurations": [
+        {
+            "includePath": [
+                "${workspaceFolder}/source",
+                "/source"
+            ]
+        }
+    ],
+    "update.enableWindowsBackgroundUpdates": true,
+    "background.customImages": [
+        "file://C:/Users/wenzhou/.vscode/extensions/t011d1c8512fada0d72.jpg"
+    ],
+    "background.style": {
+        "content":"''",
+        "pointer-events":"none",
+        "position":"fixed",
+        "z-index":"99999",
+        "top": "0",
+        "left": "0",
+        "width": "100%",
+        "height": "100%",
+        "background.repeat":"no-repeat",
+        "background-size":"cover",
+        "background-position": "90% 50%",
+        "opacity":0.1
+    },
+    "background.useFront": true,
+    "background.useDefault": false,
+    "background.loop": true,
+    "editor.scrollBeyondLastColumn": 100
+}
