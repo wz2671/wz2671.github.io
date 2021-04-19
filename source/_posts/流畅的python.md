@@ -566,3 +566,79 @@ e = {_s: _i for _s, _i in [('one', 1), ('two', 2), ('three', 3)]}
 
 * 关于垃圾回收，分代回收可参考[python文档](https://docs.python.org/zh-cn/3/library/gc.html)
 * 关于更多弱引用相关资料，也可参考[python文档](https://docs.python.org/zh-cn/3/library/weakref.html)，[相关论文](/doc/python_gc_final_2012-01-22.pdf) 
+
+***
+
+
+# 九、符合Python风格的对象
+
+### 1. 一些特殊方法
+* `__bytes__`函数调用它获取对象的字节序列表示形式。再python中，应当返回`bytes`类型。
+* `x, y = my_vector`可以采用方法`(i for i in (self.x, self.y))`或`yield self.x; yield self.y`实现。
+* 实现`Vector2d`的一个demo:
+
+```python
+from array import array
+import math
+
+class Vector2d:
+    typecode = 'd'
+
+    def __init__(self, x, y):
+        self.x = float(x)
+        self.y = float(y)
+
+    def __iter__(self):
+        return (i for i in (self.x, self.y))
+
+    def __repr__(self):
+        class_name = type(self).__name__
+        return '{}({!r}, {!r})'.format(class_name, *self)
+
+    def __str__(self):
+        return str(tuple(self))
+
+    def __bytes__(self):
+        # 前类型码(一字节)转成字节序列，后面是迭代自己(x, y)再转成的数组，再转成字节序列
+        return (bytes([ord(self.typecode)])) + bytes(array(self.typecode, self))
+
+    @classmethod
+    def frombytes(cls, octets):
+        typecode = chr(octets[0])       # 取出字节码
+        memv = memotyview(octets[1:]).cast(typecode)   # 将字节序列创建内存视图
+        return cls(*memv)       # 用类创建并返回对象
+
+```
+
+### 2. `classmethod`与`staticmethod`
+* `classmethod`第一个参数是类本身，而不是实例。<font color=red>常用于定义备选构造方法。</font>
+* `staticmethod`就是个静态方法，类似于普通函数。
+* 关于python方法描述更详尽的一篇文章[The Definitive Guide on How to Use Static, Class or Abstarct Methods in Python](https://julien.danjou.info/guide-python-static-class-abstract-methods/)
+
+
+### 3. Python的私有属性
+* 如果以两个签到下划线命名的实例属性，Python会把属性名存入实例的`__dict__`属性中，而且会在前面加上一个下划线和类型。我试了一下，确实，如果只有一个下划线，就不会改名。
+    ```python
+    >>> class Test:
+    ...     def __init__(self, x, y):
+    ...          self.__y = y
+    ...          self.__x = x
+    ...
+    >>> v = Test(1, 2)
+    >>> v.__dict__
+    {'_Test__y': 2, '_Test__x': 1}
+    ```
+* 在模块中，顶层名称使用一个前导下划线时，`from xxx import *`不会导入这些模块，但是可以`from xxx improt _xxx`来导入。
+
+### 4. `__slots__`类属性
+* 在类中定义`__slots__`属性，可以节省内存，它的值为一个字符串构成的可迭代对象，其中各个元素表示各个实例属性。`__slots__ = ('__x', '__y')` 
+* 此时Python会避免使用消耗内存的`__dict__`属性来存储属性。当有数百万个实例同时活动可以节省大量内存。
+* 需要注意以下问题：
+    * 不要使用`__slots__`属性禁止类的用户新增属性，它是用于优化而不是约束程序员的。
+    * 每个子类都要定义`__slots__`属性。解释器会忽略继承的`__slots__`属性。
+    * 实例只能拥有`__slots__`中列出的属性，除非把`__dict__`加入，但就会失去节省内存的功效。
+    * 如果不把`__weakref__`加入`__slots__`，实例就不能作为弱引用的目标。
+
+### 5. 覆盖类属性
+* 如果类和实例对象都拥有一个属性，那么`self`会优先使用实例对象的属性值。
+* 可以通过继承来覆盖父类的属性的默认值，更为Pythonic。
