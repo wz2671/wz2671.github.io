@@ -642,3 +642,71 @@ class Vector2d:
 ### 5. 覆盖类属性
 * 如果类和实例对象都拥有一个属性，那么`self`会优先使用实例对象的属性值。
 * 可以通过继承来覆盖父类的属性的默认值，更为Pythonic。
+
+### 6. 切片支持
+* `slice`的`indices(x)`方法下可以看到，在长度为`x`的情况下，乱七八糟的索引`(start, stop. stride)`会被整顿为非负数，且都落在指定长度序列的边界内。
+
+### 7 . 动态存取属性
+
+* 属性查找，简单来说，
+    * 对 my_obj.x 表达式，Python 会检查 my_obj 实例有没有名为 x 的属性；
+    * 如果没有，到类（my_obj.__class__）中查找；
+    * 如果还没有，顺着继 承树继续查找。
+    * 如果依旧找不到，调用 my_obj 所属类中定义的 __getattr__ 方法，传入 self 和属性名称的字符串形式（如 'x'）
+* `operator`模块以函数的形式提供了全部中缀运算符，从而减少使用`lambda`表达式。例如`^`等价于`operator.xor`
+* `reduce`函数也叫合拢，累计，聚合，压缩和注入REF. [Fold](https://en.wikipedia.org/wiki/Fold_(higher-order_function))
+
+### Python风格的求和方式
+* 问题描述已知`my_list = [[1, 2, 3], [40, 50, 60], [9, 8, 7]]`，求`my_list[0][1] + my_list[1][1] + my_list[2][1]`
+* 使用列表推导+`lambda`表达式: `functools.reduce(lambda a, b: a+b, [sub[1] for sub in my_list])`
+* 仅使用`lambda`表达式: `functools.reduce(lambda a, b: a + b[1], my_list, 0)`
+* 使用`numpy`: `my_array = numpy.array(my_list)` & `numpy.sum(my_array[:, 1])`
+* 不适用`lambda`表达式: `functools.reduce(operator.add, [sub[1] for sub in my_list], 0)`
+* 使用`sum`: `sum([sub[1] for sub in my_list])`
+* 使用`sum` + 生成器表达式: `sum(sub[1] for sub in my_list)`
+
+***
+
+
+# 十一、接口：从协议到抽象基类
+
+### 1. 接口与协议
+* 协议是由文档和约定定义的接口，大致意思是，通过实现某些接口，可以让对象在系统中扮演特定的角色。
+* 协议不是强制的，可以只实现部分接口。
+* 例如实现`__getitem__`方法，实现序列协议的移部分，就足够访问元素、迭代和使用`in`运算符。
+* 可以在运行时对对象打补丁(然而我早已知道)
+* > 抽象基类是用于封装框架引入的一般性概念和抽象的，例如“一个序列”和“一个确切的数”。（读者）基本上不需要自己编写新的抽象基类，只要正确使用现有的抽象基类，就能获得99.9%的好处，而不用冒着设计不当导致的巨大风险。
+
+### 2. 标准库中的抽象基类
+* 大多数抽象基类在`collections.abc`模块中定义，其他地方例如：`numbers`和`io`包中包有一些基类。
+* `_collections_abc.py`模块中定义了16个抽象基类。![UML类图](/images/collections_abc.png)
+* 大致内容如下：
+    * `Iterable`支持迭代(`__iter__`)、`Container`支持`in`运算符(`__contains__`)、`Sized`支持`len`函数(`__len__`)。集合应当继承这三个抽象基类。
+    * `Sequence`, `Mapping`, `Set`不可变集合，`MutableSequence`, `MutableMapping`, `MutableSet`可变的集合子类。
+    * `MappingView`, `ItemsView`, `KeysView`, `ValuesView`，是`.items()`,`.keys()`, `.values()`返回的实例。
+    * `Callable`和`Hashable`主要作用是为内置函数`isinstance`提供支持，以一种安全的方式判断对象能不能调用或散列。
+    * `Iterator` 见14章
+* `numbers`包中，有以下类: `Number`, `Complex`, `Real`(浮点数), `Rational`, `Integral`(整数)
+
+### 3. 自定义抽象基类
+* Python3.4及以上可以通过`abc`模块中的相关方法实现，继承自`abc.ABC`使用`abstractmethod`装饰器。子类不实现抽象方法将无法实例化对象。
+    ```python
+    import abc
+    class Tombola(abc.ABC):
+
+        @abc.abstractmethod
+        def load(self, iterable):
+            """ docstr """
+    ```
+* 旧版的Python3可使用`metaclass=abc.ABCMeta`作为关键字参数。
+    ```python
+    class Tombola(metaclass=abc.ABCMeta):
+        pass
+    ```
+* 如果是Python2（会有什么sb公司现在还用python2呢）必须使用`__metaclass__`属性。
+    ```python
+    class Tobola(object):
+        __metaclass__ = abc.ABCMeta
+        pass
+    ```
+* 在函数上堆叠装饰器时，`abstractmethod`应当放在最里层[abc模块文档](https://docs.python.org/zh-cn/dev/library/abc.html#abc.abstractmethod)

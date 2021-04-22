@@ -1,12 +1,4 @@
 {
-    "configurations": [
-        {
-            "includePath": [
-                "${workspaceFolder}/source",
-                "/source"
-            ]
-        }
-    ],
     "update.enableWindowsBackgroundUpdates": true,
     "background.customImages": [
         "file://C:/Users/wenzhou/.vscode/extensions/t011d1c8512fada0d72.jpg"
