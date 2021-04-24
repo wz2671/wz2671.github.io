@@ -678,7 +678,7 @@ class Vector2d:
 * > 抽象基类是用于封装框架引入的一般性概念和抽象的，例如“一个序列”和“一个确切的数”。（读者）基本上不需要自己编写新的抽象基类，只要正确使用现有的抽象基类，就能获得99.9%的好处，而不用冒着设计不当导致的巨大风险。
 
 ### 2. 标准库中的抽象基类
-* 大多数抽象基类在`collections.abc`模块中定义，其他地方例如：`numbers`和`io`包中包有一些基类。
+* 大多数抽象基类在`collections.abc`模块中定义，其他地方例如：`numbers`和`io`包中包有一些基类。[PEP 3119]
 * `_collections_abc.py`模块中定义了16个抽象基类。![UML类图](/images/collections_abc.png)
 * 大致内容如下：
     * `Iterable`支持迭代(`__iter__`)、`Container`支持`in`运算符(`__contains__`)、`Sized`支持`len`函数(`__len__`)。集合应当继承这三个抽象基类。
@@ -687,6 +687,19 @@ class Vector2d:
     * `Callable`和`Hashable`主要作用是为内置函数`isinstance`提供支持，以一种安全的方式判断对象能不能调用或散列。
     * `Iterator` 见14章
 * `numbers`包中，有以下类: `Number`, `Complex`, `Real`(浮点数), `Rational`, `Integral`(整数)
+* 然而现在的Python里有一大堆虚基类了(2021/4/23)
+    ```python
+    __all__ = ["Awaitable", "Coroutine",
+           "AsyncIterable", "AsyncIterator", "AsyncGenerator",
+           "Hashable", "Iterable", "Iterator", "Generator", "Reversible",
+           "Sized", "Container", "Callable", "Collection",
+           "Set", "MutableSet",
+           "Mapping", "MutableMapping",
+           "MappingView", "KeysView", "ItemsView", "ValuesView",
+           "Sequence", "MutableSequence",
+           "ByteString",
+           ]
+    ```
 
 ### 3. 自定义抽象基类
 * Python3.4及以上可以通过`abc`模块中的相关方法实现，继承自`abc.ABC`使用`abstractmethod`装饰器。子类不实现抽象方法将无法实例化对象。
@@ -709,4 +722,121 @@ class Vector2d:
         __metaclass__ = abc.ABCMeta
         pass
     ```
-* 在函数上堆叠装饰器时，`abstractmethod`应当放在最里层[abc模块文档](https://docs.python.org/zh-cn/dev/library/abc.html#abc.abstractmethod)
+* 在函数上堆叠装饰器时，`@abstractmethod`应当放在最里层[abc模块文档](https://docs.python.org/zh-cn/dev/library/abc.html#abc.abstractmethod)
+
+### 4. 虚拟子类
+
+* 注册虚拟子类的方式是在抽象基类上调用`register`方法。这么做之后，注册的类会变成抽象基类的虚拟子类，而且`issubclass`和`isinstance`等函数都能识别。但是注册的类不会从抽象基类中继承任何方法和属性。（个人感觉没啥用）
+    ```python
+    from tombola import Tombola
+    ### python3.3之后
+    @Tombola.register
+    class TomboList(list):
+        pass
+    ### python3.3及之前
+    Tombola.register(TomboList)
+    ```
+* `__mro__`这个特殊的类属性中指定了类的继承关系，作用为：按顺序列出类及其超类。并且它只会列出“真实的”超类，注册的并不。
+* 有个`__subclasshook__(cls, c)`的方法，会用来检查自定义类是否实现了特定方法，如果实现了就认为是抽象基类的子类。例如`Container`实现如下：
+    ```python
+    def _check_methods(C, *methods):
+        mro = C.__mro__
+        for method in methods:
+            for B in mro:
+                if method in B.__dict__:
+                    if B.__dict__[method] is None:
+                        return NotImplemented
+                    break
+            else:
+                return NotImplemented
+        return True
+
+    class Container(metaclass=ABCMeta):
+
+        __slots__ = ()
+
+        @abstractmethod
+        def __contains__(self, x):
+            return False
+
+        @classmethod
+        def __subclasshook__(cls, C):
+            if cls is Container:
+                return _check_methods(C, "__contains__")
+            return NotImplemented
+
+        __class_getitem__ = classmethod(GenericAlias)
+    ```
+* 在`class ABCMeta(type)`还有相关的更上层的接口，用来检查是否是父类，其中`_abc_subclasscheck(cls, subclass)`用C语言进行了实现[源码](https://github.com/python/cpython/blob/master/Modules/_abc.c)。
+
+* > 尽管抽象基类使得类型检查变得更容易了，但不应该在程序中过度使用它。Python的核心在于它是一门动态语言，它带来了极大的灵活性。如果处处都强制实行类型约束，那么会使代码变得更加复杂，而本不应该如此。我们应该拥抱Python的灵活性。
+—— David Beazley 和 Brian Jones 《Python Cookbook（第 3 版）中文版》
+
+
+***
+
+# 十二、继承的优缺点
+
+### 1. 子类化内置类型
+
+* 内置类型（使用C语言编写）(的其他方法)不会调用用户定义的类覆盖的特殊方法。如`__getitem__`之类的，但是据说`__missing__`方法却行。
+    ```python
+    >>> class TestDict(dict):
+    ...     def __setitem__(self, key, value):
+    ...         super().__setitem__(key, [value] * 2)
+    ...
+    >>> dd = TestDict(one=1)
+    >>> dd
+    {'one': 1}
+    >>> dd.update(three=3)
+    >>> dd
+    {'one': 1, 'three': 3}
+    >>> dd['two'] = 2       # 显式调用覆盖的特殊方法会有效
+    >>> dd
+    {'one': 1, 'three': 3, 'two': [2, 2]}
+    ```
+* <font color=red>直接子类化内置类型（如dict, list, str）容易出错，因为内置类型的方法通常会忽略用户覆盖的方法，不要子类化内置类型，用户自己定义的类应该继承`collections`模块中的类</font>，例如`UserDict`, `UserList`, `UserString`，这些类做了特殊设计，易于扩展。
+* 以上问题至发生在C语言实现的内置类型内部的方法委托上，而且之影响直接继承内置类型的用户自定义类。
+* PyPy的行为会有微笑差异[Differences between PyPy and CPython](https://doc.pypy.org/en/latest/cpython_differences.html#subclasses-of-built-in-types)
+
+### 2. 多重继承和方法解析顺序
+
+* Python会按照特定的顺序遍历继承图。这个顺序叫做方法解析顺序（Method Resolution Oeder, MRO）。
+* 类都有一个名为`__mro__`的属性，它的值是一个元组，按照方法解析顺序列出各个超类，从当前类一直向上，直到object类。
+    ```python
+    >>> class A:
+    ...     pass
+    ...
+    >>> class B(A):
+    ...     pass
+    ...
+    >>> class C(A):
+    ...     pass
+    ...
+    >>> class D(B, C):
+    ...     pass
+    ...
+    >>> D.__mro__
+    (<class '__main__.D'>, <class '__main__.B'>, <class '__main__.C'>, <class '__main__.A'>, <class 'object'>)
+    ```
+* 可以直接在类上调用实例方法，需要显式传入`self`参数，例如`A.ping(self)`
+* 可以使用内置的`super()`函数，使用`super()`调用方法时，会遵守方法解析顺序。
+* python的方法解析顺序（MRO）采用了[C3算法](https://www.python.org/download/releases/2.3/mro/)
+
+### 3. 处理多重继承的一些建议
+
+* 把*接口继承*和*实现继承*区分开，接口继承是框架的的支柱，实现继承通常可以换用组合和委托模式。
+* 使用抽象基类显式表示接口。
+* 通过混入（mixin class）重用代码
+* 在名称中明确指明混入，定义类是直接采用`TestMixin`这样子的命名。
+* 抽象基类可以作为混入，反过来则不成立（**这部分具体含义没有懂**）
+* 不要子类化多个具体类，具体类的超类中，除了这一个具体的超类之外，其余的都是抽象基类或混入。
+* 为用户提供聚合类（aggregate class），也就是继承多个Mixin，提供一个类。
+* 优先使用对象组合，而不是类继承。
+
+### 4. 作者认为Tkinter的不好之处
+
+* 几何管理器应该用组合模式集成到`Widget`中，而不是继承。
+* `Widget`定义的接口含义不清晰明确
+* `Misc`提供了许许多多的功能如（剪切板，文本选择之类），而所有的小组件都继承了它，应当拆分成多个`Mixin`分别混入不同小组件。
+* 使用`dir(tkinter.Button)`之类，方法众多，无法确定自己所需的方法。
