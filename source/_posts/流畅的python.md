@@ -840,3 +840,103 @@ class Vector2d:
 * `Widget`定义的接口含义不清晰明确
 * `Misc`提供了许许多多的功能如（剪切板，文本选择之类），而所有的小组件都继承了它，应当拆分成多个`Mixin`分别混入不同小组件。
 * 使用`dir(tkinter.Button)`之类，方法众多，无法确定自己所需的方法。
+
+***
+
+
+# 十三、正确重载运算符
+
+### 各种运算符
+
+* `- x` (`__neg__`) 一元取负算数运算符。
+* `+ x` (`__pos__`) 一元取正算数运算符。
+* `~ x` (`__invert__`) 对整数按位取反。
+* `a + b` (`__add__`, `_radd__`) 加法(反向加法)运算符，如果`a`有`__add__`方法，会调用`a.__add__(b)`方法，否则会尝试调用`b.__radd__(a)`。
+* `a * b` (`__mul__`, `__rmul__`) 乘法运算符。
+
+* 还有许许多多新加的运算符，见[文档](https://docs.python.org/zh-cn/3/library/operator.html)
+
+
+***
+
+# 十四、可迭代对象，迭代器和生成器
+
+### 0. 迭代器模式 (Iterator Pattern)
+
+* 扫描内存中存放不下的数据集时，我们要找到一种惰性获取数据项的方式，即按需一次获取一个数据项。
+* 在Python中，所有集合都可以迭代。迭代器主要用于支持：
+    * `for`循环
+    * 构建和扩展集合类型
+    * 逐行遍历文本文件
+    * 列表推导、字典推导和集合推导。
+    * 元组拆包
+    * 使用`*`拆包实参
+
+### 1. 序列可以迭代的原因 (`iter`函数)
+* 解释器需要迭代对象时：
+    * 检查对象是否实现了`__iter__`方法，如果实现了就调用它，获取一个迭代器。
+    * 如果没有实现`__iter__`方法，但是实现了`__getitem__`方法。Python会创建一个迭代器，尝试按顺序（从索引0开始）获取元素。
+    * 如果尝试失败，Python抛出`TypeError`异常，通常会提`Class object is not iterable`
+* 如果没有`for`语句，就需要用`while`循环包着`try except StopIteration`。
+* 标准迭代器接口有两个方法`__next__`（如果没有元素会抛`StopIteration`异常）和`__iter__`（返回`self`）。
+* 迭代器`abc.Iterator`的大致实现：
+    ```python
+    class Iterator(Iterable):
+        __slots__ = ()
+
+        @abstractmethod
+        def __next__(self):
+            'Return the next item from the iterator. When exhausted, raise StopIteration'
+            raise StopIteration
+
+        def __iter__(self):
+            return self
+
+        @classmethod
+        def __subclasshook__(cls, C):
+            if cls is Iterator:
+                if (any("__next__" in B.__dict__ for B in C.__mro__) and
+                    any("__iter__" in B.__dict__ for B in C.__mro__)):
+                    return True
+                return NotImplemented
+    ```
+
+### 2. 迭代器和可迭代对象
+* 可迭代对象指的就是可以被迭代的对象，一般需要实现`__iter__`(返回自身的迭代器)方法。
+* 迭代器，应该一直可以迭代，他能维护自身的内部状态，一般需要实现`__iter__`(返回自身)和`__next__`(返回单个元素)方法。
+* 迭代器模式的优势：
+    * 访问聚合对象内容而无需知道内部表示
+    * 提供多种遍历方式
+    * 提供统一接口
+* 模范写法：
+    ```python
+    class Sentence:
+
+        def __iter__(self):
+            return SentenceIterator(self.words)
+
+    class SentenceIterator:
+
+        def __iter__(self):
+            return self
+
+        def __next__(self):
+            """ 返回单个单词或抛出异常 """
+            raise StopIteration()
+    ```
+* 可以使用`yield`生成逐个单词，也可以迭代。
+* 调用生成器函数返回生成器，生成器产出或生成之。
+* 也可以使用生成器表达式`(i for i in range(10))`
+* 如果函数或构造方法只有一个参数，传入生成器表达式时，不用写两对括号，但有多个，就要用括号围住。
+
+### 3. 标准库中的生成器函数
+
+* `itertools.takewhile`生成一个使用另一个生成器的生成器，直至给定条件为`False`，例如`itertools.takewhile(lambda n: n < 3, itertools.count(1, 0.5))`生成`[1, 1.5, 2.0, 2.5]`，还有个反的名为`itertools.dropwhile`
+* `itertools.compress`可以处理两个可迭代对象，会筛选出后者为真的数据，例如`itertools.compress('abcdef', (1,0,1,1,0,1))`生成`[a,c,d,f]`
+* `itertools.islice`产生切片，类似于`s[start:stop:step]`
+
+* `itertools.accumulate`产出累计的总和(类似于cursum)，还可以传入`func`，将前两个的计算结果和下一个元素传给`func`，例如`itertools.accumulate([1,2,3,4,5], operator.mul)`生成`[1,2,6,24,120]`
+* `map`可以接收多个可迭代对象，例如`map(lambda a, b: (a, b)), range(11), [2, 4, 8]))`生成`[(0, 2), (1, 4), (2, 8)]`，还有个类似的`itertools.starmap`
+* `itertools.zip_longest`会一直产出知道最长的可迭代对象到头后才停止，可以提供`fillvalue`
+
+* `itertools.count`生成从零开始的整数数列，可以无限生成。
