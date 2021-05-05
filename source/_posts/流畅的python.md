@@ -939,4 +939,166 @@ class Vector2d:
 * `map`可以接收多个可迭代对象，例如`map(lambda a, b: (a, b)), range(11), [2, 4, 8]))`生成`[(0, 2), (1, 4), (2, 8)]`，还有个类似的`itertools.starmap`
 * `itertools.zip_longest`会一直产出知道最长的可迭代对象到头后才停止，可以提供`fillvalue`
 
-* `itertools.count`生成从零开始的整数数列，可以无限生成。
+* `itertools.count`生成从零开始的整数数列，可以无限生成。有点像`range`
+* `itertools.combinations(it, out_len)`将元素进行组合并产出，例如`itertools.combinations('ABC', 2)`生成`[('A', 'B'), ('A', 'C'), ('B', 'C')]`
+* `itertools.permutations(it, out_len=None)`将元组排列并产出，例如`itertools.permutations(it, out_len=None)`生成`[('A','B'), ('A','C'), ('B','A'), ('B','C'), ('C','A'), ('C','B')]`
+* `itertools.produce(it, out_len)`产生笛卡尔积
+
+* `itertools.groupby(it, key=None)`产出由两个元素组成的元素，形式为`(key, group)`
+    ```python
+    >>> animals = ['duck', 'eagle', 'rat', 'giraffe', 'bear', 'bat', 'dolphin', 'shark', 'lion']
+    >>> animals.sort(key=len)
+    >>> for length, group in itertools.groupby(animals, len):
+    ...     print(length, list(group))
+    ...
+    3 ['rat', 'bat']
+    4 ['duck', 'bear', 'lion']
+    5 ['eagle', 'shark']
+    7 ['giraffe', 'dolphin']
+    ```
+* `itertools.tee(it, n=2)`产出n个迭代器`it`(感觉是真的没用)。
+
+### 4. 归约函数和`iter`函数
+
+* `max(it, [key=, ] [defalut= ])`注意这里面还有个`default`可以提供默认值
+* `all(it)`和`any(it)`还提供短路功能
+* `iter`还有个用法，提供一个标记值，不断调用函数，直至产生特定元素`iter(func, sentinel)`，例如：
+    ```python
+    >>> def func():
+    ...     return random.randint(0, 10)
+    ...
+    >>> list(iter(func, 5))
+    [3, 1, 6, 6, 10, 2, 10, 0, 7, 10, 2, 8, 3, 10, 4, 0, 9]
+    >>> list(iter(func, 5))
+    [2, 0]
+    >>> list(iter(func, 5))
+    [1]
+    >>> list(iter(func, 5))
+    [6, 2, 1, 8, 2, 0, 0, 8, 10, 1, 7, 9, 6, 7, 9, 10, 6, 8, 9, 10, 2, 2, 3, 0, 2, 7, 3, 10, 8, 0, 3, 7, 8]
+    ```
+* 上述一个有用的例子是，逐行读取文件，直至遇到空行或者达到文件末尾为止。
+
+### 5. 把生成器当成协程
+
+* 生成器对象提供了一个方法`.send()`允许生成内部和外部双向交换数据。此时，生成器本身就变身成为协程了。
+* 生成器和协程是两个不同的概念，不能混为一谈。
+* 详见下下章。
+
+### 6. 生成器和迭代器
+
+* 接口，迭代器定义了两个方法`__next__`和`__iter__`，生成器对象实现了这两个方法，从此看所有生成器都是迭代器。例如`isinstance(enumerate('ABC'), collections.abc.Iterator`)为`True`，但是可以通过实现经典的迭代器模式，实现不是生成器的迭代器`isinstance(enumerate('ABC'), types.GeneratorType)`为`False`
+* 实现，生成器可采用两种方式编写，`yield`语句和生成器表达式`(i for i in range(10))`，对应于[`types.GeneratorType`类型](https://docs.python.org/3/library/types.html#types.GeneratorType)。"生成器-迭代器对象的类型，调用生成器函数时生成"
+* 概念，典型的设计模式中，迭代器用于遍历集合，从而产出元素，1.读取值，2.不加修改地产出。生成器可以无需遍历集合就生成值。
+* 在python中，迭代器和生成器一定程度上是同义词，并不会严格区分。
+
+***
+
+
+# 第十六章 协程
+
+我将十六章挪到了十五章前面，因为上一章讲的生成器和迭代器，而生成器和协程联系又如此紧密，放在一块方便对比参考，没有人会有意见吧
+
+### 1. 生成器进化成协程
+
+* 核心，使用`.send(value)`接口
+* 需要明确，`yield`可以不接受或者传出数据，不管数据如何流动，<font color=red>`yield`是一种流程控制工具</font>。
+* 在 PEP342 中还添加了`.throw(...)`（让调用方抛出异常）和`.close()`（终止生成器）。
+* 在 PEP380 进行了两处改动，可以给`return`语句提供返回值，可以使用`yield from`句法，把复杂的生成器重构成小型的嵌套生成器。
+
+
+***
+
+# 第十五章 上下文管理器和`else`块
+
+### 1. `else`
+* `else`子句不仅能在`if`中使用，还能在`for`、`while`、`try`中使用。
+* `for/else`当`for`循环运行完毕时（即`for`循环没有被`break`语句终止），才运行`else`块
+    ```python
+    >>> for i in range(5):
+    ...     if i == 5:
+    ...         break
+    ... else:
+    ...     print('5 not found')
+    ...
+    5 not found
+    ```
+* `while/else`与`for/else`类似，只有为假值退出才执行`else`块
+* `try/else`只有`try`中美抛出异常时才运行`else`块
+* `return`, `break`, `continue`语句地执行跳出主块都会跳过`else`块
+
+### 2. 上下文管理器和`with`块
+
+* 上下文管理器协议包含`__enter__`和`__exit__`两个方法。`with`语句开始执行时，调用`__enter__`方法，结束运行后，调用`__exit__`方法。
+* `with`块不产生新的作用域，在`with`语句之后，还是可以访问创建的对象，但不能进行某些操作了。
+* `with`语句时为了简化`try/finally`模式。即便是由于异常、`return`语句`sys.exit()`调用而终止，`finally`中用于释放重要的资源，或者还原临时变更的状态。
+* `with open('mirror.py') as fp`语句，有以下几点需要注意：
+    * `with open('mirror.py')`语句的得到的时上下文管理器对象`TextIOWrapper`类的实例，`as fp`把值绑定到目标变量时在上下文管理器对象上调用`__enter__`方法的结果。此处返回的是上下文管理器对象本身`self`，可能返回其他对象。
+    * 退出`with`块时，都会在上下文管理器上调用`__exit__`方法。而不是在`__enter__`返回的对象上调用。
+    * `__exit__(self, exc_type, exc_value, traceback)`方法接收三个参数，分别为异常类(`ZeroDivisionError`)，异常实例，`traceback`对象。
+* 也可以通过手动调用`__enter__`和`__exit__`来实现`with`语句效果。
+
+### 3. `contextlib`模块
+
+* 模块中有许多实用工具，（但我觉的用的应该不多）包括：`closing`, `suppress`, `@contextmanager`, `ContextDecorator`, `ExitStack`。
+* `@contextmanager`比较常用，可以减少创建上下文管理器的代码量。只需要实现一个`yield`语句的生成器。`yield`语句前面的代码在`__enter__`调用时执行，后面的代码在`__exit__`方法时调用。
+    ```python
+    >>> import contextlib
+    >>>
+    >>> @contextlib.contextmanager
+    ... def test():
+    ...     print('enter')
+    ...     yield 'test'
+    ...     print('exit')
+    ...
+    >>> with test() as value:
+    ...     print(value)
+    ...
+    enter
+    test
+    exit
+    ```
+* `@contextmanager`本质上是返回了一个`_GeneratorContextManger`的类，其中实现了`__enter__`和`__exit__`方法，[源码链接](https://hg.python.org/cpython/file/tip/Lib/contextlib.py)
+* 还需要注意，`@contextmanager`并不会处理在`with`中抛出的异常，所以，需要自行捕获并处理异常。它会在`yield`表达式里再次抛出，因此需要在`yield`语句附近裹层`try except`。以下是`__exit__`原始实现。
+    ```python
+    def __exit__(self, type, value, traceback):
+        if type is None:
+            try:
+                next(self.gen)
+            except StopIteration:
+                return
+            else:
+                raise RuntimeError("generator didn't stop")
+        else:
+            if value is None:
+                # Need to force instantiation so we can reliably
+                # tell if we get the same exception back
+                value = type()
+            try:
+                self.gen.throw(type, value, traceback)               # 这儿貌似就是把异常抛给yield的部分
+                raise RuntimeError("generator didn't stop after throw()")
+            except StopIteration as exc:
+                # Suppress StopIteration *unless* it's the same exception that
+                # was passed to throw().  This prevents a StopIteration
+                # raised inside the "with" statement from being suppressed.
+                return exc is not value
+            except RuntimeError as exc:
+                # Don't re-raise the passed in exception. (issue27112)
+                if exc is value:
+                    return False
+                # Likewise, avoid suppressing if a StopIteration exception
+                # was passed to throw() and later wrapped into a RuntimeError
+                # (see PEP 479).
+                if exc.__cause__ is value:
+                    return False
+                raise
+            except:
+                # only re-raise if it's *not* the exception that was
+                # passed to throw(), because __exit__() must not raise
+                # an exception unless __exit__() itself failed.  But throw()
+                # has to raise the exception to signal propagation, so this
+                # fixes the impedance mismatch between the throw() protocol
+                # and the __exit__() protocol.
+                #
+                if sys.exc_info()[1] is not value:
+                    raise
+    ```
