@@ -19,7 +19,7 @@
         "background.repeat":"no-repeat",
         "background-size":"cover",
         "background-position": "90% 50%",
-        "opacity":0.1
+        "opacity":0.05
     },
     "background.useFront": true,
     "background.useDefault": false,

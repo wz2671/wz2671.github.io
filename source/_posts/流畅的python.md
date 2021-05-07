@@ -420,6 +420,12 @@ e = {_s: _i for _s, _i in [('one', 1), ('two', 2), ('three', 3)]}
 
 ***
 
+# 五、一等函数
+
+待补充
+
+***
+
 
 # 六、使用一等函数实现设计模式
 
@@ -455,6 +461,13 @@ e = {_s: _i for _s, _i in [('one', 1), ('two', 2), ('three', 3)]}
 * 《Python高级编程》 第14章
 * [EuroPython2011演讲](https://pyvideo.org/europython-2011/python-design-patterns.html)
 * [Design Patterns in Dynamic Languages](/doc/design-patterns.pdf)
+
+***
+
+
+# 七、函数装饰器和闭包
+
+待补充
 
 ***
 
@@ -854,8 +867,7 @@ class Vector2d:
 * `a + b` (`__add__`, `_radd__`) 加法(反向加法)运算符，如果`a`有`__add__`方法，会调用`a.__add__(b)`方法，否则会尝试调用`b.__radd__(a)`。
 * `a * b` (`__mul__`, `__rmul__`) 乘法运算符。
 
-* 还有许许多多新加的运算符，见[文档](https://docs.python.org/zh-cn/3/library/operator.html)
-
+* 还有许许多多新加的运算符，见[文档](https://docs.python.org/zh-cn/3/library/operator.html)，比较简单，不多阐述
 
 ***
 
@@ -994,21 +1006,153 @@ class Vector2d:
 ***
 
 
-# 第十六章 协程
+# 十六、 协程
 
 我将十六章挪到了十五章前面，因为上一章讲的生成器和迭代器，而生成器和协程联系又如此紧密，放在一块方便对比参考，没有人会有意见吧
 
 ### 1. 生成器进化成协程
 
 * 核心，使用`.send(value)`接口
+* 使用`coro.send(None)`和`next(coro)`效果是一致的
 * 需要明确，`yield`可以不接受或者传出数据，不管数据如何流动，<font color=red>`yield`是一种流程控制工具</font>。
 * 在 PEP342 中还添加了`.throw(...)`（让调用方抛出异常）和`.close()`（终止生成器）。
 * 在 PEP380 进行了两处改动，可以给`return`语句提供返回值，可以使用`yield from`句法，把复杂的生成器重构成小型的嵌套生成器。
+* 协程具有四种状态，可以使用`inspect.getgeneratorstate(...)`函数确定
+    * `GEN_CREATE`: 等待开始执行
+    * `GEN_RUNNING`: 解释器正在执行（一般在多线程应用中，或自身调用才能看到此状态）
+    * `GEN_SUSPENDED`: 在`yield`表达式处暂停
+    * `GEN_CLOSED`: 执行结束
+* 一个例子：（由于我早已明白，就不过多解释了），简而言之，`yield`之后的值会产出并暂停，`send`过来的值会赋予`yield`左方变量。
+    ```python
+    >>> import inspect
+    >>>
+    >>> def simple_coro(a):
+    ...     print('-> Start: a =', a)
+    ...     b = yield a
+    ...     print('-> Received: b =', b)
+    ...     c = yield a + b
+    ...     print('-> Received: c =', c)
+    ...
+    >>> my_coro = simple_coro(14)
+    >>> next(my_coro)
+    -> Start: a = 14
+    14
+    >>> inspect.getgeneratorstate(my_coro)
+    'GEN_SUSPENDED'
+    >>> my_coro.send(28)
+    -> Received: b = 28
+    42
+    >>> my_coro.send(99)
+    -> Received: c = 99
+    Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+    StopIteration
+    >>> inspect.getgeneratorstate(my_coro)
+    'GEN_CLOSED'
+    ```
 
+### 2. 预激协程的装饰器
+
+* 把生成器当协程使用前需要执行一次`next`使其停在`yield`之前，这件事可以用一个装饰器完成，示意代码如下：
+    ```python
+    from functools import wraps
+
+    def coroutine(func):
+        @wraps(func)
+        def primer(*args, **kwargs):
+            gen = func(*args, **kwargs)
+            next(gen)
+            return gen
+        return primer
+    ```
+
+### 3. 终止协程与异常处理
+
+* 从python2.5起，生成器对象是具有两个方法，`throw`和`close`。
+* `generator.throw(exc_type[, exc_calue[, traceback]])` 在`yield`表达式处抛出异常。异常若未被处理，会一直上抛，传到调用方的上下文中。
+* `generator.close()` 在`yield`表达式出抛出`GeneratorExit`异常。
+* 如果希望协程结束后做些清理工作，应当把协程定义提中相关代码放入`try/finally`块中。
+
+* 在python3.3及之后，生成器可以返回值，为了返回值，协程需要正常终止。`return`表达式返回的值，会偷偷传给调用方，赋值给在了`StopIteration`异常的`value`属性之中。
+    ```python
+    >>> def gen_return():
+    ...     v = yield
+    ...     return ('value', v)
+    ...
+    >>> gen = gen_return()
+    >>> next(gen)
+    >>> try:
+    ...     gen.send(1111)
+    ... except StopIteration as exc:
+    ...     res = exc.value
+    ...
+    >>> res
+    ('value', 1111)
+    ```
+
+### 4. `yield from`
+
+* 主要功能是打开双向通道，把最外层的调用方与最内层的子生成器连接起来。例如链接可迭代对象可由如下实现
+    ```python
+    def chain(*iterables):
+        for it in iterablse:
+            yield from it
+    ```
+* 其行为在 [PEP380](https://www.python.org/dev/peps/pep-0380/#proposal) 中进行了阐述。
+* 大致为六点（搬运）:
+    1. 子生成器产出的值都直接传给委派生成器的调用方
+    2. 使用`send()`方法发给委派生成器的值都直接传给子生成器。如果发送的值是`None`，那么会调用子生成器的`__next__()`方法。如果不是`None`会调用`send()`方法。如果抛出`StopIteration`异常，那么委派生成器恢复运行，其他异常上冒。
+    3. 生成器退出时，生成器或子生成器中的`return expr`表达式会触发`StopIteration(expr)`异常抛出。
+    4. `yield from`表达式的值是子生成器终止传给`StopIteration`异常的第一个参数。
+    5. 传入委派生成器的异常，除了`GeneratorExit`之外都传给子生成器的`throw()`方法。如果调用`throw()`方法时抛出`StopIteration`异常，委派生成器继续运行，其他异常继续抛出。
+    6. 如果传入`GeneratorExit`异常或调用`close()`方法给委派生成器，那么尝试在子生成器上调用`close()`方法，若产生异常会上抛，无异常抛出`GeneratorExit`。
+* `RESULT = yield from EXPR`的等价伪代码大致如下
+    ```python
+    _i = iter(EXPR)
+    try:
+        _y = next(_i)
+    except StopIteration as _e:
+        _r = _e.value
+    else:
+        while 1:        # 子生成器未结束前，会一直在这儿阻塞
+            try:
+                _s = yield _y       # 由客户端驱动这儿轮转
+            except GeneratorExit as _e:
+                try:
+                    _m = _i.close
+                except AttributeError:
+                    pass
+                else:
+                    _m()
+                raise _e        # 尝试调用子生成器的close后，会继续往上抛
+            except BaseException as _e:
+                _x = sys.exc_info()
+                try:
+                    _m = _i.throw
+                except AttributeError:
+                    raise _e
+                else:
+                    try:
+                        _y = _m(*_x)
+                    except StopIteration as _e:
+                        _r = _e.value
+                        break
+            else:               # 无异常的执行流程
+                try:
+                    if _s is None:      # 对应于上述第2点
+                        _y = next(_i)
+                    else:
+                        _y = _i.send(_s)
+                except StopIteration as _e:
+                    _r = _e.value
+                    break
+    RESULT = _r
+    ```
+* 个人感觉`yield from`作为基础结构确实过于复杂，比较适合装逼炫技时用，将来若用到时，再来细细研究。
 
 ***
 
-# 第十五章 上下文管理器和`else`块
+# 十五、上下文管理器和`else`块
 
 ### 1. `else`
 * `else`子句不仅能在`if`中使用，还能在`for`、`while`、`try`中使用。
@@ -1102,3 +1246,24 @@ class Vector2d:
                 if sys.exc_info()[1] is not value:
                     raise
     ```
+
+***
+
+# 十九-二十一、 元编程
+
+### 占位 
+
+
+***
+
+# 其余章节
+
+
+### 第四章 文本和字节序列
+接触相关问题较少，用时再读
+
+### 第十七章 使用(`futures`)期物处理并发
+感觉（目前）应该不会使用到，用时再读
+
+### 第十八章 使用`asyncio`包处理并发
+同上
