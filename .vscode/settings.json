@@ -1,7 +1,7 @@
 {
     "includePath": [
         "${workspaceRoot}",
-        "${workspaceRoot}/source"
+        "d:\\BLOG\\wenzhou\\source"
     ],
     "update.enableWindowsBackgroundUpdates": true,
     "background.customImages": [
@@ -24,5 +24,11 @@
     "background.useFront": true,
     "background.useDefault": false,
     "background.loop": true,
-    "editor.scrollBeyondLastColumn": 100
+    "editor.scrollBeyondLastColumn": 100,
+    "vim.autoSwitchInputMethod.enable": true,
+    "vim.autoSwitchInputMethod.defaultIM": "1033",
+    "vim.autoSwitchInputMethod.obtainIMCmd": "D:\\CODE\\im-select\\im-select-win\\out\\x64\\im-select.exe", 
+    "vim.autoSwitchInputMethod.switchIMCmd": "D:\\CODE\\im-select\\im-select-win\\out\\x64\\im-select.exe {im}",
+    "vim.vimrc.enable": true,
+    "vim.vimrc.path": "d:\\BLOG\\wenzhou\\.vimrc"
 }

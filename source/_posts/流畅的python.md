@@ -422,13 +422,89 @@ e = {_s: _i for _s, _i in [('one', 1), ('two', 2), ('three', 3)]}
 
 # 五、一等函数
 
-待补充
+### 1. 函数
+* 函数为参数，或者返回结果为函数的 就是高阶函数(higher-order function)
+* 匿名函数`lambda`限制了定义体只能使用纯表达式，不能赋值，也不能使用`while`, `try`等语句。
+
+### 2. 可调用对象
+* 调用运算符`()`可以应用到其他对象上，使用内置的`callable()`函数可以判断对象是否可调用。
+* 可调用的对象包括7种：
+    * 用户定义的函数，使用`def`语句或`lambda`表达式创建
+    * 内置函数，使用CPython实现的函数，如`len`
+    * 内置方法，使用C语言实现的方法，如`dict.get`
+    * 方法，在类的定义体种定义的函数
+    * 类，调用类时，会运行类的`__new__`方法和`__init__`方法
+    * 类的实例，如果定义了`__call__`方法，就可被调用
+    * 生成器函数，使用了`yield`关键词的函数，调用时会返回生成器对象
+* 函数特有的一些属性(不全`set(dir(func)) - set(dir(class))`)：
+    * `__call__`: 可调用对象协议
+    * `__annotations__`: 参数和返回值的注解
+    * `__closure__`: 函数闭包
+    * `__defaults__`: 形参的默认值
+    * `__kwdefaults__`: 关键词形参的默认值
+    * `__name__`: 函数名
+    * `__globals__`: 函数所在模块种的全局变量
+    * `__code__`: 编译成字节码的函数元数据和函数定义体
+
+### 3. 函数参数
+* 参数的默认值存在了`__defaluts__`和`__kwdefaults__`中，其中出现了可变参数后的关键词参数，就会存到`__kwdefaults__`中，并且只能通过关键词参数传递。
+    ```python
+    >>> def test(a, b=1, *args, c=2, d=3, **kwargs):
+    ...     value1 = 1
+    ...     value2 = 2
+    ...     return value1, value2
+    ...
+    >>> test.__defaults__
+    (1,)
+    >>> test.__kwdefaults__
+    {'c': 2, 'd': 3}
+    ```
+* 参数的名称在`__code__`属性中。函数中的局部变量也会存在其中
+    ```python
+    >>> test.__code__.co_varnames
+    ('a', 'b', 'c', 'd', 'args', 'kwargs', 'value1', 'value2')
+    >>> test.__code__.co_argcount
+    2
+    ```
+* 更好的取参数的方式为使用`inspect.signature`模块，可以获得函数的签名
+    ```python
+    >>> sig = inspect.signature(test)
+    >>> str(sig)
+    '(a, b=1, *args, c=2, d=3, **kwargs)'
+    >>> for name, param in sig.parameters.items():
+    ...     print(param.kind, name, param.default)
+    ...
+    POSITIONAL_OR_KEYWORD a <class 'inspect._empty'>        # 位置参数或关键字参数传入皆可
+    POSITIONAL_OR_KEYWORD b 1
+    VAR_POSITIONAL args <class 'inspect._empty'>            # 定位参数元组
+    KEYWORD_ONLY c 2                                        # 仅限关键字参数(keyword-only argument)
+    KEYWORD_ONLY d 3
+    VAR_KEYWORD kwargs <class 'inspect._empty'>             # 关键词参数字典
+    # 还有一个POSITIONAL_ONLY的类型，貌似只有python语法不支持(C语言的支持)
+    ```
+* 同时，上面的签名还可以使用`bind`方法用于参数检查
+    ```python
+    >>> sig.bind(0, b=1, dd=2, c=3)
+    <BoundArguments (a=0, b=1, c=3, kwargs={'dd': 2})>
+    >>> sig.bind(b=1, dd=2, c=3)
+    Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+    File "C:\Program Files (x86)\Python38\lib\inspect.py", line 3025, in bind
+        return self._bind(args, kwargs)
+    File "C:\Program Files (x86)\Python38\lib\inspect.py", line 2940, in _bind
+        raise TypeError(msg) from None
+    TypeError: missing a required argument: 'a'
+    ```
+* Python3在声明函数是可以附加参数和返回值类型，它会存储在函数的`__annotations__`属性中，但不会做额外的检查和验证。
+
+### 4. 函数式编程
+* `operator`中的`itemgetter`和`attrgetter`这两个方法等价于，`lambda v: v.__getattr__` 和`lambda v: v.__getitem__`
+* `functools.partial`可以冻结参数
 
 ***
 
 
 # 六、使用一等函数实现设计模式
-
 
 ### 1. 策略模式
 * 例如：对于不同的用户，购买物品时有不同的折扣，具体折扣策略，可以使用策略模式
@@ -467,25 +543,87 @@ e = {_s: _i for _s, _i in [('one', 1), ('two', 2), ('three', 3)]}
 
 # 七、函数装饰器和闭包
 
-待补充
+### 1. 装饰器
+* 装饰器是可调用对象，它的参数是个函数，它可以处理被装饰的函数，把它返回，或将其替换成另一个函数或可调用对象。
+* 装饰器在加载模块是立即执行，而被装饰的函数只在明确调用时执行。
+* 用法比较简单（我应该都会了），就不记了
+
+### 2. 闭包
+* 如果有个局部变量在函数体中，那么函数中就不会尝试获取全局变量，除非使用`global`进行声明
+* 闭包延伸了函数的作用域，它能访问不在定义体中定义的非全局变量。
+* 使用闭包计算平均值的示例：
+    ```python
+    >>> def make_average():
+    ...     series = []
+    ...     def averager(new_value):
+    ...         series.append(new_value)
+    ...         total = sum(series)
+    ...         return total/len(series)
+    ...     return averager
+    ...
+    >>> avg = make_average()
+    >>> avg(5), avg(10), avg(15)
+    (5.0, 7.5, 10.0)
+    ```
+* 在上段代码中，`series`不再是局部变量了，它是一个自由变量(free variable)，指的是未在本地作用域中绑定的变量。这个变量绑定在`avg.__closure__`的属性中，它的名称和`avg.__code__.co_freevars`相对应，类型是`cell`，真正的值保存在`cell.cell_contents`属性中
+    ```python
+    >>> avg.__code__.co_freevars
+    ('series',)
+    >>> avg.__closure__
+    (<cell at 0x00000245353F6820: list object at 0x00000245356BE0C0>,)
+    >>> avg.__closure__[0].cell_contents
+    [5, 10, 15]
+    ```
+* 个人理解：里面的函数`averager`应当就称为闭包，(可能是因为它的`__closure__`中有值)，它的主要特点就是，它能绑定不在全局作用域的外部变量。也就是把`series`这个局部变量一直据为己有，众所周知，一般函数是没法存状态的，只有类有成员变量，这儿就相当于搞了个特例。
+* 但是，也只有可变变量可以作为自由变量使用，对不可变量的操作，还是会创建局部变量。除非加上`nonlocal`关键词
+    ```python
+    >>> def make_average():
+    ...     count, total = 0, 0
+    ...     def averager(new_value):
+    ···         nonlocal count, total       # 如果没有这句，下面的变量会是局部变量，不会成为自由变量。
+    ...         count += 1
+    ...         total += new_value
+    ...         return total / count
+    ...     return averager
+    ```
+
+### 3. 标准库中的装饰器
+* 内置的装饰器有：`property`, `classmethod`和`staticmethod`
+* 有个常见的`functools.wraps`协助构建行为良好的装饰器
+* `functools.lru_cache`实现了备忘功能。（看了以下，似乎确实挺好用）
+* `functools.singledispatch` 生成HTML用的。
+
+### 4. more装饰器
+* 叠放在越外层，相当于越早调用外层函数
+* 如果要给装饰器传入参数，那么装饰器执行时应当创建返回装饰器，如下：
+    ```python
+    >>> def wrap_outer(value):
+    ...     def wrap_inner(func):
+    ...         return value
+    ...     return wrap_inner
+    ...
+    >>> @wrap_outer(True)   # 此处等价于@wrap_inner，又因为wrap_inner返回value，所以func成为了True
+    ... def func():
+    ...     pass
+    ...
+    >>> wrap_outer(True)
+    <function wrap_outer.<locals>.wrap_inner at 0x00000245356C84C0>
+    >>> func
+    True
+    >>>
+    ```
+### 5. Lisp语言
+* 粗略看了一下，感觉贼牛b，大致的思想是将函数(代码)和数据融为一体，用列表的方式描述一个函数执行，可以自行构造抽象语法树，定义算符，动态生成和创建逻辑，等等。以下是些参考资料
+
+* [The Roots of Lisp](/resources/Lisp之根源.html)
+* [Lisp的本质](https://zhuanlan.zhihu.com/p/26876852)
 
 ***
 
 
 # 八、对象引用、可变性和垃圾回收
 
-
-### 1. 变量
-* 变量经常是引用，对引用赋值，索引的是同一块内存
-* 创建一个变量只有在赋值语句执行完毕，才有，使用`dir()`可以查看当前的命名空间中的模块
-* > 每个变量都有标识、类型和值。对象一旦创建，它的标识绝不会变；你可以把标识理解为对象在内存中的地址。`is`运算符比较两个对象的标识；`id()`函数返回对象标识的整数表示。               -- [Python语言参考手册](https://docs.python.org/3/reference/datamodel.html#objects-values-and-types)
-* 在CPython中，`id()`返回对象的内存地址，在其他Python解释器中可能是别的值，但ID一定唯一且对象生命周期中绝对不变
-* `==`比较的是两个对象的值，`is`比较对象的标识。
-* `is`运算符比`==`快，它不能重载，无需查找调用特殊方法，`==`等同于`__eq__()`，大多数内置类型会考虑对象属性的值。
-* 对于元组，元素的标识不能变，但是标识对应的内容可变。
-* 复制列表，默认只会做浅拷贝，如果列表中具有可变元素，可能会有bug
-* 可变对象的`+=`，`*=`运算符会就地修改，不可变对象会创建新的对象再赋值。
-    ```python
+ ```python
     l1 = [3, [66, 55, 44], (7, 8, 9)]
     l2 = list(l1)
     l1.append(100)
