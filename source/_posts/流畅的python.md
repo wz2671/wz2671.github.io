@@ -275,7 +275,7 @@ e = {_s: _i for _s, _i in [('one', 1), ('two', 2), ('three', 3)]}
     # 等价于以下
     if key not in my_dict:
         my_dict[key] = []
-    my_dictp[key].append(new_value)
+    my_dict[key].append(new_value)
     ```
 * `d.fromkeys(it, [initial])`将迭代器`it`里的元素设置为键，`initial`为对应的value
 
@@ -382,7 +382,7 @@ e = {_s: _i for _s, _i in [('one', 1), ('two', 2), ('three', 3)]}
     >>> {i for i in 'anbcdsaoi'}    // 集合推导
     {'n', 'c', 'a', 'o', 'i', 's', 'd', 'b'}
     ```
-* 支持中缀运算符: `|` (合集),`&` (交集), `-` (差集)，需要两侧被操作对象都为集合类型。但是成员方法只要求所传入的参数是可迭代对象。
+* 支持中缀运算符: `|` (合集), `&` (交集), `-` (差集)，需要两侧被操作对象都为集合类型。但是成员方法只要求所传入的参数是可迭代对象。
 * 其余运算符：
     | | | |
     | :----:| :----: | :----: |
@@ -623,7 +623,17 @@ e = {_s: _i for _s, _i in [('one', 1), ('two', 2), ('three', 3)]}
 
 # 八、对象引用、可变性和垃圾回收
 
- ```python
+### 1. 变量
+* 变量经常是引用，对引用赋值，索引的是同一块内存
+* 创建一个变量只有在赋值语句执行完毕，才有，使用`dir()`可以查看当前的命名空间中的模块
+* > 每个变量都有标识、类型和值。对象一旦创建，它的标识绝不会变；你可以把标识理解为对象在内存中的地址。`is`运算符比较两个对象的标识；`id()`函数返回对象标识的整数表示。               -- [Python语言参考手册](https://docs.python.org/3/reference/datamodel.html#objects-values-and-types)
+* 在CPython中，`id()`返回对象的内存地址，在其他Python解释器中可能是别的值，但ID一定唯一且对象生命周期中绝对不变
+* `==`比较的是两个对象的值，`is`比较对象的标识。
+* `is`运算符比`==`快，它不能重载，无需查找调用特殊方法，`==`等同于`__eq__()`，大多数内置类型会考虑对象属性的值。
+* 对于元组，元素的标识不能变，但是标识对应的内容可变。
+* 复制列表，默认只会做浅拷贝，如果列表中具有可变元素，可能会有bug
+* 可变对象的`+=`，`*=`运算符会就地修改，不可变对象会创建新的对象再赋值。
+    ```python
     l1 = [3, [66, 55, 44], (7, 8, 9)]
     l2 = list(l1)
     l1.append(100)
@@ -869,7 +879,7 @@ class Vector2d:
     ```
 * 如果是Python2（会有什么sb公司现在还用python2呢）必须使用`__metaclass__`属性。
     ```python
-    class Tobola(object):
+    class Tombola(object):
         __metaclass__ = abc.ABCMeta
         pass
     ```
@@ -1389,8 +1399,100 @@ class Vector2d:
 
 # 十九-二十一、 元编程
 
-### 占位 
+###  1. 动态属性和特性(property)
 
+* 内置的`property`其实是一个类，它的构造方法为`paroperty(fget=None, fset=None, fdel=None, doc=None)`，不适用装饰器的实现方法为，`value = property(get_value, set_value)`，后面两个是取值赋值的方法。
+* 特性会覆盖实例属性。`obj.attr`这样的表达式不会从`obj`开始寻找，而是从`obj.__class__`开始。
+* 影响属性处理方式的特殊属性：
+    * `__class__`: 对象所属类的引用(`type(obj)`)，`__getattr__`只在对象的类中寻找，而不在实例中寻找。
+    * `__dict__`: 存储对象或类的可写属性。具有该属性，任何时候都能随意设置新属性。
+    * `__slots__`: 可以限制实例能有哪些属性，如果`__slots__`中没有`__dict__`，那么该类的实例没有`__dict__`属性。只允许有指定名称的属性。
+* 处理属性的内置函数：
+    * `dir`: 列出对象的大多数属性，但是不全。
+    * `getattr`, `hasattr`, `setattr`略。
+    * `vars([object])`返回`object`对象的`__dict__`属性，没有的除外。没有参数，返回本地作用域的字典等价于`locals`。
+* 处理属性的特殊方法：
+    * `__delattr__`使用`del`语句删除属性，会触发`Class.__delattr__(obj, 'attr')`方法
+    * `__getattr__`仅当获取指定的属性没找到时，才会触发`Class.__getattr__`方法，也就是找到了就不会触发。
+    * `__getattribute__`尝试获取指定的属性时，会先调用它，抛出`AttributeError`后，才会调用`__getattr__`方法
+    * `__setattr__`尝试设置指定的属性时会调用
+* 特殊方法`__getattribute__`和`__setattr__`不管怎样都会调用，几乎会影响每一次属性存取，比较难正确使用。
+
+### 2. 属性描述符(有点东西)
+
+* 实现了`__get__`, `__set__`, `__delete__`方法的类是描述符，描述符的用法是，创建一个实例，作为另一个类的类属性。
+* 假设**描述符类**为老王，**描述符实例对象**为老王的儿子小王，**托管类及其实例对象**为接盘侠，假入接盘侠的定义了描述符属性，都不再是原始的属性了，而是冒牌的小王，当接盘侠尝试读取属性值时，实际上调用了小王的`__get__`接口，设置属性时，调用了小王的`__set__`接口等
+    ```python
+    class LaoWang():
+        def __init__(self, name):
+            self.name = name
+
+        def __set__(self, instance, value):
+            """ 如果self.name的值与属性名一致，这儿会无限递归 """
+            # setattr(instance, self.name) = value
+            instance.__dict__[self.name] = value
+
+        def __get__(self, instance, owner):
+            """ 如果是类本身访问该属性，instance会为None，此时会返回描述符自身 """
+            if instance is None:
+                return self
+            return getattr(instance, self.name)
+
+    class JiePanXia:
+        erzi = LaoWang("xiao_wang1")
+        nver = LaoWang("xiao_wang2")
+
+        def __init__(self, erzi, nver):
+            self.erzi = erzi
+            self.nver = nver
+
+    >>> jpx = JiePanXia('jpx的儿子', 'jpx的女儿')
+    >>> jpx.erzi, jpx.nver
+    ('jpx的儿子', 'jpx的女儿')
+    >>> jpx.__dict__
+    {'xiao_wang1': 'jpx的儿子', 'xiao_wang2': 'jpx的女儿'}
+    ```
+* 描述符如果同时实现了`__set__`和`__get__`方法，那么无论是取值还是赋值，都会走这两个接口。
+* 描述符如果只实现了`__set__`方法，那么用类或对象取值时，会访问到描述符实例，**但是**，如果在对象的`__dict__`添加了这条属性，那么取值时会访问到该值（也就是优先从对象中取值，会覆盖描述符实例），但是赋值时仍会走`__set__`接口。
+* 描述符如果只实现了`__get__`方法，描述符是非覆盖型描述符，访问属性时，若对象已有该属性，会绕过描述符的`__get__`方法，但它仍然是类中的一个描述符。
+* 总结而言，<font color=red>如果用对象访问属性，会优先从对象的属性`__dict__`中进行查找，没有找到会重类的属性中寻找，调用描述符的`__get__`方法，赋值时也是如此，如果对象已有该属性，它会覆盖掉描述符的`__set__`方法，除非用类显式访问该属性。</font>
+* 类属性的操作可由描述符的`__get__`方法处理，但类属性的写操作，不会依托于`__set__`方法处理，会直接覆盖掉描述符。
+
+### 3. 函数(function)和绑定方法(bound method)的本质
+* 在类中定义的函数，本质上是一个非覆盖型描述符(的自身)，也就是实现了`__get__`方法，未实现`__set__`方法。
+* 通过托管对象访问的函数，本质上是一个可调用对象(绑定方法对象)，函数以及托管对象都包装在了其中。
+```python
+>>> class Test:
+...     def test_fun(self):
+...         print('test_fun')
+...
+>>> test_obj = Test()
+>>> type(Test.test_fun), Test.test_fun
+(<class 'function'>, <function Test.test_fun at 0x0000020C7917D160>)
+>>> type(test_obj.test_fun), test_obj.test_fun
+(<class 'method'>, <bound method Test.test_fun of <__main__.Test object at 0x0000020C790FDFD0>>)
+```
+* 上述例子中，`Test.test_fun`返回的是描述符自身(`function`)，`test_obj.test_fun`返回的是可调用对象绑定方法(`method`)
+```python
+>>> Test.test_fun.__get__(test_obj)
+<bound method Test.test_fun of <__main__.Test object at 0x0000020C790FDFD0>>
+>>> Test.test_fun.__get__(test_obj) == test_obj.test_fun
+True
+>>> test_obj.test_fun.__func__ is Test.test_fun
+True
+```
+* 方法本身是描述符返回的可调用对象，且其`__func__`属性就是函数本身
+* 绑定方法的`__self__`属性中存储着托管对象的引用，`__call__`方法实现了具体的调用逻辑，会隐式的将托管对象传入，也就是参数中常见的`self`。
+
+### 4.描述符用法建议
+
+* `property`类创建的就是覆盖性描述符。且`__set__`方法和`__get__`方法都实现了。
+* 只读描述符必须有`__set__`和`__get__`方法，否则实例的同名属性会遮盖住描述符。
+* 用于验证的描述符可以只有`__set__`方法
+* 仅有`__get__`方法的描述符可以实现高效缓存。（计算数据并创建属性后直接覆盖描述符）
+* 实例的非特殊方法可以被轻松覆盖，但特殊方法不受影响
+
+### 5. 类元编程
 
 ***
 
