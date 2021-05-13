@@ -8,7 +8,6 @@ date: 2020-12-13 17:23:59
 
 ![封面](/images/liuchangdepython.jpg)
 
-**更新中**
 
 <!--more -->
 
@@ -1455,7 +1454,7 @@ class Vector2d:
 * 描述符如果同时实现了`__set__`和`__get__`方法，那么无论是取值还是赋值，都会走这两个接口。
 * 描述符如果只实现了`__set__`方法，那么用类或对象取值时，会访问到描述符实例，**但是**，如果在对象的`__dict__`添加了这条属性，那么取值时会访问到该值（也就是优先从对象中取值，会覆盖描述符实例），但是赋值时仍会走`__set__`接口。
 * 描述符如果只实现了`__get__`方法，描述符是非覆盖型描述符，访问属性时，若对象已有该属性，会绕过描述符的`__get__`方法，但它仍然是类中的一个描述符。
-* 总结而言，<font color=red>如果用对象访问属性，会优先从对象的属性`__dict__`中进行查找，没有找到会重类的属性中寻找，调用描述符的`__get__`方法，赋值时也是如此，如果对象已有该属性，它会覆盖掉描述符的`__set__`方法，除非用类显式访问该属性。</font>
+* 总结而言，在两个接口没有都实现时，<font color=red>如果用对象访问属性，会优先从对象的属性`__dict__`中进行查找，没有找到会从类的属性中寻找，调用描述符的`__get__`方法，赋值时也是如此，如果对象已有该属性，它会覆盖掉描述符的`__set__`方法，除非用类显式访问该属性。</font>
 * 类属性的操作可由描述符的`__get__`方法处理，但类属性的写操作，不会依托于`__set__`方法处理，会直接覆盖掉描述符。
 
 ### 3. 函数(function)和绑定方法(bound method)的本质
@@ -1484,7 +1483,7 @@ True
 * 方法本身是描述符返回的可调用对象，且其`__func__`属性就是函数本身
 * 绑定方法的`__self__`属性中存储着托管对象的引用，`__call__`方法实现了具体的调用逻辑，会隐式的将托管对象传入，也就是参数中常见的`self`。
 
-### 4.描述符用法建议
+### 4. 描述符用法建议
 
 * `property`类创建的就是覆盖性描述符。且`__set__`方法和`__get__`方法都实现了。
 * 只读描述符必须有`__set__`和`__get__`方法，否则实例的同名属性会遮盖住描述符。
@@ -1492,7 +1491,108 @@ True
 * 仅有`__get__`方法的描述符可以实现高效缓存。（计算数据并创建属性后直接覆盖描述符）
 * 实例的非特殊方法可以被轻松覆盖，但特殊方法不受影响
 
-### 5. 类元编程
+### 5. 类的创建
+
+* `type`是一个类，传入三个参数，可以创建一个新类，以下两种定义`MyClass`方式等价
+```python
+MyClass = type('MyClass', (MySuperClass, MyMixin), {'x': 42, 'x2': lambda self: self.x * 2})
+class MyClass(MySuperClass, MyMixin):
+    x = 42
+
+    def x2(self):
+        return self.x * 2
+```
+* 内置的`collections.namedtuple`创建方式是，先定义一个字符串`_class_template`作为源码模板，然后调用`_class_template.format(...)`方法填充模板，用`exec`解析。[源码参考](https://hg.python.org/cpython/file/tip/Lib/collections/__init__.py#l303)
+    ```python
+    class_definition = _class_template.format(
+        typename = typename,
+        field_names = tuple(field_names),
+        num_fields = len(field_names),
+        arg_list = repr(tuple(field_names)).replace("'", "")[1:-1],
+        repr_fmt = ', '.join(_repr_template.format(name=name)
+                                for name in field_names),
+        field_defs = '\n'.join(_field_template.format(index=index, name=name)
+                                for index, name in enumerate(field_names))
+    )
+
+    # Execute the template string in a temporary namespace and support
+    # tracing utilities by setting a value for frame.f_globals['__name__']
+    namespace = dict(__name__='namedtuple_%s' % typename)
+    exec(class_definition, namespace)
+    result = namespace[typename]
+    result._source = class_definition       # 可以通过_source 获取生成的源码定义
+    ```
+* 类装饰器可以以简单的方式做到，创建类时定制类，装饰器函数会传入类本身。
+* 这儿有个导入的例题，我基本都答对了（tql），有几个地方需要注意
+    * `python evaltime.py`执行后，对于`__name__ == '__main__'`语句下的内容，也会直接按顺序执行。
+    * 定义类时，它的静态变量以及子类的静态变量会在导入时就执行。
+    * 定义方法时，方法体中内容不会执行，只会在调用后执行。
+
+### 6. 元类基础知识
+
+* > `object`类和`type`类之间的关系很独特：`object`是`type`的实例，而`type`是`object`的子类。这种关系很“神奇”，无法使用`Python`代码表述，因为定义其中一个之前另一个必须存在。`type`是自身的实例这一点也很神奇。(我是我爸爸？)
+* 所有类都是`type`的实例，但是元类还是`type`的子类，因此可以作为制造类的工厂。
+* 这儿还有导入包含元类的例题，没有都对，主要以下需要注意：
+    * 如果定义了一个类的元类，那么会先调用派生类的类中逻辑，再调用元类的`__init__`方法
+    * 所有元类的实例（创建出来的类），都会受到执行元类的逻辑
+    ```python
+    # test.py
+    class MetaTest(type):
+        def __init__(cls, name, bases, dic):
+            print("MetaTest.__init__")
+            def inner(self):
+                print('MetaTest.__init__.inner')
+            cls.outer = inner
+
+    class MetaObjClass(metaclass=MetaTest):
+        print('MetaObjClass created')
+        def outer(self):
+            print('MetaObjClass.outer')
+
+    class SubMetaObjClass(MetaObjClass):
+        print('SubMetaObjClass created')
+        def outer(self):
+            print('SubMetaObjClass.outer')
+
+    ### 控制台执行
+    >>> import test
+    MetaObjClass created
+    MetaTest.__init__
+    SubMetaObjClass created
+    MetaTest.__init__
+    >>> test.MetaObjClass().outer()
+    MetaTest.__init__.inner
+    >>> test.SubMetaObjClass().outer()
+    MetaTest.__init__.inner
+    ```
+* 在python3中，`__prepare__`会在调用元类的`__new__`方法之前调用，可以保留属性在类定义体中的顺序。返回值必须是映射，并传入给`__new__`方法的最后一个参数。
+    ```python
+    class EntityMeta(type):
+
+        @classmethod
+        def __prepare__(cls, name, bases):
+            # 类属性将会存在返回的空字典中
+            return collections.OrderedDict()
+
+        def __init__(cls, name, bases, attr_dict):
+            super().__init__(name, bases, attr_dict)
+            # 这儿会按顺序打印出所有的属性了
+            print(attr_dict.keys())
+
+    ```
+* 元类可协助实现的任务：
+    * 验证属性
+    * 一次把装饰器依附到多个方法上
+    * 序列化对象或转换对象
+    * 对象关系映射
+    * 基于对象的持久存储
+    * 动态转换使用其他语言编写的类结构
+* 类对象的属性
+    * `__mro__`, `__class__`, `__name__`
+    * `cls.__bases__`由类的基类组成的元组，里面是强引用
+    * `cls.__qualname__`就是从全局作用域 用点运算符 点到它的路径名称`A.B.C`等。
+    * `cls.__subclasses__()`类的直接子类，并使用的弱引用
+    * `cls.mro()`元类可以覆盖这个方法定制类解析顺序
 
 ***
 
