@@ -46,10 +46,10 @@ noremap <C-n> :nohlsearch<CR>
 
 noremap tg gT
 
-map <up> :resize +5<CR>
-map <down> :resize -5<CR>
-map <left> :vertical resize -5<CR>
-map <right> :vertical resize +5<CR>
+" map <up> :resize +5<CR>
+" map <down> :resize -5<CR>
+" map <left> :vertical resize -5<CR>
+" map <right> :vertical resize +5<CR>
 
 map s <nop>
 map Q :wq<CR>                   " 将Q键绑定到:wq(保存并退出)

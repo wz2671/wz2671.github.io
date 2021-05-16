@@ -23,7 +23,9 @@ date: 2020-12-13 17:23:59
 * 配合`__len__`方法，就能和Python自由的序列数据类型一样使用了。
 
 
-### 2. 对于Python内置的类型（例如：list, str, bytearry），CPython会直接返回`PyVarObject`里的`ob_size`的值。它表示内存中长度可变的内置对象的C语言结构体。
+### 2. 内置`len`
+
+* 对于Python内置的类型（例如：list, str, bytearry），CPython会直接返回`PyVarObject`里的`ob_size`的值。它表示内存中长度可变的内置对象的C语言结构体。
 
 
 ### 3. 字符串表示形式
