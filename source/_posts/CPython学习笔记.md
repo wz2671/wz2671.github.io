@@ -4,9 +4,10 @@ date: 2021-04-07 23:44:47
 tags: python笔记
 ---
 
-[参考资料](https://pg.ucsd.edu/cpython-internals.htm)
-[youtube视频](https://www.youtube.com/playlist?list=PLzV58Zm8FuBL6OAv1Yu6AwXZrnsFbbR0S)
-
+[参考资料](https://pg.ucsd.edu/cpython-internals.htm)  
+[youtube视频](https://www.youtube.com/playlist?list=PLzV58Zm8FuBL6OAv1Yu6AwXZrnsFbbR0S)  
+[百度云(提取码：2twh)](https://pan.baidu.com/s/1SmWNpCrY3kfiKDxAdI8roA)
+[python2.7源码链接](https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz)
 
 <!--more -->
 
@@ -124,5 +125,45 @@ tags: python笔记
    can be disabled on gcc by using the -fno-gcse flag (or possibly
    -fno-crossjumping).
 */
-
 ```
+
+
+# Lecture 1. Interpreter and source code overview
+
+### 1. python解释器说明
+* CPython是标准的python解释器，采用c语言实现。PyPy是用python实现的；Jython是用java写的；Skulpt是用javascript写的，因此可以再网页浏览器里使用。
+* 讲述了一些基本概念，xxx.py是python的源码，python解释器可以执行它并作出对应输出。而python解释器是cpython经过g++等编辑器编译出来的可执行程序，我们要研究的就是cpython的实现思路之类。
+* 解释器执行的是字节码，并不是python的源码，编译成字节码的过程是个比较标准的过程，视频说不会太过关注，解释器部分才是真正python的动态之处
+
+### 2. 源码概览
+* [源码链接](https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz)
+* `/Include`目录下是所有的头文件，里面定义了所有的接口
+* `/Objects`目录下所有的`.c`文件都对应了python中的一种对象类型，例如`listobject.c`就是对应的`list`
+* `/Python`目录下是运行时主要用的一些模块
+* `/Modules`目录下是一些内置模块的实现如`import operator`，里面是用c语言实现的
+* `/Lib`目录下是用python实现的一些内置模块
+
+* `/Include/opcode.h`文件下定义了python中所有的操作码（字节码）例如`LOAD_FAST`之类
+* `/Python/ceval.c`中是python的主循环所在位置，在源码的1069行起，它是一个无限的循环，每次解释一个字节码，就会调度一次循环
+```c++
+// line[1069-1086]
+    for (;;) {
+#ifdef WITH_TSC
+        if (inst1 == 0) {
+            /* Almost surely, the opcode executed a break
+               or a continue, preventing inst1 from being set
+               on the way out of the loop.
+            */
+            READ_TIMESTAMP(inst1);
+            loop1 = inst1;
+        }
+        dump_tsc(opcode, ticked, inst0, inst1, loop0, loop1,
+                 intr0, intr1);
+        ticked = 0;
+        inst1 = 0;
+        intr0 = 0;
+        intr1 = 0;
+        READ_TIMESTAMP(loop0);
+#endif
+```
+* 可以随意修改cpython源码，进行编译，就能使用自己独家定制的python解释器了
