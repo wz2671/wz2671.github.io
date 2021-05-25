@@ -167,3 +167,46 @@ tags: python笔记
 #endif
 ```
 * 可以随意修改cpython源码，进行编译，就能使用自己独家定制的python解释器了
+
+
+***
+
+# Lecture 2. Opcodes and main interpreter loop
+
+### 1. `compile`内置函数
+* 由于切python2环境过于麻烦，此处用的都是python3
+* test.py
+    ```python
+    x = 1
+    y = 2
+    z = x + y
+    print(z)
+    ```
+* 使用`compile('test.py', 'test.py', 'exec')`编译该模块，返回一个`code object`
+    ```python
+    >>>> c.co_code
+    b'e\x00j\x01\x01\x00d\x00S\x00'
+    >>> [byte for byte in c.co_code]       # python
+    [101, 0, 106, 1, 1, 0, 100, 0, 83, 0]
+    ```
+    ```bash
+    PS D:\CODE\Python-2.7.18> python -m dis test.py
+    1           0 LOAD_CONST               0 (1)
+                2 STORE_NAME               0 (x)
+
+    2           4 LOAD_CONST               1 (2)
+                6 STORE_NAME               1 (y)
+
+    3           8 LOAD_NAME                0 (x)
+                10 LOAD_NAME                1 (y)
+                12 BINARY_ADD
+                14 STORE_NAME               2 (z)
+
+    4          16 LOAD_NAME                3 (print)
+                18 LOAD_NAME                2 (z)
+                20 CALL_FUNCTION            1
+                22 POP_TOP
+                24 LOAD_CONST               2 (None)
+                26 RETURN_VALUE
+    ```
+* 在`opcode.h`中，从94行`HAVE_ARGUMENT`起，下面的字节码是需要接受参数的了
