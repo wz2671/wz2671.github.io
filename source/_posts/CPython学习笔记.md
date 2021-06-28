@@ -210,3 +210,56 @@ tags: python笔记
                 26 RETURN_VALUE
     ```
 * 在`opcode.h`中，从94行`HAVE_ARGUMENT`起，下面的字节码是需要接受参数的了
+* 视频里说第三列的数字表示在变量栈(value stack)里的顺序
+
+### 2. `PyEval_EvalFrameEx`
+* 是一个超长的函数`line[689-3364]`，它就是执行python源码的主要函数，里面有个指针`stack_pointer`就是存的value stack
+* 先定义了一些操作的宏定义，例如压栈出栈等
+    ```c++
+    // line[883-975]
+    #define PUSH(v)         { (void)(BASIC_PUSH(v), \
+                            lltrace && prtrace(TOP(), "push")); \
+                            assert(STACK_LEVEL() <= co->co_stacksize); }
+    #define POP()           ((void)(lltrace && prtrace(TOP(), "pop")), \
+                            BASIC_POP())
+    ```
+* 它的参数是`PyFrameObject`，指的是第一节中的`frame`，其中存储了各个字节码，参数等
+    ```c++
+    // line[1024-1029]
+    co = f->f_code;
+    names = co->co_names;
+    consts = co->co_consts;
+    fastlocals = f->f_localsplus;
+    freevars = f->f_localsplus + co->co_nlocals;
+    first_instr = (unsigned char*) PyString_AS_STRING(co->co_code);
+    ```
+* 大大的循环从`line[1069]`开始`for (;;)`，其中`WITH_TSC`指的是`Timestamp counter`，用来评估程序跑的有多快。
+* 从`line[1211]`行起，就是大大的`switch...case...`，分别遍历每个操作符，并执行对应的操作，循环结束的部分如下所示，会跳到`fast_block_end`部分
+    ```c++
+    // line[2100-2105]
+    TARGET_NOARG(RETURN_VALUE)
+    {
+        retval = POP();
+        why = WHY_RETURN;
+        goto fast_block_end;
+    }
+    // line[2852-2856]
+    TARGET_NOARG(BREAK_LOOP)
+    {
+        why = WHY_BREAK;
+        goto fast_block_end;
+    }
+
+    // line[2858-2867]
+    TARGET(CONTINUE_LOOP)
+    {
+        retval = PyInt_FromLong(oparg);
+        if (!retval) {
+            x = NULL;
+            break;
+        }
+        why = WHY_CONTINUE;
+        goto fast_block_end;
+    }
+    ```
+* 之后会做一些清理的工作，直到`line[3363]`行`return retval`返回结果
