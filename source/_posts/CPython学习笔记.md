@@ -182,17 +182,20 @@ tags: python笔记
     z = x + y
     print(z)
     ```
-* 使用`compile('test.py', 'test.py', 'exec')`编译该模块，返回一个`code object`
+* 使用`compile(open('test.py').read(), 'test.py', 'exec')`编译该模块，返回一个`code object`。  
+    以下两部分是对应的，每个字节对应的就是一条操作码或者参数，`test.py`中的内容编译过后就是总长为28的字节数组(`co_code`)
     ```python
-    >>>> c.co_code
-    b'e\x00j\x01\x01\x00d\x00S\x00'
-    >>> [byte for byte in c.co_code]       # python
-    [101, 0, 106, 1, 1, 0, 100, 0, 83, 0]
+    >>> compile(open("test.py").read(), "test.py", 'exec')
+    <code object <module> at 0x000001A131B76190, file "test.py", line 1>
+    >>> _.co_code
+    b'd\x00Z\x00d\x01Z\x01e\x00e\x01\x17\x00Z\x02e\x03e\x02\x83\x01\x01\x00d\x02S\x00'
+    >>> [byte for byte in _]
+    [100, 0, 90, 0, 100, 1, 90, 1, 101, 0, 101, 1, 23, 0, 90, 2, 101, 3, 101, 2, 131, 1, 1, 0, 100, 2, 83, 0]
     ```
     ```bash
     PS D:\CODE\Python-2.7.18> python -m dis test.py
-    1           0 LOAD_CONST               0 (1)
-                2 STORE_NAME               0 (x)
+    1           0 LOAD_CONST               0 (1)        # 这儿LOAD_CONST占一字节(100)，参数一字节，共两字节
+                2 STORE_NAME               0 (x)        # STORE_NAME从第三字节开始(90)
 
     2           4 LOAD_CONST               1 (2)
                 6 STORE_NAME               1 (y)
@@ -209,6 +212,7 @@ tags: python笔记
                 24 LOAD_CONST               2 (None)
                 26 RETURN_VALUE
     ```
+* **在教程中，上面说的有点问题**，一开始使用`compile('test.py', 'test.py', 'exec')`实际编译的是`test.py`这条语句。(后来纠正了)
 * 在`opcode.h`中，从94行`HAVE_ARGUMENT`起，下面的字节码是需要接受参数的了
 * 视频里说第三列的数字表示在变量栈(value stack)里的顺序
 
@@ -263,3 +267,174 @@ tags: python笔记
     }
     ```
 * 之后会做一些清理的工作，直到`line[3363]`行`return retval`返回结果
+
+***
+
+
+# Lecture 3. Frames, functions calls, and scope
+
+### 1. `Frames`
+
+* `PyEval_EvalFrameEx`是之前所说的执行字节码的主入口，他接受一个`PyFrameObject`的指针，这个指针指向的就是一个`frame`对象。
+
+* 每个`frame`都包含一段可以执行的逻辑，也就是`code_object`，还有相关的运行环境如全局变量和局部变量等，它的具体定义如下所示，在文件`Include/frameobject.h`中
+    ```c++
+    typedef struct _frame {
+        PyObject_VAR_HEAD
+        struct _frame *f_back;	/* previous frame, or NULL */       // 存储了调用它的上一个frame
+        PyCodeObject *f_code;	/* code segment */                  // 字节对象
+        PyObject *f_builtins;	/* builtin symbol table (PyDictObject) */
+        PyObject *f_globals;	/* global symbol table (PyDictObject) */
+        PyObject *f_locals;		/* local symbol table (any mapping) */
+        PyObject **f_valuestack;	/* points after the last local */       // 拥有一个独立的数据栈
+        /* Next free slot in f_valuestack.  Frame creation sets to f_valuestack.
+        Frame evaluation usually NULLs it, but a frame that yields sets it
+        to the current stack top. */
+        PyObject **f_stacktop;
+        PyObject *f_trace;		/* Trace function */
+
+        /* If an exception is raised in this frame, the next three are used to
+        * record the exception info (if any) originally in the thread state.  See
+        * comments before set_exc_info() -- it's not obvious.
+        * Invariant:  if _type is NULL, then so are _value and _traceback.
+        * Desired invariant:  all three are NULL, or all three are non-NULL.  That
+        * one isn't currently true, but "should be".
+        */
+        PyObject *f_exc_type, *f_exc_value, *f_exc_traceback;
+
+        PyThreadState *f_tstate;
+        int f_lasti;		/* Last instruction if called */
+        /* Call PyFrame_GetLineNumber() instead of reading this field
+        directly.  As of 2.3 f_lineno is only valid when tracing is
+        active (i.e. when f_trace is set).  At other times we use
+        PyCode_Addr2Line to calculate the line from the current
+        bytecode index. */
+        int f_lineno;		/* Current line number */
+        int f_iblock;		/* index in f_blockstack */
+        PyTryBlock f_blockstack[CO_MAXBLOCKS]; /* for try and loop blocks */
+        PyObject *f_localsplus[1];	/* locals+stack, dynamically sized */       // 动态创建的一个数据栈
+    } PyFrameObject;
+    ```
+
+* 每个函数都会对应一个`code_object`，通过编译以下代码，可以看到`code object`被存到了名为`func`的变量里了，它也包含字节码，是一段独立的可执行的逻辑
+    ```python
+    def fun(x):
+        a = x
+        print(2 * a)
+    ```
+    ```bash
+    PS D:\CODE\Python-2.7.18> python -m dis .\test.py
+    2           0 LOAD_CONST               0 (<code object fun at 0x000001872E049920, file ".\test.py", line 2>)
+                2 LOAD_CONST               1 ('fun')
+                4 MAKE_FUNCTION            0
+                6 STORE_NAME               0 (fun)
+                8 LOAD_CONST               2 (None)
+                10 RETURN_VALUE
+
+    Disassembly of <code object fun at 0x000001872E049920, file ".\test.py", line 2>:
+    3           0 LOAD_FAST                0 (x)
+                2 STORE_FAST               1 (a)
+
+    4           4 LOAD_GLOBAL              0 (print)
+                6 LOAD_CONST               1 (2)
+                8 LOAD_FAST                1 (a)
+                10 BINARY_MULTIPLY
+                12 CALL_FUNCTION            1
+                14 POP_TOP
+                16 LOAD_CONST               0 (None)
+                18 RETURN_VALUE
+    PS D:\CODE\Python-2.7.18>ash
+    ```
+* `code_object`定义在了`Include/code.h`之中，具体成员变量如下所示
+    ```c++
+    /* Bytecode object */
+    typedef struct {
+        PyObject_HEAD
+        int co_argcount;		/* #arguments, except *args */
+        int co_nlocals;		/* #local variables */
+        int co_stacksize;		/* #entries needed for evaluation stack */
+        int co_flags;		/* CO_..., see below */
+        PyObject *co_code;		/* instruction opcodes */       // 原始的操作码
+        PyObject *co_consts;	/* list (constants used) */
+        PyObject *co_names;		/* list of strings (names used) */
+        PyObject *co_varnames;	/* tuple of strings (local variable names) */   //变量名之类
+        PyObject *co_freevars;	/* tuple of strings (free variable names) */    // 自由变量
+        PyObject *co_cellvars;      /* tuple of strings (cell variable names) */
+        /* The rest doesn't count for hash/cmp */
+        PyObject *co_filename;	/* string (where it was loaded from) */
+        PyObject *co_name;		/* string (name, for reference) */
+        int co_firstlineno;		/* first source line number */
+        PyObject *co_lnotab;	/* string (encoding addr<->lineno mapping) See
+                    Objects/lnotab_notes.txt for details. */
+        void *co_zombieframe;     /* for optimization only (see frameobject.c) */
+        PyObject *co_weakreflist;   /* to support weakrefs to code objects */
+    } PyCodeObject;
+    ```
+
+* 一些概念区分:
+    * `code_object`，它存储的了原始的字节码，和一些变量名之类。
+    * `function`持有一个`code_object`，同时拥有执行该`code_object`的环境`environment`，它时静态的数据。
+    * `frame`是`function`在运行时的对象，它是动态的。如下图所示，`fact`只拥有一个`function`，但是在运行时可以拥有多个`frame`，每个`frame`拥有数据自己的数据栈。![frame_and_function](/images/cpython/frame_and_function.png)
+
+* `CALL_FUNCTION`字节码的实现只是调用函数，具体实现在`call_function`函数里的`fast_function`中。
+    ```c++
+    // line[3005-3019]
+    TARGET(CALL_FUNCTION)
+    {
+        PyObject **sp;
+        PCALL(PCALL_ALL);
+        sp = stack_pointer;             
+    #ifdef WITH_TSC
+        x = call_function(&sp, oparg, &intr0, &intr1);
+    #else
+        x = call_function(&sp, oparg);  //  执行函数，获取返回值
+    #endif
+        stack_pointer = sp;             //
+        PUSH(x);                        // 返回结果压栈
+        if (x != NULL) DISPATCH();
+        break;
+    }
+
+    // line[4334-4401]
+    static PyObject *
+    call_function(PyObject ***pp_stack, int oparg
+    #ifdef WITH_TSC
+                    , uint64* pintr0, uint64* pintr1
+    #endif
+                    )
+    {
+    // ...略
+        if (PyFunction_Check(func))
+            x = fast_function(func, pp_stack, n, na, nk);
+        else
+            x = do_call(func, pp_stack, na, nk);
+    // ...略
+    }
+
+    // line[4424]
+    static PyObject *
+    fast_function(PyObject *func, PyObject ***pp_stack, int n, int na, int nk)
+    {
+    // 略
+            assert(tstate != NULL);
+            f = PyFrame_New(tstate, co, globals, NULL);     // 这儿创建的对应frame
+            if (f == NULL)
+                return NULL;
+            // 以下将函数的value_stack拷贝了出来，本质上是将参数传递了过来
+            fastlocals = f->f_localsplus;
+            stack = (*pp_stack) - n;
+
+            for (i = 0; i < n; i++) {
+                Py_INCREF(*stack);
+                fastlocals[i] = *stack++;
+            }
+            retval = PyEval_EvalFrameEx(f,0);       // 此时重新调用主循环，执行刚刚创建的frame
+            ++tstate->recursion_depth;
+            Py_DECREF(f);
+            --tstate->recursion_depth;
+            return retval;
+        }
+    // 略
+    }
+    ```
+* 因此调用一个函数的流程时执行`CALL_FUNCTION`操作码，实质是创建了一个`FrameObject`交给`PyEval_EvalFrameEx`去执行。
