@@ -230,7 +230,7 @@ tags: python笔记
 * 它的参数是`PyFrameObject`，指的是第一节中的`frame`，其中存储了各个字节码，参数等
     ```c++
     // line[1024-1029]
-    co = f->f_code;
+    co = f->f_code;         // 取出frame的code_object
     names = co->co_names;
     consts = co->co_consts;
     fastlocals = f->f_localsplus;

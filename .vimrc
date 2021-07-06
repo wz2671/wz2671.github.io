@@ -38,10 +38,10 @@ exec "nohlsearch"
 au BufReadPost * if line(\)  1 && line(\) = line($) | exe normal! g\ | endif
 
 
-noremap <C-j> 5jzz
-noremap <C-k> 5kzz
-noremap <C-h> 0
-noremap <C-l> $
+noremap J 5jzz
+noremap K 5kzz
+noremap H 0
+noremap L $
 noremap <C-n> :nohlsearch<CR>
 
 noremap tg gT
