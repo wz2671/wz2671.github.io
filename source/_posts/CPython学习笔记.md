@@ -268,6 +268,9 @@ tags: python笔记
     ```
 * 之后会做一些清理的工作，直到`line[3363]`行`return retval`返回结果
 
+### 3. `dis`模块
+* 官方文档的`dis`模块中详细说明了各个字节码的含义，具体内容可参考[链接](https://docs.python.org/3/library/dis.html)
+
 ***
 
 
@@ -438,3 +441,120 @@ tags: python笔记
     }
     ```
 * 因此调用一个函数的流程时执行`CALL_FUNCTION`操作码，实质是创建了一个`FrameObject`交给`PyEval_EvalFrameEx`去执行。
+
+***
+
+# Lecture 4. PyObject The core Python object
+
+### 1. 在python中万物皆对象
+
+* 就算是`int`的变量，也是对象
+    ```python
+    >>> x = 123
+    >>> dir(x)
+    ['__abs__', '__add__', '__and__', '__bool__', '__ceil__', '__class__', '__delattr__', '__dir__', '__divmod__', '__doc__', '__eq__', '__float__', '__floor__', '__floordiv__', '__format__', '__ge__', '__getattribute__', '__getnewargs__', '__gt__', '__hash__', '__index__', '__init__', '__init_subclass__', '__int__', '__invert__', '__le__', '__lshift__', '__lt__', '__mod__', '__mul__', '__ne__', '__neg__', '__new__', '__or__', '__pos__', '__pow__', '__radd__', '__rand__', '__rdivmod__', '__reduce__', '__reduce_ex__', '__repr__', '__rfloordiv__', '__rlshift__', '__rmod__', '__rmul__', '__ror__', '__round__', '__rpow__', '__rrshift__', '__rshift__', '__rsub__', '__rtruediv__', '__rxor__', '__setattr__', '__sizeof__', '__str__', '__sub__', '__subclasshook__', '__truediv__', '__trunc__', '__xor__', 'as_integer_ratio', 'bit_length', 'conjugate', 'denominator', 'from_bytes', 'imag', 'numerator', 'real', 'to_bytes']
+    >>> x.__add__(1)
+    124
+    ```
+* `int`的加法实际实现在`intobject.c`里的`int_add`中
+    ```c++
+    // line[168-179]
+    static PyObject *
+    int_add(PyIntObject *v, PyIntObject *w)
+    {
+        register long a, b, x;
+        CONVERT_TO_LONG(v, a);
+        CONVERT_TO_LONG(w, b);
+        /* casts in the line below avoid undefined behaviour on overflow */
+        x = (long)((unsigned long)a + b);
+        if ((x^a) >= 0 || (x^b) >= 0)
+            return PyInt_FromLong(x);
+        return PyLong_Type.tp_as_number->nb_add((PyObject *)v, (PyObject *)w);
+    }
+    ```
+* 使用`sys`模块中过的`getrefcount`可以轻易看到引用计数。从视频中的来看，有些令人费解
+* 在`object.h`中的注释中说，每个`PyObject`对象都拥有一个`reference count`引用计数，和`type`类型，对于`type`类型，它有一个`type`指向了自己，（也仅仅只有这两个东西）
+    ```c++
+    #define PyObject_HEAD                   \
+        _PyObject_HEAD_EXTRA                \       // 这个宏定义是用于调试的(Py_TRACE_REFS)
+        Py_ssize_t ob_refcnt;               \       // 引用计数
+        struct _typeobject *ob_type;                // 类型指针
+    /* Nothing is actually declared to be a PyObject, but every pointer to
+    * a Python object can be cast to a PyObject*.  This is inheritance built
+    * by hand.  Similarly every pointer to a variable-size Python object can,
+    * in addition, be cast to PyVarObject*.
+    */
+    typedef struct _object {
+        PyObject_HEAD
+    } PyObject;
+    // 宏定义编辑过后的结果就是
+    typedef struct _object {
+        Py_ssize_t ob_refcnt;
+        struct _typeobject *ob_type;
+    }
+    ```
+* 对于`intobject`，它的定义如下(在`intobject.h`中)，相对于PyObject，多定义了一个long，其他的对象类似。
+    ```c++
+    typedef struct {
+        PyObject_HEAD
+        long ob_ival;
+    } PyIntObject;
+    ```
+* PyObject对象的生成与内存分配在`object.c`中的`_PyObject_New`函数中。
+    ```c++
+    // line[240-248] 先创建一个类型
+    PyObject *
+    _PyObject_New(PyTypeObject *tp)
+    {
+        PyObject *op;
+        op = (PyObject *) PyObject_MALLOC(_PyObject_SIZE(tp));
+        if (op == NULL)
+            return PyErr_NoMemory();
+        return PyObject_INIT(op, tp);
+    }
+    ```
+* python中对象的动态性主要来源于，对每种类型都约束其特定接口，不同类型的PyObject传入后，会执行相同名称不同接口的具体实现
+    ```c++
+    // 例如把某个类型转成字符串，通过`tp_str`接口实现的，有点像多态那味
+    PyObject *
+    _PyObject_Str(PyObject *v)
+    {
+        PyObject *res;
+        int type_ok;
+        if (v == NULL)
+            return PyString_FromString("<NULL>");
+        if (PyString_CheckExact(v)) {
+            Py_INCREF(v);
+            return v;
+        }
+    #ifdef Py_USING_UNICODE
+        if (PyUnicode_CheckExact(v)) {
+            Py_INCREF(v);
+            return v;
+        }
+    #endif
+        if (Py_TYPE(v)->tp_str == NULL)
+            return PyObject_Repr(v);
+
+        /* It is possible for a type to have a tp_str representation that loops
+        infinitely. */
+        if (Py_EnterRecursiveCall(" while getting the str of an object"))
+            return NULL;
+        res = (*Py_TYPE(v)->tp_str)(v);     // 每个类型都实现了`tp_str`的方法，去执行具体类型转化为字符串的逻辑
+        Py_LeaveRecursiveCall();
+        if (res == NULL)
+            return NULL;
+        type_ok = PyString_Check(res);
+    #ifdef Py_USING_UNICODE
+        type_ok = type_ok || PyUnicode_Check(res);
+    #endif
+        if (!type_ok) {
+            PyErr_Format(PyExc_TypeError,
+                        "__str__ returned non-string (type %.200s)",
+                        Py_TYPE(res)->tp_name);
+            Py_DECREF(res);
+            return NULL;
+        }
+        return res;
+    }
+    ```
