@@ -86,46 +86,46 @@ tags: python笔记
     ```
 * 如果python只有一个数据栈，那么生成器的特性就无法实现
 * 由于`python`的动态类型特性，想要进一步地优化性能是一件很困难的事情，在python2中大多数是个大大的`switch...case...`，在python3中会有部分优化，源码中的部分说明如下：大致意思是，会根据cpu流水线的feature，进行优化。
-```cpp
-/* Computed GOTOs, or
-       the-optimization-commonly-but-improperly-known-as-"threaded code"
-   using gcc's labels-as-values extension
-   (http://gcc.gnu.org/onlinedocs/gcc/Labels-as-Values.html).
+    ```cpp
+    /* Computed GOTOs, or
+        the-optimization-commonly-but-improperly-known-as-"threaded code"
+    using gcc's labels-as-values extension
+    (http://gcc.gnu.org/onlinedocs/gcc/Labels-as-Values.html).
 
-   The traditional bytecode evaluation loop uses a "switch" statement, which
-   decent compilers will optimize as a single indirect branch instruction
-   combined with a lookup table of jump addresses. However, since the
-   indirect jump instruction is shared by all opcodes, the CPU will have a
-   hard time making the right prediction for where to jump next (actually,
-   it will be always wrong except in the uncommon case of a sequence of
-   several identical opcodes).
+    The traditional bytecode evaluation loop uses a "switch" statement, which
+    decent compilers will optimize as a single indirect branch instruction
+    combined with a lookup table of jump addresses. However, since the
+    indirect jump instruction is shared by all opcodes, the CPU will have a
+    hard time making the right prediction for where to jump next (actually,
+    it will be always wrong except in the uncommon case of a sequence of
+    several identical opcodes).
 
-   "Threaded code" in contrast, uses an explicit jump table and an explicit
-   indirect jump instruction at the end of each opcode. Since the jump
-   instruction is at a different address for each opcode, the CPU will make a
-   separate prediction for each of these instructions, which is equivalent to
-   predicting the second opcode of each opcode pair. These predictions have
-   a much better chance to turn out valid, especially in small bytecode loops.
+    "Threaded code" in contrast, uses an explicit jump table and an explicit
+    indirect jump instruction at the end of each opcode. Since the jump
+    instruction is at a different address for each opcode, the CPU will make a
+    separate prediction for each of these instructions, which is equivalent to
+    predicting the second opcode of each opcode pair. These predictions have
+    a much better chance to turn out valid, especially in small bytecode loops.
 
-   A mispredicted branch on a modern CPU flushes the whole pipeline and
-   can cost several CPU cycles (depending on the pipeline depth),
-   and potentially many more instructions (depending on the pipeline width).
-   A correctly predicted branch, however, is nearly free.
+    A mispredicted branch on a modern CPU flushes the whole pipeline and
+    can cost several CPU cycles (depending on the pipeline depth),
+    and potentially many more instructions (depending on the pipeline width).
+    A correctly predicted branch, however, is nearly free.
 
-   At the time of this writing, the "threaded code" version is up to 15-20%
-   faster than the normal "switch" version, depending on the compiler and the
-   CPU architecture.
+    At the time of this writing, the "threaded code" version is up to 15-20%
+    faster than the normal "switch" version, depending on the compiler and the
+    CPU architecture.
 
-   We disable the optimization if DYNAMIC_EXECUTION_PROFILE is defined,
-   because it would render the measurements invalid.
+    We disable the optimization if DYNAMIC_EXECUTION_PROFILE is defined,
+    because it would render the measurements invalid.
 
 
-   NOTE: care must be taken that the compiler doesn't try to "optimize" the
-   indirect jumps by sharing them between all opcodes. Such optimizations
-   can be disabled on gcc by using the -fno-gcse flag (or possibly
-   -fno-crossjumping).
-*/
-```
+    NOTE: care must be taken that the compiler doesn't try to "optimize" the
+    indirect jumps by sharing them between all opcodes. Such optimizations
+    can be disabled on gcc by using the -fno-gcse flag (or possibly
+    -fno-crossjumping).
+    */
+    ```
 
 
 # Lecture 1. Interpreter and source code overview
@@ -145,27 +145,27 @@ tags: python笔记
 
 * `/Include/opcode.h`文件下定义了python中所有的操作码（字节码）例如`LOAD_FAST`之类
 * `/Python/ceval.c`中是python的主循环所在位置，在源码的1069行起，它是一个无限的循环，每次解释一个字节码，就会调度一次循环
-```c++
-// line[1069-1086]
-    for (;;) {
-#ifdef WITH_TSC
-        if (inst1 == 0) {
-            /* Almost surely, the opcode executed a break
-               or a continue, preventing inst1 from being set
-               on the way out of the loop.
-            */
-            READ_TIMESTAMP(inst1);
-            loop1 = inst1;
-        }
-        dump_tsc(opcode, ticked, inst0, inst1, loop0, loop1,
-                 intr0, intr1);
-        ticked = 0;
-        inst1 = 0;
-        intr0 = 0;
-        intr1 = 0;
-        READ_TIMESTAMP(loop0);
-#endif
-```
+    ```c++
+    // line[1069-1086]
+        for (;;) {
+    #ifdef WITH_TSC
+            if (inst1 == 0) {
+                /* Almost surely, the opcode executed a break
+                or a continue, preventing inst1 from being set
+                on the way out of the loop.
+                */
+                READ_TIMESTAMP(inst1);
+                loop1 = inst1;
+            }
+            dump_tsc(opcode, ticked, inst0, inst1, loop0, loop1,
+                    intr0, intr1);
+            ticked = 0;
+            inst1 = 0;
+            intr0 = 0;
+            intr1 = 0;
+            READ_TIMESTAMP(loop0);
+    #endif
+    ```
 * 可以随意修改cpython源码，进行编译，就能使用自己独家定制的python解释器了
 
 
@@ -556,5 +556,404 @@ tags: python笔记
             return NULL;
         }
         return res;
+    }
+    ```
+
+* 除了`PyObject`之外，附近还有一个`PyVarObject`，是用来处理一些可变变量的类型，除了`PyObject_HEAD`之外，它还额外拥有一个`ob_size`属性。因此它有三条属性：引用计数，类型，和体重。
+    ```c++
+    #define PyObject_VAR_HEAD               \
+        PyObject_HEAD                       \
+        Py_ssize_t ob_size; /* Number of items in variable part */
+    #define Py_INVALID_SIZE (Py_ssize_t)-1
+
+    /* Similarly every pointer to a variable-size Python object can,
+    * in addition, be cast to PyVarObject*.
+    */
+    typedef struct {
+        PyObject_VAR_HEAD
+    } PyVarObject;
+    ```
+
+***
+
+# Lecture 5. Example Python data types
+
+### 1. `stringobject`
+
+* 字符串是不可变类型(immutable)，在python3中，字符串会更复杂一点，因为它要支持各种变长的国际化字符。
+* 每个字符串对象，实际真正只会被创建一次，其他的只是持有其引用，类似于java中的池子。([string interning](http://wikipedia.org/wiki/String_interning))，<font color=red> 但是要注意，只有简单的`str`才会有此feature </font>
+    ```python
+    >>> a = "hello"
+    >>> b = "hello"
+    >>> a is b
+    True
+    >>> aa = "ashdfijahsdkl jvoi jweoifj asdoik fuiasdhvck jx"
+    >>> bb = "ashdfijahsdkl jvoi jweoifj asdoik fuiasdhvck jx"
+    >>> aa is bb
+    False
+    # 以下这种格式固定的，也会被优化
+    >>> aa = 'hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello'
+    >>> bb = 'hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello'
+    >>> aa is bb
+    True
+    ```
+
+* `stringobject`的定义如下：
+    ```c++
+    /*
+    Type PyStringObject represents a character string.  An extra zero byte is
+    reserved at the end to ensure it is zero-terminated, but a size is
+    present so strings with null bytes in them can be represented.  This
+    is an immutable object type.
+
+    There are functions to create new string objects, to test
+    an object for string-ness, and to get the
+    string value.  The latter function returns a null pointer
+    if the object is not of the proper type.
+    There is a variant that takes an explicit size as well as a
+    variant that assumes a zero-terminated string.  Note that none of the
+    functions should be applied to nil objects.
+    */
+
+    /* Caching the hash (ob_shash) saves recalculation of a string's hash value.
+    Interning strings (ob_sstate) tries to ensure that only one string
+    object with a given value exists, so equality tests can be one pointer
+    comparison.  This is generally restricted to strings that "look like"
+    Python identifiers, although the intern() builtin can be used to force
+    interning of any string.
+    Together, these sped the interpreter by up to 20%. */
+
+    typedef struct {
+        PyObject_VAR_HEAD
+        long ob_shash;          // 用于计算字符串的哈希值，会保存在一个驻留字典中，以节约内存（上面注释有说明）
+        int ob_sstate;          // 如果没有驻留在内存中，就为0
+        char ob_sval[1];        // 普通的cstring，最后一个字符是0x00
+
+        /* Invariants:
+        *     ob_sval contains space for 'ob_size+1' elements.
+        *     ob_sval[ob_size] == 0.
+        *     ob_shash is the hash of the string or -1 if not computed yet.
+        *     ob_sstate != 0 iff the string object is in stringobject.c's
+        *       'interned' dictionary; in this case the two references
+        *       from 'interned' to this object are *not counted* in ob_refcnt.
+        */
+    } PyStringObject;
+    ```
+* 示例代码
+    ```python
+    # test.py
+    a = "hello"
+    b = "hello"
+
+    a == b
+    a + b
+    ```
+    ```bash
+    PS D:\CODE\Python-2.7.18> python -m dis test.py
+    1           0 LOAD_CONST               0 ('hello')
+                2 STORE_NAME               0 (a)
+
+    2           4 LOAD_CONST               0 ('hello')
+                6 STORE_NAME               1 (b)
+
+    4           8 LOAD_NAME                0 (a)
+                10 LOAD_NAME                1 (b)
+                12 COMPARE_OP               2 (==)      # 比较两个值
+                14 POP_TOP
+
+    6           16 LOAD_NAME                0 (a)
+                18 LOAD_NAME                1 (b)
+                20 BINARY_ADD                           # 字符串连接，只是个普普通通的加法
+                22 POP_TOP
+                24 LOAD_CONST               1 (None)
+                26 RETURN_VALUE
+    ```
+* 字符串的比较，被执行的就是以上的`COMPARE_OP`操作码。总体比较的步骤大致如下：
+    * `ceval.c`中会对该字节码进行解释执行，从变量栈中取出连个值，由于是字符串，执行到`cmp_outcome`函数
+        ```c++
+        // line[2566-2601]
+        TARGET(COMPARE_OP)
+        {
+            w = POP();
+            v = TOP();
+            if (PyInt_CheckExact(w) && PyInt_CheckExact(v)) {       // 整形的比较
+                /* INLINE: cmp(int, int) */
+                register long a, b;
+                register int res;
+                a = PyInt_AS_LONG(v);
+                b = PyInt_AS_LONG(w);
+                switch (oparg) {
+                case PyCmp_LT: res = a <  b; break;
+                case PyCmp_LE: res = a <= b; break;
+                case PyCmp_EQ: res = a == b; break;
+                case PyCmp_NE: res = a != b; break;
+                case PyCmp_GT: res = a >  b; break;
+                case PyCmp_GE: res = a >= b; break;
+                case PyCmp_IS: res = v == w; break;
+                case PyCmp_IS_NOT: res = v != w; break;
+                default: goto slow_compare;
+                }
+                x = res ? Py_True : Py_False;
+                Py_INCREF(x);
+            }
+            else {
+                slow_compare:
+                x = cmp_outcome(oparg, v, w);                       // 其他的类型
+            }
+            Py_DECREF(v);
+            Py_DECREF(w);
+            SET_TOP(x);
+            if (x == NULL) break;
+            PREDICT(POP_JUMP_IF_FALSE);
+            PREDICT(POP_JUMP_IF_TRUE);
+            DISPATCH();
+        }
+        ```
+    * 在`cmp_outcome`会走到`default`中的`PyObject_RichCompare`函数。
+        ```c++
+        static PyObject *
+        cmp_outcome(int op, register PyObject *v, register PyObject *w)
+        {
+            int res = 0;
+            switch (op) {
+            case PyCmp_IS:                                  // is的判断 效率会高点
+                res = (v == w);
+                break;
+            case PyCmp_IS_NOT:
+                res = (v != w);
+                break;
+            case PyCmp_IN:
+                res = PySequence_Contains(w, v);
+                if (res < 0)
+                    return NULL;
+                break;
+            case PyCmp_NOT_IN:
+                res = PySequence_Contains(w, v);
+                if (res < 0)
+                    return NULL;
+                res = !res;
+                break;
+            case PyCmp_EXC_MATCH:
+                // 太长，跳过了，也没看懂，似乎是报警用的
+                break;
+            default:
+                return PyObject_RichCompare(v, w, op);          // 走到了这儿
+            }
+            v = res ? Py_True : Py_False;
+            Py_INCREF(v);
+            return v;
+        }
+        ```
+    * 在`object.c`中的`PyObject_RichCompare`函数中，走到了取比较函数的指针`frich`并执行的分支，也就是执行了`RICHCOMPARE`宏定义。
+        ```c++
+        /* Return:
+        NULL for exception;
+        some object not equal to NotImplemented if it is implemented
+            (this latter object may not be a Boolean).
+        */
+        PyObject *
+        PyObject_RichCompare(PyObject *v, PyObject *w, int op)
+        {
+            PyObject *res;
+
+            assert(Py_LT <= op && op <= Py_GE);
+            if (Py_EnterRecursiveCall(" in cmp"))
+                return NULL;
+
+            /* If the types are equal, and not old-style instances, try to
+            get out cheap (don't bother with coercions etc.). */
+            if (v->ob_type == w->ob_type && !PyInstance_Check(v)) {
+                cmpfunc fcmp;
+                richcmpfunc frich = RICHCOMPARE(v->ob_type);                // 这儿会把stringobject中的比较函数指针拿出来
+                /* If the type has richcmp, try it first.  try_rich_compare
+                tries it two-sided, which is not needed since we've a
+                single type only. */
+                if (frich != NULL) {
+                    res = (*frich)(v, w, op);                               // 在这儿执行这个指针所指向的函数
+                    if (res != Py_NotImplemented)
+                        goto Done;
+                    Py_DECREF(res);
+                }
+                /* No richcmp, or this particular richmp not implemented.
+                Try 3-way cmp. */
+                fcmp = v->ob_type->tp_compare;
+                if (fcmp != NULL) {
+                    int c = (*fcmp)(v, w);
+                    c = adjust_tp_compare(c);
+                    if (c == -2) {
+                        res = NULL;
+                        goto Done;
+                    }
+                    res = convert_3way_to_object(op, c);
+                    goto Done;
+                }
+            }
+
+            /* Fast path not taken, or couldn't deliver a useful result. */
+            res = do_richcmp(v, w, op);
+        Done:
+            Py_LeaveRecursiveCall();
+            return res;
+        }
+        ```
+    * 此处，会在运行时拿到`stringobject.c`里的`tp_richcompare`，也就是`string_richcompare`函数，执行，这儿就是最终两个字符串进行比较的地方。
+        ```c++
+        static PyObject*
+        string_richcompare(PyStringObject *a, PyStringObject *b, int op)
+        {
+            int c;
+            Py_ssize_t len_a, len_b;
+            Py_ssize_t min_len;
+            PyObject *result;
+
+            /* Make sure both arguments are strings. */
+            if (!(PyString_Check(a) && PyString_Check(b))) {            // 检查两个参数是否都是字符串类型
+                result = Py_NotImplemented;
+                goto out;
+            }
+            if (a == b) {                                               // 判断是否执行同一个PyStringObject
+                switch (op) {
+                case Py_EQ:case Py_LE:case Py_GE:
+                    result = Py_True;                                   // 此类都为True，否则为False
+                    goto out;
+                case Py_NE:case Py_LT:case Py_GT:
+                    result = Py_False;
+                    goto out;
+                }
+            }
+            if (op == Py_EQ) {                                          // 如果是判断是否相等
+                /* Supporting Py_NE here as well does not save
+                much time, since Py_NE is rarely used.  */
+                if (Py_SIZE(a) == Py_SIZE(b)                            // 长度不等的串一定不等
+                    && (a->ob_sval[0] == b->ob_sval[0]                  // 首字母检查是否相等
+                    && memcmp(a->ob_sval, b->ob_sval, Py_SIZE(a)) == 0)) {          // 调用c提供的内存比较方法memcmp
+                    result = Py_True;
+                } else {
+                    result = Py_False;
+                }
+                goto out;
+            }
+            len_a = Py_SIZE(a); len_b = Py_SIZE(b);
+            min_len = (len_a < len_b) ? len_a : len_b;
+            if (min_len > 0) {
+                c = Py_CHARMASK(*a->ob_sval) - Py_CHARMASK(*b->ob_sval);
+                if (c==0)
+                    c = memcmp(a->ob_sval, b->ob_sval, min_len);
+            } else
+                c = 0;
+            if (c == 0)
+                c = (len_a < len_b) ? -1 : (len_a > len_b) ? 1 : 0;
+            switch (op) {
+            case Py_LT: c = c <  0; break;
+            case Py_LE: c = c <= 0; break;
+            case Py_EQ: assert(0);  break; /* unreachable */
+            case Py_NE: c = c != 0; break;
+            case Py_GT: c = c >  0; break;
+            case Py_GE: c = c >= 0; break;
+            default:
+                result = Py_NotImplemented;
+                goto out;
+            }
+            result = c ? Py_True : Py_False;
+        out:
+            Py_INCREF(result);
+            return result;
+        }
+        ```
+
+* 字符串连接，本质上是解析并执行了`BINARY_ADD`这个字节码。执行起来就比较直接了，直接进行类型判断，调用`string_concatenate`函数
+    ```c++
+    TARGET_NOARG(BINARY_ADD)
+    {
+        w = POP();
+        v = TOP();
+        if (PyInt_CheckExact(v) && PyInt_CheckExact(w)) {
+            /* INLINE: int + int */
+            register long a, b, i;
+            a = PyInt_AS_LONG(v);
+            b = PyInt_AS_LONG(w);
+            /* cast to avoid undefined behaviour
+                on overflow */
+            i = (long)((unsigned long)a + b);
+            if ((i^a) < 0 && (i^b) < 0)
+                goto slow_add;
+            x = PyInt_FromLong(i);
+        }
+        else if (PyString_CheckExact(v) &&                  // 如果两个变量是字符串类型，就调用连接的函数
+                    PyString_CheckExact(w)) {
+            x = string_concatenate(v, w, f, next_instr);
+            /* string_concatenate consumed the ref to v */
+            goto skip_decref_vx;
+        }
+        else {
+            slow_add:
+            x = PyNumber_Add(v, w);
+        }
+        Py_DECREF(v);
+        skip_decref_vx:
+        Py_DECREF(w);
+        SET_TOP(x);
+        if (x != NULL) DISPATCH();
+        break;
+    }
+    ```
+    ```c++
+    static PyObject *
+    string_concat(register PyStringObject *a, register PyObject *bb)
+    {
+        register Py_ssize_t size;
+        register PyStringObject *op;
+        if (!PyString_Check(bb)) {
+    #ifdef Py_USING_UNICODE
+            if (PyUnicode_Check(bb))
+                return PyUnicode_Concat((PyObject *)a, bb);
+    #endif
+            if (PyByteArray_Check(bb))
+                return PyByteArray_Concat((PyObject *)a, bb);
+            PyErr_Format(PyExc_TypeError,
+                        "cannot concatenate 'str' and '%.200s' objects",
+                        Py_TYPE(bb)->tp_name);
+            return NULL;
+        }
+    #define b ((PyStringObject *)bb)
+        /* Optimize cases with empty left or right operand */
+        if ((Py_SIZE(a) == 0 || Py_SIZE(b) == 0) &&
+            PyString_CheckExact(a) && PyString_CheckExact(b)) {
+            if (Py_SIZE(a) == 0) {
+                Py_INCREF(bb);
+                return bb;
+            }
+            Py_INCREF(a);
+            return (PyObject *)a;
+        }
+        /* Check that string sizes are not negative, to prevent an
+        overflow in cases where we are passed incorrectly-created
+        strings with negative lengths (due to a bug in other code).
+        */
+        if (Py_SIZE(a) < 0 || Py_SIZE(b) < 0 ||
+            Py_SIZE(a) > PY_SSIZE_T_MAX - Py_SIZE(b)) {
+            PyErr_SetString(PyExc_OverflowError,
+                            "strings are too large to concat");
+            return NULL;
+        }
+        size = Py_SIZE(a) + Py_SIZE(b);
+
+        /* Inline PyObject_NewVar */
+        if (size > PY_SSIZE_T_MAX - PyStringObject_SIZE) {
+            PyErr_SetString(PyExc_OverflowError,
+                            "strings are too large to concat");
+            return NULL;
+        }
+        op = (PyStringObject *)PyObject_MALLOC(PyStringObject_SIZE + size);
+        if (op == NULL)
+            return PyErr_NoMemory();
+        (void)PyObject_INIT_VAR(op, &PyString_Type, size);
+        op->ob_shash = -1;
+        op->ob_sstate = SSTATE_NOT_INTERNED;
+        Py_MEMCPY(op->ob_sval, a->ob_sval, Py_SIZE(a));                         // 通过memcpy来拷贝字符串，
+        Py_MEMCPY(op->ob_sval + Py_SIZE(a), b->ob_sval, Py_SIZE(b));
+        op->ob_sval[size] = '\0';
+        return (PyObject *) op;                                                 // 返回一个新的字符串
+    #undef b
     }
     ```
