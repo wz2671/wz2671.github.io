@@ -9,6 +9,10 @@ tags: python笔记
 [百度云(提取码：2twh)](https://pan.baidu.com/s/1SmWNpCrY3kfiKDxAdI8roA)
 [python2.7源码链接](https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz)
 
+（但本文中的python代码都是基于python3环境测试的）
+
+![cpython](/images/cpython.jpg)
+
 <!--more -->
 
 # 一、Bytes in the Machine Inside the CPython interpreter
@@ -573,6 +577,7 @@ tags: python笔记
         PyObject_VAR_HEAD
     } PyVarObject;
     ```
+* 在`object.h`中还定义了`PyTypeObject`，这个就是每个`PyObject_HEAD`中的那个`ob_type`，超核心的类型指针对应的类型。（搜`_typeobject`比较好找）
 
 ***
 
@@ -860,6 +865,10 @@ tags: python笔记
             return result;
         }
         ```
+* 如何根据`tp_richcompare`找到对应类型的比较方法呢？我看了下代码，大致流程如下：
+    * 每种类型都会定义一个`PyTypeObeject`的类型，例如string就是`PyString_Type`，每次在创建`PyStringObject`之后，都会使用该`Type`对`PyObject`进行初始化。
+    * 在`object.c`中，先调用`PyObject_MALLOC`给具体的`PyObject`分配内存，然后调用`PyObject_Init`或`PyObject_InitVar`对其类型进行初始化。本质上执行的就是`Py_TYPE`，也就是把这个类型赋值给了其中的`op_type`变量，`#define Py_TYPE(ob)              (((PyObject*)(ob))->ob_type)`
+    * 归根结底，`PyObject`中的`ob_type`对应的对象，就已经决定了这个`PyObejct`的执行轨迹。
 
 * 字符串连接，本质上是解析并执行了`BINARY_ADD`这个字节码。执行起来就比较直接了，直接进行类型判断，调用`string_concatenate`函数
     ```c++
@@ -955,5 +964,171 @@ tags: python笔记
         op->ob_sval[size] = '\0';
         return (PyObject *) op;                                                 // 返回一个新的字符串
     #undef b
+    }
+    ```
+
+***
+
+
+# Lecture 6. Code objects, function objects, and closures
+
+### 1. function object
+
+* 在`import`一个模块的时候，只有当执行到了定义的函数之后，函数名对应的`function object`才被创建，在这之前是无法获取函数名的，讲函数名赋值给另外一个变量，实质上是创建了一个新的引用指向了该`function object`。
+* 函数的属性们
+    ```python
+    >>> def func(x, y):
+    ...     z = x + y
+    ...     return z
+    ...
+    >>> bar = func
+    >>> dir(bar)
+    ['__annotations__', '__call__', '__class__', '__closure__', '__code__', '__defaults__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__get__', '__getattribute__', '__globals__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__kwdefaults__', '__le__', '__lt__', '__module__', '__name__', '__ne__', '__new__', '__qualname__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__']
+    >>> bar.__globals__
+    {'__name__': '__main__', '__doc__': None, '__package__': None, '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': None, '__annotations__': {}, '__builtins__': <module 'builtins' (built-in)>, 'func': <function func at 0x000001775B29D0D0>, 'bar': <function func at 0x000001775B29D0D0>}
+    ```
+* `__globals__`（在python2中是`func_globals`）是函数对象的一个成员变量，为什么有这个变量，因为对于函数而言，它的全局变量是以文件为单位的，不同py文件中的函数，他们的`__globals__`是不一样的。因此对于两段完全相同的代码（`__code__`），可以因为环境的不同，产生完全不同的结果。
+* python中的`code object`拥有的属性如下，`co_code`就是经过编译之后的字节码
+    ```python
+    >>> func.__code__.co_code
+    b'|\x00|\x01\x17\x00}\x02|\x02S\x00'
+    >>> dir(func.__code__)
+    ['__class__', '__delattr__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', 'co_argcount', 'co_cellvars', 'co_code', 'co_consts', 'co_filename', 'co_firstlineno', 'co_flags', 'co_freevars', 'co_kwonlyargcount', 'co_lnotab', 'co_name', 'co_names', 'co_nlocals', 'co_posonlyargcount', 'co_stacksize', 'co_varnames', 'replace']
+    ```
+* `bytecode object`的cpython源码，在`code.h`中定义的`PyCodeObject`。第三讲里的笔记已经贴了源码了。
+
+### 2. `funcobject`
+
+* cpython源码中的`PyFUnctionObejct`(在`funcobject.h`中的定义)
+    ```c++
+    typedef struct {
+        PyObject_HEAD
+        PyObject *func_code;	/* A code object */                             // code object 里面存的编译后的字节码
+        PyObject *func_globals;	/* A dictionary (other mappings won't do) */        // 全局变量
+        PyObject *func_defaults;	/* NULL or a tuple */
+        PyObject *func_closure;	/* NULL or a tuple of cell objects */               // 里面存的是闭包里的变量
+        PyObject *func_doc;		/* The __doc__ attribute, can be anything */
+        PyObject *func_name;	/* The __name__ attribute, a string object */
+        PyObject *func_dict;	/* The __dict__ attribute, a dict or NULL */
+        PyObject *func_weakreflist;	/* List of weak references */
+        PyObject *func_module;	/* The __module__ attribute, can be anything */
+
+        /* Invariant:           
+        // 这儿对闭包的变量解释了以下co_freevars里存的就是函数作用域范围外的变量，co_freevars和closure
+        *     func_closure contains the bindings for func_code->co_freevars, so
+        *     PyTuple_Size(func_closure) == PyCode_GetNumFree(func_code)
+        *     (func_closure may be NULL if PyCode_GetNumFree(func_code) == 0).
+        */
+    } PyFunctionObject;
+    ```
+* 在`funcobejct.c`中，构造一个`PyfunctionObejct`只需需要传入两个参数，`code object`和`globals`，分别指的是函数的字节码和全局变量的指针。它的函数声明如下，`PyObject * PyFunction_New(PyObject *code, PyObject *globals)`
+
+* `PyMemberDef`和`PyGetSetDef`，里面定义的是从python控制台里可以直接取到的变量。，对于`PyGetSetDef`里，还定义了一些可以修改的变量。
+    ```c++
+    static PyMemberDef func_memberlist[] = {
+        {"func_closure",  T_OBJECT,     OFF(func_closure),
+        RESTRICTED|READONLY},
+        {"__closure__",  T_OBJECT,      OFF(func_closure),
+        RESTRICTED|READONLY},
+        {"func_doc",      T_OBJECT,     OFF(func_doc), PY_WRITE_RESTRICTED},
+        {"__doc__",       T_OBJECT,     OFF(func_doc), PY_WRITE_RESTRICTED},
+        {"func_globals",  T_OBJECT,     OFF(func_globals),
+        RESTRICTED|READONLY},
+        {"__globals__",  T_OBJECT,      OFF(func_globals),
+        RESTRICTED|READONLY},
+        {"__module__",    T_OBJECT,     OFF(func_module), PY_WRITE_RESTRICTED},
+        {NULL}  /* Sentinel */
+    };
+    ```
+    ```c++
+    static PyGetSetDef func_getsetlist[] = {
+        {"func_code", (getter)func_get_code, (setter)func_set_code},
+        {"__code__", (getter)func_get_code, (setter)func_set_code},
+        {"func_defaults", (getter)func_get_defaults,
+        (setter)func_set_defaults},
+        {"__defaults__", (getter)func_get_defaults,
+        (setter)func_set_defaults},
+        {"func_dict", (getter)func_get_dict, (setter)func_set_dict},
+        {"__dict__", (getter)func_get_dict, (setter)func_set_dict},
+        {"func_name", (getter)func_get_name, (setter)func_set_name},
+        {"__name__", (getter)func_get_name, (setter)func_set_name},
+        {NULL} /* Sentinel */
+    };
+    ```
+* 对于一个`function object`而言，其核心的功能，调用函数功能由函数`function_call`函数完成，它定义在了`PyFunction_Type`中(也就是`PyObject`里函数对象所对应的类型)，通过`tp_call`属性即可引用到它。
+* `function_call`实现功能的方式是取出`PyFunction`中的`PyCodeObject`、`globals`等，交由`ceval.c`中的`PyEval_EvalCodeEx`执行，然后构造出一个`PyFrameObejct`，交由`PyEval_EvalFrameEx`完成对字节码的解析并执行的结果。（又回到最初的起点）
+
+### 3. `closures`（闭包）
+
+* 示例代码
+    ```python
+    x = 1000
+
+    def foo(x):
+        def bar(y):
+            print(x + y)
+        return bar
+    
+    b1 = foo(10)
+    b1(1)
+    b2 = foo(20)
+    b2(1)
+    ```
+* 对于以上代码，`b1`是一个`function object`，它是一个闭包，拥有一个指向运行`foo(10)`时创建的`frame object`的指针，同时，该`frame object`由于拥有一个引用，也不会销毁，所以写代码时容易产生循环引用问题。
+* 上面说的并不对，python并不会持有整个`frame object`，而是只保留了那唯一的一个变量`10`和`20`，它保存在了函数的`func_closure`中（python3中是`__closure__`属性），里面是一个`cell`类型的元组，其中`cell.cell_contents`里存储的就是上述的变量。
+    ```python
+    # python3
+    >>> import test
+    11
+    21
+    >>> test.b1.__closure__
+    (<cell at 0x000001E9BEFD5BB0: int object at 0x00007FFD788D17C0>,)
+    >>>
+    # 数值
+    >>> test.b1.__closure__[0].cell_contents
+    10
+    # 变量名与__closure__中的cell个数是一一对应的（在上面的注释里有说）
+    >>> test.b1.__code__.co_freevars
+    ('x',)
+    ```
+* 闭包执行的字节码如下
+    ```python
+    >>> dis.dis(test.b1)
+    5           0 LOAD_GLOBAL              0 (print)
+                2 LOAD_DEREF               0 (x)                # 这儿就是读取闭包中变量的字节码
+                4 LOAD_FAST                0 (y)
+                6 BINARY_ADD
+                8 CALL_FUNCTION            1
+                10 POP_TOP
+                12 LOAD_CONST               0 (None)
+                14 RETURN_VALUE
+    ```
+    ```c++
+    TARGET(LOAD_DEREF)
+    {
+        x = freevars[oparg];            // 可以看到变量名是存在了freevars里，也就是上面的`test.b1.__code__.co_freevars`
+        w = PyCell_Get(x);
+        if (w != NULL) {
+            PUSH(w);
+            DISPATCH();
+        }
+        err = -1;
+        /* Don't stomp existing exception */
+        if (PyErr_Occurred())
+            break;
+        if (oparg < PyTuple_GET_SIZE(co->co_cellvars)) {
+            v = PyTuple_GET_ITEM(co->co_cellvars,
+                                    oparg);
+            format_exc_check_arg(
+                    PyExc_UnboundLocalError,
+                    UNBOUNDLOCAL_ERROR_MSG,
+                    v);
+        } else {
+            v = PyTuple_GET_ITEM(co->co_freevars, oparg -
+                PyTuple_GET_SIZE(co->co_cellvars));
+            format_exc_check_arg(PyExc_NameError,
+                                    UNBOUNDFREE_ERROR_MSG, v);
+        }
+        break;
     }
     ```
