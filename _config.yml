@@ -103,5 +103,5 @@ theme: landscape
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: http://github.com/wz2671/wz2671.github.io.git
+  repo: git@github.com:wz2671/wz2671.github.io.git
   branch: master

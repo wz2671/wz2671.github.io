@@ -1014,7 +1014,7 @@ tags: python笔记
         PyObject *func_module;	/* The __module__ attribute, can be anything */
 
         /* Invariant:           
-        // 这儿对闭包的变量解释了以下co_freevars里存的就是函数作用域范围外的变量，co_freevars和closure
+        // 这儿对闭包的变量解释了以下co_freevars里存的就是函数作用域范围外的变量，co_freevars和closure里的cell应是一一对应的
         *     func_closure contains the bindings for func_code->co_freevars, so
         *     PyTuple_Size(func_closure) == PyCode_GetNumFree(func_code)
         *     (func_closure may be NULL if PyCode_GetNumFree(func_code) == 0).
