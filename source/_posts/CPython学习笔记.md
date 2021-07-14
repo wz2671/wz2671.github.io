@@ -1132,3 +1132,153 @@ tags: python笔记
         break;
     }
     ```
+
+***
+
+# Lecture 7. Iterators
+
+### 1. 迭代器
+
+* 像`list`之类的是可迭代对象，`__iter__()`方法会返回一个迭代器，通过`next()`函数可以不断取出迭代器中元素，直至抛出`StopIteration`异常，在[流畅的python中十四章](https://wz2671.github.io/2020/12/13/%E6%B5%81%E7%95%85%E7%9A%84python/)有更详细说明。
+* 测试代码`test.py`
+    ```python
+    x = ['a', 'b', 'c']
+    for e in x:
+        print e
+    ```
+* python编译之后，这儿是python3编译后的结果，和python2的差别挺大，python2还有个`SETUP_LOOP`的字节码
+    ```bash
+    PS D:\CODE\Python-2.7.18> python -m dis .\test.py
+    1           0 LOAD_CONST               0 ('a')
+                2 LOAD_CONST               1 ('b')
+                4 LOAD_CONST               2 ('c')
+                6 BUILD_LIST               3
+                8 STORE_NAME               0 (x)
+
+    2          10 LOAD_NAME                0 (x)
+               12 GET_ITER
+          >>   14 FOR_ITER                12 (to 28)        # 在14-28之前都是循环里的代码，stop之后，会跳到28
+               16 STORE_NAME               1 (e)
+
+    3          18 LOAD_NAME                2 (print)
+               20 LOAD_NAME                1 (e)
+               22 CALL_FUNCTION            1
+               24 POP_TOP
+               26 JUMP_ABSOLUTE           14
+          >>   28 LOAD_CONST               3 (None)
+               30 RETURN_VALUE
+    ```
+* 因此`for`循环的核心代码，主要是`GET_ITER`和`FOR_ITER`操作码，他们的cpython源码实现如下：
+    ```c++
+    TARGET_NOARG(GET_ITER)
+    {
+        /* before: [obj]; after [getiter(obj)] */
+        v = TOP();
+        x = PyObject_GetIter(v);            // 获取v的迭代器
+        Py_DECREF(v);
+        if (x != NULL) {
+            SET_TOP(x);                     // 迭代器放到了栈顶
+            PREDICT(FOR_ITER);              // 预测并直接跳到下一个操作码FOR_ITER
+            DISPATCH();
+        }
+        STACKADJ(-1);
+        break;
+    }
+
+    PREDICTED_WITH_ARG(FOR_ITER);           // 从这儿执行，只是一重eval循环
+    TARGET(FOR_ITER)
+    {
+        /* before: [iter]; after: [iter, iter()] *or* [] */
+        v = TOP();                          // 此时这儿是那个迭代器
+        x = (*v->ob_type->tp_iternext)(v);  // 取出了迭代器的next方法，并调用，这儿返回的就是具体的变量
+        if (x != NULL) {                    // 根据next函数返回的结果判断是否结束for循环
+            PUSH(x);                        // 压入变量栈中
+            PREDICT(STORE_FAST);            // 存到了for循环里那个局部变量中
+            PREDICT(UNPACK_SEQUENCE);
+            DISPATCH();
+        }
+        if (PyErr_Occurred()) {
+            if (!PyErr_ExceptionMatches(
+                            PyExc_StopIteration))
+                break;
+            PyErr_Clear();
+        }
+        /* iterator ended normally */
+        x = v = POP();
+        Py_DECREF(v);
+        JUMPBY(oparg);
+        DISPATCH();
+    }
+    ```
+* 获取迭代器的方法`PyObject_GetIter`定义在了`abstarct.h`中，是一个抽象基础方法。具体实现是尝试获取PyObject的`tp_iter`方法，如果没有找到的话，会尝试构建一个迭代器，实现代码如下：
+    ```c++
+    PyObject *
+    PyObject_GetIter(PyObject *o)
+    {
+        PyTypeObject *t = o->ob_type;
+        getiterfunc f = NULL;
+        if (PyType_HasFeature(t, Py_TPFLAGS_HAVE_ITER))     // 会根据类型定义标志的作比较
+            f = t->tp_iter;
+        if (f == NULL) {
+            if (PySequence_Check(o))
+                return PySeqIter_New(o);                    // 对于list而言，会走这儿构建一个新的迭代器
+            return type_error("'%.200s' object is not iterable", o);
+        }
+        else {
+            PyObject *res = (*f)(o);
+            if (res != NULL && !PyIter_Check(res)) {
+                PyErr_Format(PyExc_TypeError,
+                            "iter() returned non-iterator "
+                            "of type '%.100s'",
+                            res->ob_type->tp_name);
+                Py_DECREF(res);
+                res = NULL;
+            }
+            return res;
+        }
+    }
+    ```
+
+* 构造迭代器的方法`PySeqIter_New`定义在了`iterobejct.c`，第一个接口就是，主要思路就创建一个迭代器对象，把索引和对象的指针设置一下完毕，迭代器的定义如下：
+    ```c++
+    typedef struct {
+        PyObject_HEAD
+        long      it_index;
+        PyObject *it_seq; /* Set to NULL when iterator is exhausted */
+    } seqiterobject;
+    ```
+* 对于调用`next`方法，也就是`ceval.c`中的`x = (*v->ob_type->tp_iternext)(v)`语句，对于上述例子，会执行`iter_iuternext`方法，实现的源码如下：
+    ```c++
+    static PyObject *
+    iter_iternext(PyObject *iterator)
+    {
+        seqiterobject *it;
+        PyObject *seq;
+        PyObject *result;
+
+        assert(PySeqIter_Check(iterator));      // 检查是否是一个迭代器
+        it = (seqiterobject *)iterator;
+        seq = it->it_seq;                       // 取出其中的序列
+        if (seq == NULL)
+            return NULL;
+        if (it->it_index == LONG_MAX) {
+            PyErr_SetString(PyExc_OverflowError,
+                            "iter index too large");
+            return NULL;
+        }
+
+        result = PySequence_GetItem(seq, it->it_index);         // 类似于直接按下标取值seq[it->it_index]
+        if (result != NULL) {
+            it->it_index++;
+            return result;
+        }
+        if (PyErr_ExceptionMatches(PyExc_IndexError) ||             // StopIteration或索引越界都认为结束了
+            PyErr_ExceptionMatches(PyExc_StopIteration))
+        {
+            PyErr_Clear();
+            it->it_seq = NULL;                  // 将序列的指针置为null
+            Py_DECREF(seq);
+        }
+        return NULL;                            // 返回，后续会根据null决定是否结束for循环
+    }
+    ```
