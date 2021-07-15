@@ -178,8 +178,8 @@ tags: python笔记
 # Lecture 2. Opcodes and main interpreter loop
 
 ### 1. `compile`内置函数
-* 由于切python2环境过于麻烦，此处用的都是python3
-* test.py
+
+* 测试文件test.py
     ```python
     x = 1
     y = 2
@@ -273,6 +273,7 @@ tags: python笔记
 * 之后会做一些清理的工作，直到`line[3363]`行`return retval`返回结果
 
 ### 3. `dis`模块
+
 * 官方文档的`dis`模块中详细说明了各个字节码的含义，具体内容可参考[链接](https://docs.python.org/3/library/dis.html)
 
 ***
@@ -1282,3 +1283,267 @@ tags: python笔记
         return NULL;                            // 返回，后续会根据null决定是否结束for循环
     }
     ```
+
+# Lecture 8. User-defined classes and objects
+
+### 1. class
+
+* python测试代码(test.py)
+    ```python
+    class Counter:
+        def __init__(self, low, high):
+            self.current = low
+            self.high = high
+
+        def __iter__(self):
+            return self
+
+        def next(self):
+            if self.current > self.high:
+                raise StopIteration
+            else:
+                self.current += 1
+                return self.current - 1
+
+    c =  Counter(5, 7)
+    ```
+    ```bash
+    PS D:\CODE\Python-2.7.18> python -m dis .\test.py
+    # 这部分就是定义类class Counter和创建Counter对象c的部分，使用python2编译器编译出来的内容只会打印这部分
+    1           0 LOAD_BUILD_CLASS        # python2中，是先load多个const，才执行BUILD_CLASS
+                2 LOAD_CONST               0 (<code object Counter at 0x000001992E279EA0, file ".\test.py", line 1>)
+                4 LOAD_CONST               1 ('Counter')
+                6 MAKE_FUNCTION            0
+                8 LOAD_CONST               1 ('Counter')
+                10 CALL_FUNCTION            2
+                12 STORE_NAME               0 (Counter)
+
+    16          14 LOAD_NAME                0 (Counter)
+                16 LOAD_CONST               2 (5)
+                18 LOAD_CONST               3 (7)
+                20 CALL_FUNCTION            2
+                22 STORE_NAME               1 (c)
+                24 LOAD_CONST               4 (None)
+                26 RETURN_VALUE
+    # 这儿是创建类 本身这个对象的部分，主要就是定义了它的各个函数的code object
+    Disassembly of <code object Counter at 0x000001992E279EA0, file ".\test.py", line 1>:
+    1           0 LOAD_NAME                0 (__name__)
+                2 STORE_NAME               1 (__module__)
+                4 LOAD_CONST               0 ('Counter')
+                6 STORE_NAME               2 (__qualname__)
+
+    2           8 LOAD_CONST               1 (<code object __init__ at 0x000001992E279C90, file ".\test.py", line 2>)
+                10 LOAD_CONST               2 ('Counter.__init__')
+                12 MAKE_FUNCTION            0
+                14 STORE_NAME               3 (__init__)
+
+    6          16 LOAD_CONST               3 (<code object __iter__ at 0x000001992E279D40, file ".\test.py", line 6>)
+                18 LOAD_CONST               4 ('Counter.__iter__')
+                20 MAKE_FUNCTION            0
+                22 STORE_NAME               4 (__iter__)
+
+    9          24 LOAD_CONST               5 (<code object next at 0x000001992E279DF0, file ".\test.py", line 9>)
+                26 LOAD_CONST               6 ('Counter.next')
+                28 MAKE_FUNCTION            0
+                30 STORE_NAME               5 (next)
+                32 LOAD_CONST               7 (None)
+                34 RETURN_VALUE
+    # 这儿是__init__函数的部分
+    Disassembly of <code object __init__ at 0x000001992E279C90, file ".\test.py", line 2>:
+    3           0 LOAD_FAST                1 (low)
+                2 LOAD_FAST                0 (self)
+                4 STORE_ATTR               0 (current)
+
+    4           6 LOAD_FAST                2 (high)
+                8 LOAD_FAST                0 (self)
+                10 STORE_ATTR               1 (high)
+                12 LOAD_CONST               0 (None)
+                14 RETURN_VALUE
+    # __iter__部分
+    Disassembly of <code object __iter__ at 0x000001992E279D40, file ".\test.py", line 6>:
+    7           0 LOAD_FAST                0 (self)
+                2 RETURN_VALUE
+    # next函数
+    Disassembly of <code object next at 0x000001992E279DF0, file ".\test.py", line 9>:
+    10           0 LOAD_FAST                0 (self)
+                2 LOAD_ATTR                0 (current)
+                4 LOAD_FAST                0 (self)
+                6 LOAD_ATTR                1 (high)
+                8 COMPARE_OP               4 (>)
+                10 POP_JUMP_IF_FALSE       18
+
+    11          12 LOAD_GLOBAL              2 (StopIteration)
+                14 RAISE_VARARGS            1
+                16 JUMP_FORWARD            24 (to 42)
+
+    13     >>   18 LOAD_FAST                0 (self)
+                20 DUP_TOP
+                22 LOAD_ATTR                0 (current)
+                24 LOAD_CONST               1 (1)
+                26 INPLACE_ADD
+                28 ROT_TWO
+                30 STORE_ATTR               0 (current)
+
+    14          32 LOAD_FAST                0 (self)
+                34 LOAD_ATTR                0 (current)
+                36 LOAD_CONST               1 (1)
+                38 BINARY_SUBTRACT
+                40 RETURN_VALUE
+            >>   42 LOAD_CONST               0 (None)
+                44 RETURN_VALUE
+    ```
+* 由于python版本问题，上面的编译结果和展示的代码并不一致（问题不大
+* `BUILD_CLASS`字节码在`ceval.c`中的代码如下：
+    ```c++
+    TARGET_NOARG(BUILD_CLASS)
+    {
+        u = TOP();      // 函数的字典
+        v = SECOND();   // 基类
+        w = THIRD();    // 类名
+        STACKADJ(-2);
+        x = build_class(u, v, w);
+        SET_TOP(x);
+        Py_DECREF(u);
+        Py_DECREF(v);
+        Py_DECREF(w);
+        break;
+    }
+
+    static PyObject *
+    build_class(PyObject *methods, PyObject *bases, PyObject *name)
+    {
+        PyObject *metaclass = NULL, *result, *base;
+
+        if (PyDict_Check(methods))      // 对函数做检查
+            metaclass = PyDict_GetItemString(methods, "__metaclass__");
+        if (metaclass != NULL)
+            Py_INCREF(metaclass);
+        else if (PyTuple_Check(bases) && PyTuple_GET_SIZE(bases) > 0) {
+            base = PyTuple_GET_ITEM(bases, 0);
+            metaclass = PyObject_GetAttrString(base, "__class__");
+            if (metaclass == NULL) {
+                PyErr_Clear();
+                metaclass = (PyObject *)base->ob_type;
+                Py_INCREF(metaclass);
+            }
+        }
+        else {
+            PyObject *g = PyEval_GetGlobals();
+            if (g != NULL && PyDict_Check(g))
+                metaclass = PyDict_GetItemString(g, "__metaclass__");
+            if (metaclass == NULL)
+                metaclass = (PyObject *) &PyClass_Type;
+            Py_INCREF(metaclass);
+        }
+        result = PyObject_CallFunctionObjArgs(metaclass, name, bases, methods,
+                                            NULL);  // 函数内部调用了metaclass->ob_type->tp_call执行了`PyClass_New`
+        Py_DECREF(metaclass);
+        if (result == NULL && PyErr_ExceptionMatches(PyExc_TypeError)) {
+            /* A type error here likely means that the user passed
+            in a base that was not a class (such the random module
+            instead of the random.random type).  Help them out with
+            by augmenting the error message with more information.*/
+
+            PyObject *ptype, *pvalue, *ptraceback;
+
+            PyErr_Fetch(&ptype, &pvalue, &ptraceback);
+            if (PyString_Check(pvalue)) {
+                PyObject *newmsg;
+                newmsg = PyString_FromFormat(
+                    "Error when calling the metaclass bases\n"
+                    "    %s",
+                    PyString_AS_STRING(pvalue));
+                if (newmsg != NULL) {
+                    Py_DECREF(pvalue);
+                    pvalue = newmsg;
+                }
+            }
+            PyErr_Restore(ptype, pvalue, ptraceback);
+        }
+        return result;
+    }   
+    ```
+* `classobject`里定义的类对象，类实例对象，类方法对象
+    ```c++
+    typedef struct {
+        PyObject_HEAD
+        PyObject	*cl_bases;	/* A tuple of class objects */      // 基类
+        PyObject	*cl_dict;	/* A dictionary */                  // 方法字典
+        PyObject	*cl_name;	/* A string */                      // 类型
+        /* The following three are functions or NULL */         // 应该是属性描述符（流畅的python中有介绍）
+        PyObject	*cl_getattr;
+        PyObject	*cl_setattr;
+        PyObject	*cl_delattr;
+        PyObject    *cl_weakreflist; /* List of weak references */
+    } PyClassObject;
+
+    typedef struct {
+        PyObject_HEAD
+        PyClassObject *in_class;	/* The class object */          // 所属的类
+        PyObject	  *in_dict;	/* A dictionary */                  // 实例对象里的字典也就是__dict__
+        PyObject	  *in_weakreflist; /* List of weak references */
+    } PyInstanceObject;
+
+    typedef struct {
+        PyObject_HEAD
+        PyObject *im_func;   /* The callable object implementing the method */      // 原始函数本身
+        PyObject *im_self;   /* The instance it is bound to, or NULL */         // 指向实例对象自己的指针（我懂得）
+        PyObject *im_class;  /* The class that asked for the method */          // 所属的类
+        PyObject *im_weakreflist; /* List of weak references */
+    } PyMethodObject;
+    ```
+* 使用python定义的类实例化对象，通过执行`CALL_FUNCTION`字节码，最终调用了`PyInstance_New`函数(`PyClass_Type->tp_call`指针所指向的方法)
+    ```c++
+    PyObject *
+    PyInstance_New(PyObject *klass, PyObject *arg, PyObject *kw)
+    {
+        register PyInstanceObject *inst;
+        PyObject *init;
+        static PyObject *initstr;
+
+        if (initstr == NULL) {
+            initstr = PyString_InternFromString("__init__");
+            if (initstr == NULL)
+                return NULL;
+        }
+        inst = (PyInstanceObject *) PyInstance_NewRaw(klass, NULL);     // 这儿是创建实例对象的
+        if (inst == NULL)
+            return NULL;
+        init = instance_getattr2(inst, initstr);                        // 获取__init__方法
+        if (init == NULL) {
+            if (PyErr_Occurred()) {
+                Py_DECREF(inst);
+                return NULL;
+            }
+            if ((arg != NULL && (!PyTuple_Check(arg) ||
+                                PyTuple_Size(arg) != 0))
+                || (kw != NULL && (!PyDict_Check(kw) ||
+                                PyDict_Size(kw) != 0))) {
+                PyErr_SetString(PyExc_TypeError,
+                        "this constructor takes no arguments");
+                Py_DECREF(inst);
+                inst = NULL;
+            }
+        }
+        else {
+            PyObject *res = PyEval_CallObjectWithKeywords(init, arg, kw); // 执行init方法，注意这儿的method方法有instance对象本身(im_self)，因此不需要再额外传入实例化的对象inst
+            Py_DECREF(init);
+            if (res == NULL) {
+                Py_DECREF(inst);
+                inst = NULL;
+            }
+            else {
+                if (res != Py_None) {
+                    PyErr_SetString(PyExc_TypeError,
+                            "__init__() should return None");
+                    Py_DECREF(inst);
+                    inst = NULL;
+                }
+                Py_DECREF(res);
+            }
+        }
+        return (PyObject *)inst;
+    }
+    ```
+* 视频最后还讲了关于`bounded method`和`unbound method`的一些内容，简单来说，就是使用类取得的函数是`unbound`的，调用时需要显示传入对象，但对象调用自身方法时，已经绑定了对应的对象，它是一个`bounded`方法，无需再传入自身。尤其在使用一些装饰器时需要多加注意，想获取`bounded method`应当使用`inspece.get_members`之类的。
+* <font color=red>对于`metaclass`创建类的过程仍未十分清晰，若有时间，仍需仔细看下</font>
