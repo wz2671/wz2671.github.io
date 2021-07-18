@@ -49,10 +49,9 @@ tags: python笔记
     * A collection of frames
     * Data stacks on frames
     * A way to run frames
-* python 解释器原来主要是一个超大的`switch...case...`，[源码链接](https://hg.python.org/cpython/file/tip/Python/ceval.c#l1838)，根据各个操作码执行相应的逻辑。
-* 例如`LOAD_FAST`和`BINARY_MODULO`python3.9实现
+* python 解释器原来主要是一个超大的[`switch...case...`](https://github.com/python/cpython/blob/8d21aa21f2cbc6d50aab3f420bb23be1d081dac4/Python/ceval.c#L1211)，根据各个操作码执行相应的逻辑。
+* 例如`LOAD_FAST`和`BINARY_MODULO`cpython实现
     ```cpp
-    // [1849:1859]
     case TARGET(LOAD_FAST): {
         PyObject *value = GETLOCAL(oparg);
         if (value == NULL) {
@@ -66,7 +65,6 @@ tags: python笔记
         DISPATCH();
     }
 
-    // [2038:2056]
     case TARGET(BINARY_MODULO): {
         PyObject *divisor = POP();
         PyObject *dividend = TOP();
@@ -131,6 +129,7 @@ tags: python笔记
     */
     ```
 
+***
 
 # Lecture 1. Interpreter and source code overview
 
@@ -148,9 +147,8 @@ tags: python笔记
 * `/Lib`目录下是用python实现的一些内置模块
 
 * `/Include/opcode.h`文件下定义了python中所有的操作码（字节码）例如`LOAD_FAST`之类
-* `/Python/ceval.c`中是python的主循环所在位置，在源码的1069行起，它是一个无限的循环，每次解释一个字节码，就会调度一次循环
+* `/Python/ceval.c`中是python的主循环所在位置，在源码的1069行起[line1069](https://github.com/python/cpython/blob/8d21aa21f2cbc6d50aab3f420bb23be1d081dac4/Python/ceval.c#L1069)，它是一个无限的循环，每次解释一个字节码，就会调度一次循环
     ```c++
-    // line[1069-1086]
         for (;;) {
     #ifdef WITH_TSC
             if (inst1 == 0) {
@@ -169,6 +167,8 @@ tags: python笔记
             intr1 = 0;
             READ_TIMESTAMP(loop0);
     #endif
+        ...
+        }
     ```
 * 可以随意修改cpython源码，进行编译，就能使用自己独家定制的python解释器了
 
@@ -198,18 +198,18 @@ tags: python笔记
     ```
     ```bash
     PS D:\CODE\Python-2.7.18> python -m dis test.py
-    1           0 LOAD_CONST               0 (1)        # 这儿LOAD_CONST占一字节(100)，参数一字节，共两字节
-                2 STORE_NAME               0 (x)        # STORE_NAME从第三字节开始(90)
+    1            0 LOAD_CONST               0 (1)        # 这儿LOAD_CONST占一字节(100)，参数一字节，共两字节
+                 2 STORE_NAME               0 (x)        # STORE_NAME从第三字节开始(90)
 
-    2           4 LOAD_CONST               1 (2)
-                6 STORE_NAME               1 (y)
+    2            4 LOAD_CONST               1 (2)
+                 6 STORE_NAME               1 (y)
 
-    3           8 LOAD_NAME                0 (x)
+    3            8 LOAD_NAME                0 (x)
                 10 LOAD_NAME                1 (y)
                 12 BINARY_ADD
                 14 STORE_NAME               2 (z)
 
-    4          16 LOAD_NAME                3 (print)
+    4           16 LOAD_NAME                3 (print)
                 18 LOAD_NAME                2 (z)
                 20 CALL_FUNCTION            1
                 22 POP_TOP
@@ -221,7 +221,7 @@ tags: python笔记
 * 视频里说第三列的数字表示在变量栈(value stack)里的顺序
 
 ### 2. `PyEval_EvalFrameEx`
-* 是一个超长的函数`line[689-3364]`，它就是执行python源码的主要函数，里面有个指针`stack_pointer`就是存的value stack
+* 是一个超长的函数[line688-3364](https://github.com/python/cpython/blob/8d21aa21f2cbc6d50aab3f420bb23be1d081dac4/Python/ceval.c#L688-L3364)，它就是执行python源码的主要函数，里面有个指针`stack_pointer`就是存的value stack
 * 先定义了一些操作的宏定义，例如压栈出栈等
     ```c++
     // line[883-975]
@@ -285,7 +285,7 @@ tags: python笔记
 
 * `PyEval_EvalFrameEx`是之前所说的执行字节码的主入口，他接受一个`PyFrameObject`的指针，这个指针指向的就是一个`frame`对象。
 
-* 每个`frame`都包含一段可以执行的逻辑，也就是`code_object`，还有相关的运行环境如全局变量和局部变量等，它的具体定义如下所示，在文件`Include/frameobject.h`中
+* 每个`frame`都包含一段可以执行的逻辑，也就是`code_object`，还有相关的运行环境如全局变量和局部变量等，它的具体定义如下所示，在文件`Include/frameobject.h`中[line16-50](https://github.com/python/cpython/blob/8d21aa21f2cbc6d50aab3f420bb23be1d081dac4/Include/frameobject.h#L16-L50)
     ```c++
     typedef struct _frame {
         PyObject_VAR_HEAD
@@ -353,7 +353,7 @@ tags: python笔记
                 18 RETURN_VALUE
     PS D:\CODE\Python-2.7.18>ash
     ```
-* `code_object`定义在了`Include/code.h`之中，具体成员变量如下所示
+* `code_object`定义在了`Include/code.h`之中[line10-30](https://github.com/python/cpython/blob/8d21aa21f2cbc6d50aab3f420bb23be1d081dac4/Include/code.h#L10-L30)，具体成员变量如下所示
     ```c++
     /* Bytecode object */
     typedef struct {
@@ -384,7 +384,7 @@ tags: python笔记
     * `function`持有一个`code_object`，同时拥有执行该`code_object`的环境`environment`，它时静态的数据。
     * `frame`是`function`在运行时的对象，它是动态的。如下图所示，`fact`只拥有一个`function`，但是在运行时可以拥有多个`frame`，每个`frame`拥有数据自己的数据栈。![frame_and_function](/images/cpython/frame_and_function.png)
 
-* `CALL_FUNCTION`字节码的实现只是调用函数，具体实现在`call_function`函数里的`fast_function`中。
+* `CALL_FUNCTION`字节码的实现只是调用函数[line3005-3019](https://github.com/python/cpython/blob/8d21aa21f2cbc6d50aab3f420bb23be1d081dac4/Python/ceval.c#L3005-L3019)，具体实现在`call_function`函数里的`fast_function`中[line4424-4475](https://github.com/python/cpython/blob/8d21aa21f2cbc6d50aab3f420bb23be1d081dac4/Python/ceval.c#L4424-L4475)。
     ```c++
     // line[3005-3019]
     TARGET(CALL_FUNCTION)
@@ -461,7 +461,7 @@ tags: python笔记
     >>> x.__add__(1)
     124
     ```
-* `int`的加法实际实现在`intobject.c`里的`int_add`中
+* `int`的加法实际实现在`intobject.c`里的`int_add`中[line468-493](https://github.com/python/cpython/blob/8d21aa21f2cbc6d50aab3f420bb23be1d081dac4/Objects/intobject.c#L468-L493)
     ```c++
     // line[168-179]
     static PyObject *
@@ -505,7 +505,7 @@ tags: python笔记
         long ob_ival;
     } PyIntObject;
     ```
-* PyObject对象的生成与内存分配在`object.c`中的`_PyObject_New`函数中。
+* PyObject对象的生成与内存分配在`object.c`中的`_PyObject_New`函数中[line240-248](https://github.com/python/cpython/blob/8d21aa21f2cbc6d50aab3f420bb23be1d081dac4/Objects/object.c#L240-L248)。
     ```c++
     // line[240-248] 先创建一个类型
     PyObject *
@@ -518,7 +518,7 @@ tags: python笔记
         return PyObject_INIT(op, tp);
     }
     ```
-* python中对象的动态性主要来源于，对每种类型都约束其特定接口，不同类型的PyObject传入后，会执行相同名称不同接口的具体实现
+* python中对象的动态性主要来源于，对每种类型都约束其特定接口，不同类型的PyObject传入后，会执行相同名称不同接口的具体实现[line411-451](https://github.com/python/cpython/blob/8d21aa21f2cbc6d50aab3f420bb23be1d081dac4/Objects/object.c#L411-L451)
     ```c++
     // 例如把某个类型转成字符串，通过`tp_str`接口实现的，有点像多态那味
     PyObject *
@@ -578,7 +578,98 @@ tags: python笔记
         PyObject_VAR_HEAD
     } PyVarObject;
     ```
-* 在`object.h`中还定义了`PyTypeObject`，这个就是每个`PyObject_HEAD`中的那个`ob_type`，超核心的类型指针对应的类型。（搜`_typeobject`比较好找）
+* 在`object.h`中还定义了`PyTypeObject`[line324-411](https://github.com/python/cpython/blob/8d21aa21f2cbc6d50aab3f420bb23be1d081dac4/Include/object.h#L324-L411)，这个就是每个`PyObject_HEAD`中的那个`ob_type`，超核心的类型指针对应的类型。（搜`_typeobject`比较好找）
+    ```c++
+    // 这个对象是cpython实现动态类型地关键，通过各个类型实现对应地接口，ceval可以直接拿取指针执行各自类型相应地逻辑，十分相似于多态
+    typedef struct _typeobject {
+        PyObject_VAR_HEAD
+        const char *tp_name; /* For printing, in format "<module>.<name>" */
+        Py_ssize_t tp_basicsize, tp_itemsize; /* For allocation */
+
+        /* Methods to implement standard operations */
+
+        destructor tp_dealloc;
+        printfunc tp_print;
+        getattrfunc tp_getattr;
+        setattrfunc tp_setattr;
+        cmpfunc tp_compare;
+        reprfunc tp_repr;
+
+        /* Method suites for standard classes */
+
+        PyNumberMethods *tp_as_number;
+        PySequenceMethods *tp_as_sequence;
+        PyMappingMethods *tp_as_mapping;
+
+        /* More standard operations (here for binary compatibility) */
+
+        hashfunc tp_hash;
+        ternaryfunc tp_call;                // 可执行函数
+        reprfunc tp_str;                    // str(object)函数
+        getattrofunc tp_getattro;
+        setattrofunc tp_setattro;
+
+        /* Functions to access object as input/output buffer */
+        PyBufferProcs *tp_as_buffer;
+
+        /* Flags to define presence of optional/expanded features */
+        long tp_flags;
+
+        const char *tp_doc; /* Documentation string */
+
+        /* Assigned meaning in release 2.0 */
+        /* call function for all accessible objects */
+        traverseproc tp_traverse;
+
+        /* delete references to contained objects */
+        inquiry tp_clear;
+
+        /* Assigned meaning in release 2.1 */
+        /* rich comparisons */
+        richcmpfunc tp_richcompare;         // 比较函数
+
+        /* weak reference enabler */
+        Py_ssize_t tp_weaklistoffset;
+
+        /* Added in release 2.2 */
+        /* Iterators */
+        getiterfunc tp_iter;                // 返回可迭代对象的迭代器
+        iternextfunc tp_iternext;           // 返回迭代器的下一个值
+
+        /* Attribute descriptor and subclassing stuff */
+        struct PyMethodDef *tp_methods;
+        struct PyMemberDef *tp_members;
+        struct PyGetSetDef *tp_getset;
+        struct _typeobject *tp_base;
+        PyObject *tp_dict;
+        descrgetfunc tp_descr_get;
+        descrsetfunc tp_descr_set;
+        Py_ssize_t tp_dictoffset;
+        initproc tp_init;
+        allocfunc tp_alloc;
+        newfunc tp_new;
+        freefunc tp_free; /* Low-level free-memory routine */
+        inquiry tp_is_gc; /* For PyObject_IS_GC */
+        PyObject *tp_bases;
+        PyObject *tp_mro; /* method resolution order */
+        PyObject *tp_cache;
+        PyObject *tp_subclasses;
+        PyObject *tp_weaklist;
+        destructor tp_del;
+
+        /* Type attribute cache version tag. Added in version 2.6 */
+        unsigned int tp_version_tag;
+
+    #ifdef COUNT_ALLOCS
+        /* these must be last and never explicitly initialized */
+        Py_ssize_t tp_allocs;
+        Py_ssize_t tp_frees;
+        Py_ssize_t tp_maxalloc;
+        struct _typeobject *tp_prev;
+        struct _typeobject *tp_next;
+    #endif
+    } PyTypeObject;
+    ```
 
 ***
 
@@ -871,7 +962,7 @@ tags: python笔记
     * 在`object.c`中，先调用`PyObject_MALLOC`给具体的`PyObject`分配内存，然后调用`PyObject_Init`或`PyObject_InitVar`对其类型进行初始化。本质上执行的就是`Py_TYPE`，也就是把这个类型赋值给了其中的`op_type`变量，`#define Py_TYPE(ob)              (((PyObject*)(ob))->ob_type)`
     * 归根结底，`PyObject`中的`ob_type`对应的对象，就已经决定了这个`PyObejct`的执行轨迹。
 
-* 字符串连接，本质上是解析并执行了`BINARY_ADD`这个字节码。执行起来就比较直接了，直接进行类型判断，调用`string_concatenate`函数
+* **字符串连接**，本质上是解析并执行了`BINARY_ADD`这个字节码。执行起来就比较直接了，直接进行类型判断，调用`string_concatenate`函数
     ```c++
     TARGET_NOARG(BINARY_ADD)
     {
@@ -1248,7 +1339,7 @@ tags: python笔记
         PyObject *it_seq; /* Set to NULL when iterator is exhausted */
     } seqiterobject;
     ```
-* 对于调用`next`方法，也就是`ceval.c`中的`x = (*v->ob_type->tp_iternext)(v)`语句，对于上述例子，会执行`iter_iuternext`方法，实现的源码如下：
+* 对于调用`next`方法，也就是`ceval.c`中的`x = (*v->ob_type->tp_iternext)(v)`语句，对于上述例子，会执行`iter_iternext`方法，实现的源码如下：
     ```c++
     static PyObject *
     iter_iternext(PyObject *iterator)
@@ -1290,7 +1381,7 @@ tags: python笔记
 
 * python测试代码(test.py)
     ```python
-    class Counter:
+    class Counter(object):
         def __init__(self, low, high):
             self.current = low
             self.high = high
@@ -1298,7 +1389,7 @@ tags: python笔记
         def __iter__(self):
             return self
 
-        def next(self):
+        def __next__(self):         # 在python2中，没有双下划线，就叫`next`
             if self.current > self.high:
                 raise StopIteration
             else:
@@ -1310,39 +1401,40 @@ tags: python笔记
     ```bash
     PS D:\CODE\Python-2.7.18> python -m dis .\test.py
     # 这部分就是定义类class Counter和创建Counter对象c的部分，使用python2编译器编译出来的内容只会打印这部分
-    1           0 LOAD_BUILD_CLASS        # python2中，是先load多个const，才执行BUILD_CLASS
-                2 LOAD_CONST               0 (<code object Counter at 0x000001992E279EA0, file ".\test.py", line 1>)
-                4 LOAD_CONST               1 ('Counter')
-                6 MAKE_FUNCTION            0
-                8 LOAD_CONST               1 ('Counter')
-                10 CALL_FUNCTION            2
-                12 STORE_NAME               0 (Counter)
+    1            0 LOAD_BUILD_CLASS        # python2中，是先load多个const，才执行BUILD_CLASS
+                 2 LOAD_CONST               0 (<code object Counter at 0x000001C5B0ACAEA0, file ".\test.py", line 1>)
+                 4 LOAD_CONST               1 ('Counter')
+                 6 MAKE_FUNCTION            0
+                 8 LOAD_CONST               1 ('Counter')
+                10 LOAD_NAME                0 (object)
+                12 CALL_FUNCTION            3
+                14 STORE_NAME               1 (Counter)
 
-    16          14 LOAD_NAME                0 (Counter)
-                16 LOAD_CONST               2 (5)
-                18 LOAD_CONST               3 (7)
-                20 CALL_FUNCTION            2
-                22 STORE_NAME               1 (c)
-                24 LOAD_CONST               4 (None)
-                26 RETURN_VALUE
+    16          16 LOAD_NAME                1 (Counter)
+                18 LOAD_CONST               2 (5)
+                20 LOAD_CONST               3 (7)
+                22 CALL_FUNCTION            2
+                24 STORE_NAME               2 (c)
+                26 LOAD_CONST               4 (None)
+                28 RETURN_VALUE
     # 这儿是创建类 本身这个对象的部分，主要就是定义了它的各个函数的code object
     Disassembly of <code object Counter at 0x000001992E279EA0, file ".\test.py", line 1>:
-    1           0 LOAD_NAME                0 (__name__)
-                2 STORE_NAME               1 (__module__)
-                4 LOAD_CONST               0 ('Counter')
-                6 STORE_NAME               2 (__qualname__)
+    1            0 LOAD_NAME                0 (__name__)
+                 2 STORE_NAME               1 (__module__)
+                 4 LOAD_CONST               0 ('Counter')
+                 6 STORE_NAME               2 (__qualname__)
 
-    2           8 LOAD_CONST               1 (<code object __init__ at 0x000001992E279C90, file ".\test.py", line 2>)
+    2            8 LOAD_CONST               1 (<code object __init__ at 0x000001992E279C90, file ".\test.py", line 2>)
                 10 LOAD_CONST               2 ('Counter.__init__')
                 12 MAKE_FUNCTION            0
                 14 STORE_NAME               3 (__init__)
 
-    6          16 LOAD_CONST               3 (<code object __iter__ at 0x000001992E279D40, file ".\test.py", line 6>)
+    6           16 LOAD_CONST               3 (<code object __iter__ at 0x000001992E279D40, file ".\test.py", line 6>)
                 18 LOAD_CONST               4 ('Counter.__iter__')
                 20 MAKE_FUNCTION            0
                 22 STORE_NAME               4 (__iter__)
 
-    9          24 LOAD_CONST               5 (<code object next at 0x000001992E279DF0, file ".\test.py", line 9>)
+    9           24 LOAD_CONST               5 (<code object next at 0x000001992E279DF0, file ".\test.py", line 9>)
                 26 LOAD_CONST               6 ('Counter.next')
                 28 MAKE_FUNCTION            0
                 30 STORE_NAME               5 (next)
@@ -1350,12 +1442,12 @@ tags: python笔记
                 34 RETURN_VALUE
     # 这儿是__init__函数的部分
     Disassembly of <code object __init__ at 0x000001992E279C90, file ".\test.py", line 2>:
-    3           0 LOAD_FAST                1 (low)
-                2 LOAD_FAST                0 (self)
-                4 STORE_ATTR               0 (current)
+    3            0 LOAD_FAST                1 (low)
+                 2 LOAD_FAST                0 (self)
+                 4 STORE_ATTR               0 (current)
 
-    4           6 LOAD_FAST                2 (high)
-                8 LOAD_FAST                0 (self)
+    4            6 LOAD_FAST                2 (high)
+                 8 LOAD_FAST                0 (self)
                 10 STORE_ATTR               1 (high)
                 12 LOAD_CONST               0 (None)
                 14 RETURN_VALUE
@@ -1364,12 +1456,12 @@ tags: python笔记
     7           0 LOAD_FAST                0 (self)
                 2 RETURN_VALUE
     # next函数
-    Disassembly of <code object next at 0x000001992E279DF0, file ".\test.py", line 9>:
+    Disassembly of <code object __next__ at 0x000001992E279DF0, file ".\test.py", line 9>:
     10           0 LOAD_FAST                0 (self)
-                2 LOAD_ATTR                0 (current)
-                4 LOAD_FAST                0 (self)
-                6 LOAD_ATTR                1 (high)
-                8 COMPARE_OP               4 (>)
+                 2 LOAD_ATTR                0 (current)
+                 4 LOAD_FAST                0 (self)
+                 6 LOAD_ATTR                1 (high)
+                 8 COMPARE_OP               4 (>)
                 10 POP_JUMP_IF_FALSE       18
 
     11          12 LOAD_GLOBAL              2 (StopIteration)
@@ -1389,7 +1481,7 @@ tags: python笔记
                 36 LOAD_CONST               1 (1)
                 38 BINARY_SUBTRACT
                 40 RETURN_VALUE
-            >>   42 LOAD_CONST               0 (None)
+            >>  42 LOAD_CONST               0 (None)
                 44 RETURN_VALUE
     ```
 * 由于python版本问题，上面的编译结果和展示的代码并不一致（问题不大
@@ -1547,3 +1639,273 @@ tags: python笔记
     ```
 * 视频最后还讲了关于`bounded method`和`unbound method`的一些内容，简单来说，就是使用类取得的函数是`unbound`的，调用时需要显示传入对象，但对象调用自身方法时，已经绑定了对应的对象，它是一个`bounded`方法，无需再传入自身。尤其在使用一些装饰器时需要多加注意，想获取`bounded method`应当使用`inspece.get_members`之类的。
 * <font color=red>对于`metaclass`创建类的过程仍未十分清晰，若有时间，仍需仔细看下</font>
+
+
+# Lecture 9. Generators
+
+### 1. 生成器
+
+* python测试代码(test.py)
+    ```python
+    def Counter(low, high):
+        current = low
+        while current <= high:
+            yield current
+            current += 1
+    
+    c =  Counter(5, 7)
+    for elt in c:
+        print(elt)
+    ```
+    编译过后:
+    ```bash
+    PS D:\CODE\Python-2.7.18> python -m dis .\test.py
+                 1 ('Counter')
+                  4 MAKE_FUNCTION            0
+                  6 STORE_NAME               0 (Counter)
+    # 创建Counter(5, 7)对象
+      7           8 LOAD_NAME                0 (Counter)
+                 10 LOAD_CONST               2 (5)
+                 12 LOAD_CONST               3 (7)
+                 14 CALL_FUNCTION            2
+                 16 STORE_NAME               1 (c)
+    # for 循环 
+      8          18 LOAD_NAME                1 (c)
+                 20 GET_ITER
+            >>   22 FOR_ITER                12 (to 36)
+                 24 STORE_NAME               2 (elt)
+    
+      9          26 LOAD_NAME                3 (print)
+                 28 LOAD_NAME                2 (elt)
+                 30 CALL_FUNCTION            1
+                 32 POP_TOP
+                 34 JUMP_ABSOLUTE           22
+            >>   36 LOAD_CONST               4 (None)
+                 38 RETURN_VALUE
+    # Counter 函数的字节码 
+    Disassembly of <code object Counter at 0x000001DC7D029870, file ".\test.py", line 1>:
+      2           0 LOAD_FAST                0 (low)
+                  2 STORE_FAST               2 (current)
+    
+      3     >>    4 LOAD_FAST                2 (current)
+                  6 LOAD_FAST                1 (high)
+                  8 COMPARE_OP               1 (<=)
+                 10 POP_JUMP_IF_FALSE       28
+    
+      4          12 LOAD_FAST                2 (current)
+                 14 YIELD_VALUE             # yield对应的字节码，也是唯一区别之处
+                 16 POP_TOP
+    
+      5          18 LOAD_FAST                2 (current)
+                 20 LOAD_CONST               1 (1)
+                 22 INPLACE_ADD
+                 24 STORE_FAST               2 (current)
+                 26 JUMP_ABSOLUTE            4
+            >>   28 LOAD_CONST               0 (None)
+                 30 RETURN_VALUE
+    ```
+
+### 2. `YIELD_VALUE`
+* 生成器函数的字节码与普通函数的区别主要就是`YIELD_VALUE`，打会打断循环，函数调用等 原本的执行顺序（直接交付返回值）
+* 在`ceval.c`中的具体执行的代码如下：
+    ```c++
+    // switch... case YIELD_VALUE
+    TARGET_NOARG(YIELD_VALUE)
+    {
+        retval = POP();         // 每次执行这个YIELD_VALUE，会退出执行并返回栈顶的结果
+        f->f_stacktop = stack_pointer;
+        why = WHY_YIELD;
+        goto fast_yield;
+    }
+    // fast_yield部分的代码如下
+    fast_yield:
+        if (tstate->use_tracing) {      // 应该时调试用的部分
+            if (tstate->c_tracefunc) {
+                if (why == WHY_RETURN || why == WHY_YIELD) {
+                    if (call_trace(tstate->c_tracefunc,
+                                tstate->c_traceobj, f,
+                                PyTrace_RETURN, retval)) {
+                        Py_XDECREF(retval);
+                        retval = NULL;
+                        why = WHY_EXCEPTION;
+                    }
+                }
+                else if (why == WHY_EXCEPTION) {
+                    call_trace_protected(tstate->c_tracefunc,
+                                        tstate->c_traceobj, f,
+                                        PyTrace_RETURN, NULL);
+                }
+            }
+            if (tstate->c_profilefunc) {
+                if (why == WHY_EXCEPTION)
+                    call_trace_protected(tstate->c_profilefunc,
+                                        tstate->c_profileobj, f,
+                                        PyTrace_RETURN, NULL);
+                else if (call_trace(tstate->c_profilefunc,
+                                    tstate->c_profileobj, f,
+                                    PyTrace_RETURN, retval)) {
+                    Py_XDECREF(retval);
+                    retval = NULL;
+                    why = WHY_EXCEPTION;
+                }
+            }
+        }
+
+        if (tstate->frame->f_exc_type != NULL)
+            reset_exc_info(tstate);
+        else {
+            assert(tstate->frame->f_exc_value == NULL);
+            assert(tstate->frame->f_exc_traceback == NULL);
+        }
+    //... 其他几个goto的标志
+    return retval;      // 返回结果
+    ```
+
+
+### 3. `genobject`生成器对象
+
+* cpython 的结构体定义
+    ```c++
+    typedef struct {
+        PyObject_HEAD
+        /* The gi_ prefix is intended to remind of generator-iterator. */
+
+        /* Note: gi_frame can be NULL if the generator is "finished" */
+        struct _frame *gi_frame;            // 函数运行时的frame，只要不为空，就可以一直被运行（not finished）
+
+        /* True if generator is being executed. */
+        int gi_running;
+        
+        /* The code object backing the generator */
+        PyObject *gi_code;
+
+        /* List of weak reference. */
+        PyObject *gi_weakreflist;
+    } PyGenObject;
+    ```
+* 每当想获取生成器对象`gen`的迭代器时`gen->tp_iter`，生成器对象会把自己返回过去，当调用`gen.next`方法`gen->tp_iternext`的时候，其实执行的是`gen_iternext`方法，因此生成器对象可以非常自然地表现地像是一个迭代器和可迭代对象
+    ```c++
+    PyTypeObject PyGen_Type = {
+        PyVarObject_HEAD_INIT(&PyType_Type, 0)
+        "generator",                                /* tp_name */
+        sizeof(PyGenObject),                        /* tp_basicsize */
+        0,                                          /* tp_itemsize */
+        /* methods */
+        (destructor)gen_dealloc,                    /* tp_dealloc */
+        0,                                          /* tp_print */
+        0,                                          /* tp_getattr */
+        0,                                          /* tp_setattr */
+        0,                                          /* tp_compare */
+        (reprfunc)gen_repr,                         /* tp_repr */
+        0,                                          /* tp_as_number */
+        0,                                          /* tp_as_sequence */
+        0,                                          /* tp_as_mapping */
+        0,                                          /* tp_hash */
+        0,                                          /* tp_call */
+        0,                                          /* tp_str */
+        PyObject_GenericGetAttr,                    /* tp_getattro */
+        0,                                          /* tp_setattro */
+        0,                                          /* tp_as_buffer */
+        Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC,/* tp_flags */
+        0,                                          /* tp_doc */
+        (traverseproc)gen_traverse,                 /* tp_traverse */
+        0,                                          /* tp_clear */
+        0,                                          /* tp_richcompare */
+        offsetof(PyGenObject, gi_weakreflist),      /* tp_weaklistoffset */
+        PyObject_SelfIter,                          /* tp_iter */       // 生成器的迭代器就是它自己
+        (iternextfunc)gen_iternext,                 /* tp_iternext */   // 生成器的next方法执行的是`gen_iternext`函数
+        gen_methods,                                /* tp_methods */
+        gen_memberlist,                             /* tp_members */
+        gen_getsetlist,                             /* tp_getset */
+        0,                                          /* tp_base */
+        0,                                          /* tp_dict */
+
+        0,                                          /* tp_descr_get */
+        0,                                          /* tp_descr_set */
+        0,                                          /* tp_dictoffset */
+        0,                                          /* tp_init */
+        0,                                          /* tp_alloc */
+        0,                                          /* tp_new */
+        0,                                          /* tp_free */
+        0,                                          /* tp_is_gc */
+        0,                                          /* tp_bases */
+        0,                                          /* tp_mro */
+        0,                                          /* tp_cache */
+        0,                                          /* tp_subclasses */
+        0,                                          /* tp_weaklist */
+        gen_del,                                    /* tp_del */
+    };
+    ```
+* 像上述的`gen_iternext`，`gen_send`等函数，在`genobject.c`中，执行的都是`gen_send_ex`函数，这个函数，就是每次驱动生成器推进的主要逻辑所在，具体的代码如下：
+    ```c++
+    static PyObject *
+    gen_send_ex(PyGenObject *gen, PyObject *arg, int exc)
+    {
+        PyThreadState *tstate = PyThreadState_GET();
+        PyFrameObject *f = gen->gi_frame;           // 取出上一次执行过程中的frame
+        PyObject *result;
+
+        if (gen->gi_running) {                      // 如果生成器已经在执行过程中了，就会抛异常(大概是在生成器执行过程中，又把自己执行了一遍)
+            PyErr_SetString(PyExc_ValueError,
+                            "generator already executing");
+            return NULL;
+        }
+        if (f==NULL || f->f_stacktop == NULL) {         // 当生成器的frame为空时，就抛出StopInteration
+            /* Only set exception if called from send() */
+            if (arg && !exc)
+                PyErr_SetNone(PyExc_StopIteration);
+            return NULL;
+        }
+
+        if (f->f_lasti == -1) {
+            if (arg && arg != Py_None) {
+                PyErr_SetString(PyExc_TypeError,
+                                "can't send non-None value to a "
+                                "just-started generator");
+                return NULL;
+            }
+        } else {
+            /* Push arg onto the frame's value stack */
+            result = arg ? arg : Py_None;       // 如果send方法没有传入参数，就置为None
+            Py_INCREF(result);
+            *(f->f_stacktop++) = result;        // 把参数压入栈顶
+        }
+
+        /* Generators always return to their most recent caller, not
+        * necessarily their creator. */
+        f->f_tstate = tstate;
+        Py_XINCREF(tstate->frame);
+        assert(f->f_back == NULL);
+        f->f_back = tstate->frame;
+
+        gen->gi_running = 1;            // 讲正在运行的标记置为1
+        result = PyEval_EvalFrameEx(f, exc);        // 重新执行生成器中的代码，并取出结果(由上面分析的结果看，他会在`YIELD_VALUE`部分返回结果，不会无止境的执行下去)
+        gen->gi_running = 0;            // 重置为0
+
+        /* Don't keep the reference to f_back any longer than necessary.  It
+        * may keep a chain of frames alive or it could create a reference
+        * cycle. */
+        assert(f->f_back == tstate->frame);
+        Py_CLEAR(f->f_back);
+        /* Clear the borrowed reference to the thread state */
+        f->f_tstate = NULL;
+
+        /* If the generator just returned (as opposed to yielding), signal
+        * that the generator is exhausted. */
+        if (result == Py_None && f->f_stacktop == NULL) {
+            Py_DECREF(result);
+            result = NULL;
+            /* Set exception if not called by gen_iternext() */
+            if (arg)
+                PyErr_SetNone(PyExc_StopIteration);
+        }
+
+        if (!result || f->f_stacktop == NULL) {
+            /* generator can't be rerun, so release the frame */
+            Py_DECREF(f);
+            gen->gi_frame = NULL;       // 生成器是一次性的，本质上就是这个frame在不断地被打断和启动
+        }
+
+        return result;
+    }
+    ```
