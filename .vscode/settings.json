@@ -1,6 +1,8 @@
 {
     "background.customImages": [
-        "file://C:/Users/wenzhou/.vscode/extensions/t011d1c8512fada0d72.jpg"
+        "file://.vscode/vscode_background.jpg",
+        "file://.vscode/leimu.jpg",
+        "file://.vscode/lamu.jpg",
     ],
     "background.style": {
         "content":"''",
