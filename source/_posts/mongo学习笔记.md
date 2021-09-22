@@ -11,7 +11,7 @@ tags: [服务端开发, 数据库]
 
 每本书的只有一百页左右，太棒惹。
 
-![封面](/images/mongodb.png)
+![封面](/images/cover/mongodb.png)
 
 
 <!--more -->

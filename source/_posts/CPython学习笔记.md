@@ -11,7 +11,7 @@ tags: python笔记
 
 （但本文中的python代码都是基于python3环境测试的）
 
-![cpython](/images/cpython.jpg)
+![cpython](/images/cover/cpython.jpg)
 
 <!--more -->
 

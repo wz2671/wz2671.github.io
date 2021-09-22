@@ -6,7 +6,7 @@ tags: CS笔记
 
 求一个好offer！ 继续加油！！
 
-![good_offer](/images/good_offer.jpg)
+![good_offer](/images/cover/good_offer.jpg)
 
 
 <!--more -->

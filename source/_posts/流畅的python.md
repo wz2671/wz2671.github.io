@@ -6,7 +6,7 @@ date: 2020-12-13 17:23:59
 
 参考书籍：[《流畅的python》(Fluent Python）](/doc/流畅的python.pdf)
 
-![封面](/images/liuchangdepython.jpg)
+![封面](/images/cover/liuchangdepython.jpg)
 
 
 <!--more -->

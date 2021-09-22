@@ -16,7 +16,7 @@ tags: [服务端开发, 数据库]
 
 ### 1. redis特性
 
-* Redis全程是(REmote Dictionary Server)
+* Redis全称是(REmote Dictionary Server)
 * 速度快
     * 所有数据都是存放在内存中的
     * 使用c语言实现
@@ -88,3 +88,64 @@ tags: [服务端开发, 数据库]
     15:M 01 Aug 2021 23:01:58.735 # User requested shutdown...
     15:M 01 Aug 2021 23:01:58.735 # Redis is now ready to exit, bye bye...
     ```
+* redis3.0发布了分布式实现Redis Cluster。
+
+# 二、API的理解和使用
+
+### 1. 全局命令
+* 在redis-cli里执行以下命令：
+    ```bash
+    127.0.0.1:6379> set hello world
+    127.0.0.1:6379> set java redis
+    127.0.0.1:6379> set python redis-py
+    ```
+* `keys *`: 查看所有的键
+    ```bash
+    127.0.0.1:6379> keys *
+    1) "python"
+    2) "java"
+    3) "hello"
+    ```
+* `dbsize`: 键总数 `(integer) 3`，会遍历所有键，时间复杂度是`O(n)`
+* `rpush mylist a b c d e f g`: 插入列表类型的键值对`{'mylist': ['a', 'b', 'c', 'd', 'e', 'f', 'g']}`
+* `exists key`: 检查键是否存在。
+* `del key [key ...]`: 可以删除任意的键值对。
+* `expire key seconds`: 可以对键添加过期时间，超过过期时间后会自动删除。
+* `ttl key`: 返回键剩余过期时间
+    * 大于等于0的整数：键的剩余过期时间
+    * -1: 键没设置过期时间
+    * -2: 键不存在
+    ```
+    127.0.0.1:6379> set expire_test 111
+    127.0.0.1:6379> expire expire_test 10
+    (integer) 1
+    127.0.0.1:6379> ttl expire_test
+    (integer) 5
+    127.0.0.1:6379> ttl expire_test
+    (integer) -2
+    127.0.0.1:6379> get expire_test
+    (nil)
+    ```
+* `type key`: 键对应值的类型
+    ```bash
+    127.0.0.1:6379> type mylist
+    list
+    ```
+
+### 2. 数据结构
+* `type`命令返回的就是当前键的数据结构类型，redis对外的数据结构包括：
+    * `string`（字符串）
+    * `hash`（哈希）
+    * `list`（列表）
+    * `set`（集合）
+    * `zset`（有序集合）
+* 但是这些数据结构有自己底层的内部编码实现，Redis会在合适的场景选择合适的编码。![redis数据结构](/images/redis-datastruct.png)
+* 两个好处：
+    * 可以改进内部编码，而对外的数据结构和命令没有影响，例如`quicklist`结合了`ziplist`和`linkedlist`两者的优势，为列表类型提供了一种更为优秀的内部编码实现，而对外部用户来说解基本感知不到。
+    * 多种内部编码实现可以在不同场景下发挥各自的优势。
+
+* redis使用了单线程架构和I/O多路复用模型来实现高性能的内存数据库服务。
+* 单线程指所有命令都会进入队列中依次执行，不存在多个命令被同时执行的情况。
+* 为什么单线程还这么快？
+    * redis所有数据都存储在内存中，内存访问很快。
+    * 
