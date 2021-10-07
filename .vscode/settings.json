@@ -1,4 +1,5 @@
 {
+    "background.enabled": true,
     "background.customImages": [
         "file://.vscode/vscode_background.jpg",
         "file://.vscode/leimu.jpg",
@@ -22,10 +23,10 @@
     "background.useDefault": false,
     "background.loop": true,
     "editor.scrollBeyondLastColumn": 100,
-    "vim.autoSwitchInputMethod.enable": true,
-    "vim.autoSwitchInputMethod.defaultIM": "1033",
-    "vim.autoSwitchInputMethod.obtainIMCmd": "D:\\CODE\\im-select\\im-select-win\\out\\x64\\im-select.exe", 
-    "vim.autoSwitchInputMethod.switchIMCmd": "D:\\CODE\\im-select\\im-select-win\\out\\x64\\im-select.exe {im}",
     "vim.vimrc.enable": true,
-    "vim.vimrc.path": "d:\\BLOG\\wenzhou\\.vimrc"
+    "editor.smoothScrolling": true,
+    "markdown.preview.scrollEditorWithPreview": false,
+    "vim.handleKeys": {
+        "<C-w>": true
+    }
 }
