@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>《python高手之路》笔记 | Wenzhou&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="最近从图书馆借了本《python高手之路》，看着似乎不错，趁着跑实验的空档，拜读一下，顺便做些笔记。著：Julien Danjou译：王飞龙人民邮电出版社出版发行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《python高手之路》笔记">
+<meta property="og:url" content="http://yoursite.com/2018/07/10/python%E9%AB%98%E6%89%8B%E4%B9%8B%E8%B7%AF/index.html">
+<meta property="og:site_name" content="Wenzhou&#39;s blog">
+<meta property="og:description" content="最近从图书馆借了本《python高手之路》，看着似乎不错，趁着跑实验的空档，拜读一下，顺便做些笔记。著：Julien Danjou译：王飞龙人民邮电出版社出版发行">
+<meta property="og:locale">
+<meta property="og:image" content="http://yoursite.com/images/cover/pythonfly.jpeg">
+<meta property="article:published_time" content="2018-07-10T06:16:33.000Z">
+<meta property="article:modified_time" content="2021-09-22T14:17:42.204Z">
+<meta property="article:author" content="WenZhou">
+<meta property="article:tag" content="python笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/cover/pythonfly.jpeg">
+  
+    <link rel="alternate" href="/atom.xml" title="Wenzhou's blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/wz.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Wenzhou&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Buscar"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Buscar"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-python高手之路" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/07/10/python%E9%AB%98%E6%89%8B%E4%B9%8B%E8%B7%AF/" class="article-date">
+  <time class="dt-published" datetime="2018-07-10T06:16:33.000Z" itemprop="datePublished">2018-07-10</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      《python高手之路》笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <!-- <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC"><span class="toc-text">1. 编码风格</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-Python%E4%B9%8B%E7%A6%85"><span class="toc-text">2. Python之禅</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%B8%B8%E7%94%A8%E6%A0%87%E5%87%86%E5%BA%93"><span class="toc-text">3. 常用标准库</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E6%96%87%E6%A1%A3"><span class="toc-text">4. 文档</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E5%88%86%E5%8F%91"><span class="toc-text">5. 分发</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E8%99%9A%E6%8B%9F%E7%8E%AF%E5%A2%83"><span class="toc-text">6. 虚拟环境</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95"><span class="toc-text">7. 单元测试</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-%E6%96%B9%E6%B3%95%E5%92%8C%E8%A3%85%E9%A5%B0%E5%99%A8"><span class="toc-text">8. 方法和装饰器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B"><span class="toc-text">9. 函数式编程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-%E6%8A%BD%E8%B1%A1%E8%AF%AD%E6%B3%95%E6%A0%91"><span class="toc-text">10. 抽象语法树</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-%E6%80%A7%E8%83%BD%E4%B8%8E%E4%BC%98%E5%8C%96"><span class="toc-text">11. 性能与优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BD%99%E7%AB%A0%E8%8A%82"><span class="toc-text">其余章节</span></a></li></ol> -->
+        <p>最近从图书馆借了本《python高手之路》，看着似乎不错，趁着跑实验的空档，拜读一下，顺便做些笔记。<br>著：Julien Danjou<br>译：王飞龙<br>人民邮电出版社出版发行  </p>
+<p><img src="/images/cover/pythonfly.jpeg" alt="飞得更高"></p>
+<span id="more"></span>
+
+<hr>
+<h4 id="1-编码风格"><a href="#1-编码风格" class="headerlink" title="1. 编码风格"></a>1. 编码风格</h4><p><strong>编写Python代码的<a target="_blank" rel="noopener" href="https://www.python.org/dev/peps/pep-0008/">PEP8</a>标准</strong></p>
+<ul>
+<li>每个缩进层级使用4个空格。  </li>
+<li>每行最多79个字符。  </li>
+<li>顶层的函数或类的定义之间空两行。  </li>
+<li>采用ASCII或UTF-8编码文件。  </li>
+<li>在文件顶端，注释和文档说明之下，每行每条<code>import</code>语句只导入一个模块，同时要按标准库、第三方库和本地库的导入顺序进行分组。  </li>
+<li>在小括号、中括号、大括号之间或者都好之前没有额外的空格。  </li>
+<li>类的命名采用骆驼命名法；异常的定义使用<code>ERROR</code>前缀；函数的命名使用下划线分隔的小写字母；用下划线开头定义私有的属性或方法。  </li>
+</ul>
+<p><strong>可以使用工具<a target="_blank" rel="noopener" href="https://pypi.org/project/pep8/">pep8</a>自动检查Python文件是否符合PEP8要求</strong></p>
+<hr>
+<h4 id="2-Python之禅"><a href="#2-Python之禅" class="headerlink" title="2. Python之禅"></a>2. Python之禅</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">The Zen of Python, by Tim Peters</span><br><span class="line"></span><br><span class="line">Beautiful is better than ugly.</span><br><span class="line">Explicit is better than implicit.</span><br><span class="line">Simple is better than complex.</span><br><span class="line">Complex is better than complicated.</span><br><span class="line">Flat is better than nested.</span><br><span class="line">Sparse is better than dense.</span><br><span class="line">Eeadability counts.</span><br><span class="line">Special cases aren&#39;t special enough to break the rules.</span><br><span class="line">Although practicality beats purity.</span><br><span class="line">Unless explicitly silenced.</span><br><span class="line">In the face of ambiguity, refuse the temptation to guess.</span><br><span class="line">There should be one-- and preferably one one --obvious way to do it.</span><br><span class="line">Although that way may bot be obvious at first unless you&#39;re Dutch.</span><br><span class="line">Now is better than never.</span><br><span class="line">Although never is often better than *right* now.</span><br><span class="line">If the implementation is hard to explain, it&#39;s a bad idea.</span><br><span class="line">If the implementation is easy to explain, it may be a good idea.</span><br><span class="line">Namespaces are one honking great idea -- let&#39;s do more of those!</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="3-常用标准库"><a href="#3-常用标准库" class="headerlink" title="3. 常用标准库"></a>3. 常用标准库</h4><ul>
+<li><code>atexit</code> 允许注册在程序退出时调用的函数。  </li>
+<li><code>argparse</code> 提供解析命令行参数的函数。  </li>
+<li><code>bisect</code> 为可排序列表提供二分查找算法。  </li>
+<li><code>calendar</code> 提供一组与日期相关的函数。  </li>
+<li><code>codecs</code> 提供编解码数据的函数。  </li>
+<li><code>collections</code> 提供一组有用的数据结构。  </li>
+<li><code>copy</code> 提供复制数据的函数。  </li>
+<li><code>csv</code> 提供用于读写CSV文件的函数。  </li>
+<li><code>datetime</code> 提供用于处理日期和时间的类。  </li>
+<li><code>fnmatch</code> 提供用于匹配Unix风格文件名模式的函数。  </li>
+<li><code>concurrent</code> 提供异步计算。  </li>
+<li><code>glob</code> 提供用于匹配Unix风格路徑模式的函数。  </li>
+<li><code>io</code> 提供用于处理I/O流的函数。  </li>
+<li><code>json</code> 提供用来读写JSON格式数据的函数。  </li>
+<li><code>logging</code> 提供对Python内置的日志功能的访问。  </li>
+<li><code>multiprocessing</code> 可以在应用程序中运行多个子进程，而且提供API让这些子进程看上去像线程一样。  </li>
+<li><code>operator</code> 提供实现基本的Python运算符功能的函数，可以使用这些函数而不是自己写<code>lambda</code>表达式。  </li>
+<li><code>os</code> 提供对基本的操作系统函数的访问。  </li>
+<li><code>random</code> 提供生成伪随机数的函数。  </li>
+<li><code>re</code> 提供正则表达式功能。  </li>
+<li><code>sched</code> 提供一个无需多线程的事件调度器。  </li>
+<li><code>select</code> 提供对函数<code>select()</code>和<code>poll()</code>的访问，用于创建事件循环。  </li>
+<li><code>shutil</code> 提供对高级文件处理函数的访问。  </li>
+<li><code>signal</code> 提供用于处理POSIX信号的函数。  </li>
+<li><code>tempfile</code> 提供用于创建临时文件和目录的函数。  </li>
+<li><code>threading</code> 提供对处理高级线程功能的访问。  </li>
+<li><code>urllib</code> 提供处理和解析URL的函数。  </li>
+<li><code>uuid</code> 可以生成全局唯一标识符。  </li>
+</ul>
+<hr>
+<h4 id="4-文档"><a href="#4-文档" class="headerlink" title="4. 文档"></a>4. 文档</h4><p>Python中文档格式的事实标准是<code>reStructuredText</code>，或者简称<code>reST</code>。<br>项目的文档应包括下列内容：  </p>
+<ul>
+<li>用一两句话描述这个项目要解决的问题。  </li>
+<li>项目所基于的分发许可。  </li>
+<li>一个展示项目如何工作的小例子。  </li>
+<li>安装指南。  </li>
+<li>指向社区支持、邮件列表、IRC、论坛等的链接。  </li>
+<li>指向bug跟踪系统的链接。  </li>
+<li>指向源代码的链接，以便开发人员可以下载并立刻投入开发。  </li>
+<li>还应该包括一个<code>README.rst</code>文件，解释这个项目是做什么的。  </li>
+</ul>
+<p><strong>可以利用<code>Sphinx</code>模块及其扩展实现自动化文档和其他功能</strong></p>
+<hr>
+<h4 id="5-分发"><a href="#5-分发" class="headerlink" title="5. 分发"></a>5. 分发</h4><ol>
+<li>历史  </li>
+</ol>
+<ul>
+<li><code>distutils</code>是标准库的一部分，能处理简单的包的安装。  </li>
+<li><code>setuptools</code>是领先的包安装标准，曾经被废弃但现在又继续开发。  </li>
+<li><code>distribute</code>从0.7版本开始并入了<code>setuptools</code>。  </li>
+<li><code>distutils2</code>（也称为<code>packaging</code>）已经被废弃。  </li>
+<li><code>distlib</code>将来可能会取代<code>distutils</code>。  </li>
+</ul>
+<ol start="2">
+<li>使用<code>pbr</code>打包<br><code>pbr</code>是指<code>Python Build Reasonableness</code>。它的处理方式直接受<code>distutils2</code>的启发。  </li>
+</ol>
+<p><strong><code>pbr</code>还提供了其他一些功能：</strong>  </p>
+<ul>
+<li>基于<code>requitements.txt</code>做自动依赖安装。  </li>
+<li>利用<code>Sphinx</code>实现文档自动化。  </li>
+<li>基于<em>git</em> history自动生成AUTHORS和ChangeLog文件。  </li>
+<li>针对_git_自动创建文件列表。  </li>
+<li>基于<em>git</em> tags的版本管理。  </li>
+</ul>
+<ol start="3">
+<li><p>Wheel格式<br><a target="_blank" rel="noopener" href="https://www.python.org/dev/peps/pep-0427/">PEP427</a>针对Python的分发包定义了新的标准，名为<code>Wheel</code>。已有相应工具作为这一格式的参考实现，也命名为<a target="_blank" rel="noopener" href="https://pypi.org/project/wheel/">Wheel</a>。  </p>
+</li>
+<li><p>发布成果  </p>
+<ol>
+<li>使用<code>sdist</code>命令生成一个用来分发的源代码<code>tarball</code>。  </li>
+<li>可以使用PyPI<a target="_blank" rel="noopener" href="https://test.pypi.org/">预付费服务器</a>测试发布流程。(在测试服务器上注册项目，在索引中注册项目，上传一个源代码分发<code>tarball</code>和<code>Wheel</code>归档文件。在服务器上搜索包确认是否上传成功。)  </li>
+<li>上传项目到PyPI主服务器。  </li>
+</ol>
+</li>
+<li><p>入口点  </p>
+</li>
+</ol>
+<ul>
+<li>利用<a target="_blank" rel="noopener" href="https://pypi.org/project/entry_point_inspector/">entry_point_inspector</a>的包可视化一个包中可用的入口点。  </li>
+<li>使用控制台脚本，利用<code>setuptools</code>的功能<code>console_scripts</code>，它能够用来帮助<code>setuptools</code>安装一个很小的程序到系统目录中，并通过它调用应用程序中某个模块的特定函数。  </li>
+<li>使用插件和驱动程序，<a target="_blank" rel="noopener" href="https://pypi.org/project/stevedore/">stevedore</a>提供了对动态插件的支持。  </li>
+</ul>
+<hr>
+<h4 id="6-虚拟环境"><a href="#6-虚拟环境" class="headerlink" title="6. 虚拟环境"></a>6. 虚拟环境</h4><p><strong>环境问题</strong>  </p>
+<ul>
+<li>系统中没有需要的库；  </li>
+<li>系统中没有需要的库的正确版本；  </li>
+<li>对两个不同的应用程序可能需要同一个库的两个不同的版本；  </li>
+</ul>
+<p>解决方案： <strong>每个应用程序（包含其依赖）都使用独立的库目录，然后使用这个目录加载所需的Python模块</strong>  </p>
+<p>工具<code>virtualenv</code>可以自动处理这些目录。  </p>
+<p><a target="_blank" rel="noopener" href="https://www.python.org/dev/peps/pep-0405/">PEP 405</a>定义了虚拟环境机制。<br><code>venv</code>模块可以操作虚拟环境而无需使用<code>virtualenv</code>包或者其他包。  </p>
+<hr>
+<h4 id="7-单元测试"><a href="#7-单元测试" class="headerlink" title="7. 单元测试"></a>7. 单元测试</h4><p><strong>基础知识</strong>  </p>
+<ul>
+<li>测试应该保存在应用程序或库的tests子模块中。  </li>
+<li>通常比较简单的方式是采用模块树的层次结构作为测试树的层级结构。例如，覆盖代码<code>mylib/foobar.py</code>的测试应该存储在<code>mylib/tests/test_foobar.py</code>中。  </li>
+<li><a target="_blank" rel="noopener" href="https://nose.readthedocs.io/en/latest/">nose</a>提供<code>nosetests</code>命令会加载所有以<code>test_</code>开头的文件，然后执行其中所有以<code>test_</code>开头的函数。  </li>
+<li><a target="_blank" rel="noopener" href="https://pypi.org/project/unittest/">unittest</a>能在测试失败的时候，给出测试失败的真正信息（写测试用例时<strong>永远</strong>不应该使用<code>assert</code>）。  </li>
+<li>可以使用<code>fail(msg)</code>方法有意让某个测试立刻失败。  </li>
+<li>如果想忽略某个测试，可以抛出<code>unittest.SkipTest</code>异常、使用<code>unittest.TestCase.skipTest()</code>方法、或使用<code>unittest.skip</code>装饰器。  </li>
+<li>如果需要在运行某个测试前后执行一组通用的操作，<code>unittest</code>提供了两个特殊的方法<code>setUp</code>和<code>tearDown</code>，它们会在类的每个测试方法调用前后执行一次。经常被称为<code>fixture</code>，<a target="_blank" rel="noopener" href="https://pypi.org/project/fixtures/">fixtures</a>Python模块提供了一种简单的创建<code>fixture</code>类和对象的机制。  </li>
+</ul>
+<p><strong>模拟(mocking)</strong>  </p>
+<ul>
+<li><code>mock</code>对象即模拟对象，用来通过莫中特殊和可控的方式模拟真实应用程序对像的行为。Python标准库中用来创建<code>mock</code>对象的库名为<a target="_blank" rel="noopener" href="https://pypi.org/project/mock/">mock</a>。  </li>
+<li><code>mock.patch</code>方法可以修改外部代码的任何部分，使其按照需要的方式对软件进行各种条件下的测试。  </li>
+</ul>
+<p><strong>场景测试</strong>  </p>
+<ul>
+<li>对某个对象的不同版本运行一组测试，对一组不同的对象运行同一个错误，对不同的驱动执行整个测试套件。可以使用混入类(mixin class)实现这一点。  </li>
+<li><a target="_blank" rel="noopener" href="https://pypi.org/project/testscenarios/">testscenarios</a>提供了一种简单的方式针对一组实时生成的不同场景运行类测试。  </li>
+</ul>
+<p><strong>测试序列与并行</strong>  </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://pypi.org/project/python-subunit/">subunit</a>是用来为测试结果提供流协议(streaming protocol)的一个Python模块，可以聚合测试结果或者对测试的运行进行记录或归档等。  </li>
+<li><a target="_blank" rel="noopener" href="https://pypi.org/project/testrepository/">testrepository</a>可以在测试用例的数量很多时，让程序处理测试结果序列。  </li>
+<li>通过编辑项目的根目录中的<code>.testr.conf</code>文件使<code>testr</code>自动执行要运行的测试，自己去加载测试结果。  </li>
+</ul>
+<p><strong>测试覆盖</strong>  </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://pypi.org/project/coverage/">coverage</a>模块可以指出程序的哪些部分从来没有被运行过，以及哪些可能是”僵尸代码”。  </li>
+<li>使用<code>nosetests --cover-package=xxx --with-coverage tests.test_xxxx.py</code>即可结合<code>nose</code>生成一份不错的代码覆盖报告。  </li>
+<li><code>python setup.py testr --coverage</code>可以在使用<code>testrepository</code>时，使用<code>setuptools</code>集成运行<code>coverage</code>自动运行测试集，并在<code>cover</code>目录中生成HTML报告。  </li>
+</ul>
+<p><strong>使用虚拟环境和tox</strong>  </p>
+<ul>
+<li><code>tox</code>的目标是自动化和标准化Python中运行测试的方式。它提供了在一个干净的虚拟环境中运行整个测试集的所有功能，并安装被测试的应用程序以检查其安装是否正常。  </li>
+</ul>
+<p><strong>测试策略</strong>  </p>
+<ul>
+<li>最低目标是保证每次代码提交都能通过所有测试，最好是能以自助的方式实现。  </li>
+<li>如果正在使用流行的<code>GitHub</code>托管服务，<a target="_blank" rel="noopener" href="https://travis-ci.org/">Travis CI</a>提供了一种在代码的签入(push)、合并(merge)或签出(pull)请求后运行测试的方式。  </li>
+</ul>
+<hr>
+<h4 id="8-方法和装饰器"><a href="#8-方法和装饰器" class="headerlink" title="8. 方法和装饰器"></a>8. 方法和装饰器</h4><p>Python中提供了装饰器(decorator)作为修改函数的一种便捷方式<a target="_blank" rel="noopener" href="http://www.python.org/dev/peps/pep-0318/">PEP318</a>。  </p>
+<p><strong>装饰器本质上就是一个函数，这个函数接收其他函数作为参数，并将其以一个新的修改后的函数替换它</strong>  </p>
+<p>例：以下函数，它们在被调用时检查”用户名”参数：  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Store</span>(<span class="params">object</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_food</span>(<span class="params">self, username, food</span>):</span></span><br><span class="line">        <span class="keyword">if</span> username != <span class="string">&#x27;admin&#x27;</span>:</span><br><span class="line">            <span class="keyword">raise</span> Expection(<span class="string">&quot;This user is not allowed to get food&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> self.storage.get(food)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">put_food</span>(<span class="params">self, username, food</span>):</span></span><br><span class="line">        <span class="keyword">if</span> username != <span class="string">&#x27;admin&#x27;</span>:</span><br><span class="line">            <span class="keyword">raise</span> Expection(<span class="string">&quot;This user is not allowed to put food&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> self.storage.put(food)</span><br></pre></td></tr></table></figure>
+
+<p>有了装饰器以后：  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check_is_admin</span>(<span class="params">f</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span>(<span class="params">*args, **kwargs</span>):</span></span><br><span class="line">        <span class="keyword">if</span> kwargs.get(<span class="string">&#x27;username&#x27;</span>) != <span class="string">&#x27;admin&#x27;</span>:</span><br><span class="line">            <span class="keyword">raise</span> Exception(<span class="string">&quot;This user is not allowed to get food&quot;</span>)</span><br><span class="line">        <span class="keyword">return</span> f(*args, **kwargs)</span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Store</span>(<span class="params">object</span>):</span></span><br><span class="line"><span class="meta">    @check_is_admin</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_food</span>(<span class="params">self, username, food</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.storage.get(food)</span><br><span class="line"></span><br><span class="line"><span class="meta">    @check_is_admin</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">put_food</span>(<span class="params">self, username, food</span>):</span></span><br><span class="line">        self.storage.put(food)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p><strong>原生方法的主要缺点：</strong><br>新函数缺少很多原函数的属性，如文档字符串和名字。<br>可以通过Python内置的<code>functools</code>中<code>update_wrapper</code>函数或者名为<code>wraps</code>的装饰器解决。<br><code>inspect</code>模块允许提取函数的签名并对其进行操作。  </p>
+<p><strong>静态方法</strong>  </p>
+<p>装饰器<code>@staticmethod</code>提供了以下几种功能：  </p>
+<ul>
+<li>Python不必为我们创建的每个Pizza对象实例化一个绑定方法。可以节约创建绑定方法(对象)的开销。  </li>
+<li>提高代码的可读性。  </li>
+<li>可以在子类中覆盖静态方法。  </li>
+</ul>
+<p><strong>类方法</strong>  </p>
+<p>类方法是直接绑定到类而非它的实例的方法<code>@classmethod</code>。<br>类方法对于创建工厂方法最有用，即以特定方式实例化对象。  </p>
+<p><strong>抽象方法</strong>  </p>
+<p>可以使用Python内置的<a target="_blank" rel="noopener" href="https://docs.python.org/3/library/abc.html">abc</a>模块实现抽象方法。  </p>
+<p><strong>super</strong>  </p>
+<p><code>super()</code>函数实际上是一个构造器，每次调用它都会实例化一个<code>super</code>对象。它接收一个或两个参数，地一个参数是一个类，第二个参数是一个子类或第一个参数的一个实例。<br>构造器返回的对象就像是地一个参数的父类的一个代理。它有自己的<code>__getattribute__</code>方法去遍历MRO列表中的类并返回第一个满足条件的属性。<br><code>super</code>是在子类中访问父类属性的标准方式，应该尽量使用它。它能确保父类方法的协作调用而不出意外。  </p>
+<hr>
+<h4 id="9-函数式编程"><a href="#9-函数式编程" class="headerlink" title="9. 函数式编程"></a>9. 函数式编程</h4><p>函数式编程具有以下实用的特点：  </p>
+<ul>
+<li>可证明性。  </li>
+<li>模块化。  </li>
+<li>简洁。  </li>
+<li>并发。  </li>
+<li>可测性。  </li>
+</ul>
+<p><strong>生成器</strong>  </p>
+<ul>
+<li><p>生成器是在<a target="_blank" rel="noopener" href="https://www.python.org/dev/peps/pep-0255/">PEP 255</a>中引入的，并提供了一种比较简单的实现迭代器协议(<a target="_blank" rel="noopener" href="https://docs.python.org/3/c-api/iter.html">iterator protocol</a>)的方式来创建对象。  </p>
+</li>
+<li><p>在Python中，生成器的构建是通过在函数产生某对象时保持一个对栈的引用来实现的，并在需要时恢复这个栈。Python3中可以使用函数<code>inspect.getgeneratorstate</code>给出生成器的状态。  </p>
+</li>
+<li><p>摘自<a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/opensource/os-cn-python-yield/">Python yield 使用浅析</a></p>
+<blockquote>
+<p><code>yield</code>的作用就是把一个函数变成一个<code>generator</code>，带有<code>yield</code>的函数不再是一个普通函数，Python解释器会将其视为一个<code>generator</code>，调用<code>fab(5)</code>不会执行<code>fab</code>函数，而是返回一个 <code>iterable</code>对象！在<code>for</code>循环执行时，每次循环都会执行<code>fab</code>函数内部的代码，执行到<code>yield b</code> 时，<code>fab</code>函数就返回一个迭代值，下次迭代时，代码从<code>yield b</code>的下一条语句继续执行，而函数的本地变量看起来和上次中断执行前是完全一样的，于是函数继续执行，直到再次遇到<code>yield</code>。<br>当函数执行结束时，<code>generator</code>自动抛出<code>StopIteration</code>异常，表示迭代完成。在<code>for</code>循环里，无需处理<code>StopIteration</code>异常，循环会正常结束。<br>一个带有<code>yield</code>的函数就是一个<code>generator</code>，它和普通函数不同，生成一个<code>generator</code>看起来像函数调用，但不会执行任何函数代码，直到对其调用<code>next()</code>（在<code>for</code>循环中会自动调用<code>next()</code>）才开始执行。虽然执行流程仍按函数的流程执行，但每执行到一个<code>yield</code>语句就会中断，并返回一个迭代值，下次执行时从<code>yield</code>的下一个语句继续执行。看起来就好像一个函数在正常执行的过程中被<code>yield</code>中断了数次，每次中断都会通过<code>yield</code>返回当前的迭代值。</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>函数式函数的函数化</strong>  </p>
+<p>Python中包含很多针对函数式编程的工具。  </p>
+<ul>
+<li><p><code>map(function, iterable)</code>对<code>iterable</code>中的每一个元素应用<code>function</code>，在Python2中返回一个列表，在Python3中返回可迭代的<code>map</code>对象。  </p>
+</li>
+<li><p><code>reduce(func, seq[, init()])</code>每一次迭代，都将上一次的迭代结果（注：第一次为<code>init</code>元素，如果没有指定<code>init</code>则为<code>seq</code>的第一个元素）与下一个元素一同传入二元<code>func</code>函数中去执行。在<code>reduce()</code>函数中，<code>init</code>是可选的，如果指定，则作为第一次迭代的第一个元素使用，如果没有指定，就取<code>seq</code>中的第一个元素。  </p>
+</li>
+<li><p><code>filter(function or None, iterable)</code>对<code>iterable</code>中的元素应用<code>function</code>对返回结果进行过滤，在Python2中返回一个列表，在Python3中返回可迭代的<code>filter</code>对象。  </p>
+</li>
+<li><p><code>enumerate(iterable[, start])</code>返回一个可迭代的<code>enumerate</code>对象，当需要参考数组的索引编写代码时，就很有用。  </p>
+</li>
+<li><p><code>sorted(iterable, key=None, reverse=False)</code>返回<code>iterable</code>的一个已排序版本。通过参数<code>key</code>可以提供一个返回要排序的值的函数。  </p>
+</li>
+<li><p><code>any(iterable)</code>和<code>all(iterable)</code>都返回一个依赖于<code>iterable</code>返回的值的布尔值。  </p>
+</li>
+<li><p><code>zip(iter1 [, iter2 [...]])</code>接收多个序列并将它们组合成元组。它在将一组键和一组值组合成字典时很有用。  </p>
+</li>
+<li><p>使用Python包<a target="_blank" rel="noopener" href="https://pypi.org/project/first/">first</a>，**<code>functools.partial</code><strong>以及</strong><code>operator</code>**模块可以优雅地实现从列表中找出第一个满足条件的元素。  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> operator</span><br><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> partial</span><br><span class="line"><span class="keyword">from</span> first <span class="keyword">import</span> first</span><br><span class="line">first([<span class="number">-1</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>], key=partial(operator.le, <span class="number">0</span>))</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>Python标准库中<code>itertools</code>模块提供的其他有用的函数：  </p>
+<ul>
+<li><p><code>chain(*iterables)</code>依次迭代多个<code>iterables</code>但并不会构造包含所有元素的中间列表。  </p>
+</li>
+<li><p><code>combinations(iterable, r)</code>从给定的<code>iterable</code>中生成所有长度为r的组合。  </p>
+</li>
+<li><p><code>compress(data, selectors)</code>对data应用来自<code>selectors</code>的布尔掩码并从data中返回<code>selectors</code>中对应为真的元素。  </p>
+</li>
+<li><p><code>count(start, step)</code>创建一个无限的值的序列，从<code>start</code>开始，步长为<code>step</code>。  </p>
+</li>
+<li><p><code>cycle(iterable)</code>重复地遍历<code>iterable</code>中的值。  </p>
+</li>
+<li><p><code>dropwhile(predicate, iterable)</code>过滤<code>iterable</code>中的元素，丢弃符合<code>predicate</code>描述的那些元素。  </p>
+</li>
+<li><p><code>groupy(iterable, keyfunc)</code>根据<code>keyfunc</code>函数返回的结果对元素进行分组并返回一个迭代器。  </p>
+</li>
+<li><p><code>permutations(iterable[,r])</code>返回<code>iterable</code>中r个元素的所有集合。  </p>
+</li>
+<li><p><code>product(*iterables)</code>返回<code>iterables</code>的笛卡尔积的可迭代对象，但不使用嵌套的<code>for</code>循环。  </p>
+</li>
+<li><p><code>takewhile(predicate, iterable)</code>返回满足<code>predicate</code>条件的<code>iterable</code>中的元素。  </p>
+</li>
+<li><p><strong><code>itertools</code>和<code>operator</code>能够覆盖通常程序员依赖<code>lambda</code>表达式的大部分场景。</strong><br>参考知乎对<code>lambda</code>的相关讨论<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/20125256">Lambda 表达式有何用处？如何使用？</a>，如果引入<code>lambda</code>表达式不能使代码更简洁更易懂，那么应该避免使用(滥用)。  </p>
+</li>
+</ul>
+<hr>
+<h4 id="10-抽象语法树"><a href="#10-抽象语法树" class="headerlink" title="10. 抽象语法树"></a>10. 抽象语法树</h4><p>这一章看不懂。。。自己暂时还没有这么高的需求，暂时不深究了。。</p>
+<ul>
+<li>抽象语法树(abstract syntax tree, AST)是任何语言源代码的抽象结构的树状表示。  </li>
+<li>Python中的<code>ast</code>模块可以解析一段Python代码并将其存储从而生成抽象语法树。  </li>
+<li>用抽象语法树检查来扩展<code>flake8</code>。  </li>
+<li>利用<a href="">Hy</a>编程语言为Python创建一种新的语法，并将其解析并编译成标准的Python抽象语法树。  </li>
+</ul>
+<hr>
+<h4 id="11-性能与优化"><a href="#11-性能与优化" class="headerlink" title="11. 性能与优化"></a>11. 性能与优化</h4><blockquote>
+<p>“过早优化是万恶之源。”<br>————donald Knuth, 摘自<em>Structured Programming with go to Statements</em></p>
+</blockquote>
+<p><strong>数据结构</strong><br>利用Python提供的数据结构和代码，优雅而简单地解决计算机问题。<br>有许多高级的数据结构可以极大地减少代码维护负担。例如，<code>collections.defaultdict</code>、<code>OrderedDict</code>、<code>Counter</code>等。  </p>
+<p><strong>性能分析</strong>  </p>
+<ul>
+<li><p><code>cProfile</code>可以显示每个函数的调用次数，以及执行所花费的时间，可以使用<code>-s</code>选项按其他字段进行排序。<br><code>python -m cProfile myscript.py</code>  </p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://valgrind.org/">Valgrind</a>能够提供对C程序的性能分析数据。  </p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://kcachegrind.sourceforge.net/html/Home.html">KCacheGrind</a>能够对生成的数据进行可视化展示。  </p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用KCacheGrind可视化Python性能分析数据</span></span><br><span class="line">python -m cProfile -o myscript.cprof myscript.py</span><br><span class="line">pyprof2calltree -k -i myscript.cprof</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>用<code>dis</code>模块可以对Python字节码进行反编译，能够从微观角度对代码进行分析。  <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">x</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">42</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> dis</span><br><span class="line">dis.dis(x)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><strong>有序列表和二分查找</strong>  </p>
+<ul>
+<li><p>可以利用Python提供的<code>bisect</code>模块使用二分查找算法，也可以使用该模块提供的<code>insort_left</code>和<code>insort_right</code>函数实现立即插入。  </p>
+</li>
+<li><p>更多的数据类型，Python库已经实现了各种版本，<strong>不要开发和调试自己的版本</strong>。  </p>
+</li>
+</ul>
+<p><strong>namedtuple和slots</strong>  </p>
+<ul>
+<li><p>Python中的类可以定义一个<code>__slots__</code>属性，用来制定仅该类的实例可用的属性。其作用在于可以将所有对象属性存储在一个<code>list</code>对象中，从而避免分配整个字典对象来存储所有的对象属性。  </p>
+</li>
+<li><p><code>collection</code>模块中<code>namedtuple</code>类允许动态创建一个继承自<code>tuple</code>的类，它不可变、条目数固定，但可以通过具名属性而不是索引获取元组的元素。  </p>
+</li>
+</ul>
+<p><strong>memoization</strong>  </p>
+<ul>
+<li><p><code>memoization</code>是指通过缓存函数返回结果来加速函数调用的一种技术。  </p>
+</li>
+<li><p><code>functools</code>模块提供了一个LRU(Least-Recently-Used)缓存装饰器，它在实现了<code>memoization</code>功能的同时，还限定了缓存的条目数目，当缓存的条目数目达到最大时移除最近最少使用的条目。  </p>
+</li>
+</ul>
+<p><strong>PyPy</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.pypy.org/">PyPy</a>是符合标准的Python语言的一个高效实现。  </li>
+</ul>
+<p><strong>通过缓冲区协议实现零复制</strong></p>
+<ul>
+<li><p>可以使用<a target="_blank" rel="noopener" href="https://pypi.org/project/memory_profiler/">memory_profiler</a>衡量内存的使用情况。  </p>
+</li>
+<li><p>在Python中可以使用实现了<strong>缓冲区协议</strong>的对象。<a target="_blank" rel="noopener" href="https://www.python.org/dev/peps/pep-3118/">PEP 3118</a>定义了缓冲区协议。  </p>
+</li>
+<li><p>使用<code>memoryview</code>类的构建函数去构造一个新的<code>memoryview</code>对象，它会引用原始的对象内存。  </p>
+</li>
+</ul>
+<hr>
+<h4 id="其余章节"><a href="#其余章节" class="headerlink" title="其余章节"></a>其余章节</h4><p>后续的部分介绍了扩展和架构、数据库处理、对python3的支持以及其他内容，等以后研究深入了，再来拜读！  </p>
+<p><strong>延伸阅读</strong>  </p>
+<p><a target="_blank" rel="noopener" href="https://docs.python-guide.org/">The Hitchhiker’s Guide to Python!</a><br><a target="_blank" rel="noopener" href="http://python3porting.com/">Supporting Python 3: An in-depth guide</a><br><a target="_blank" rel="noopener" href="https://python-packaging-user-guide.readthedocs.io/">Python Packaging User Guide</a>  </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/07/10/python%E9%AB%98%E6%89%8B%E4%B9%8B%E8%B7%AF/" data-id="cktvhfl9p000vji9se1z25nej" data-title="《python高手之路》笔记" class="article-share-link">Compartir</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python%E7%AC%94%E8%AE%B0/" rel="tag">python笔记</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/03/30/%E4%B8%87%E7%89%A9%E7%AE%80%E5%8F%B2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          《万物简史》摘抄
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/03/29/%E7%BC%96%E5%86%99%E9%AB%98%E8%B4%A8%E9%87%8F%E4%BB%A3%E7%A0%81%E6%94%B9%E5%96%84python%E7%A8%8B%E5%BA%8F%E7%9A%8491%E4%B8%AA%E5%BB%BA%E8%AE%AE/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">《编写高质量代码改善python程序的91个建议》笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CS%E7%AC%94%E8%AE%B0/" rel="tag">CS笔记</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python%E7%AC%94%E8%AE%B0/" rel="tag">python笔记</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%B6%E4%BB%96/" rel="tag">其他</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A9%E6%96%87%E7%89%A9%E7%90%86%E5%AD%A6%E7%AC%94%E8%AE%B0/" rel="tag">天文物理学笔记</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91/" rel="tag">服务端开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="tag">游戏开发</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Nube de Tags</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CS%E7%AC%94%E8%AE%B0/" style="font-size: 16.67px;">CS笔记</a> <a href="/tags/python%E7%AC%94%E8%AE%B0/" style="font-size: 13.33px;">python笔记</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 10px;">其他</a> <a href="/tags/%E5%A4%A9%E6%96%87%E7%89%A9%E7%90%86%E5%AD%A6%E7%AC%94%E8%AE%B0/" style="font-size: 20px;">天文物理学笔记</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 10px;">数据库</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91/" style="font-size: 10px;">服务端开发</a> <a href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" style="font-size: 10px;">游戏开发</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archivos</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Posts recientes</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/08/07/mongo%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">mongo学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/05/%E8%A2%AB%E8%AE%A8%E5%8E%8C%E7%9A%84%E5%8B%87%E6%B0%94/">《被讨厌的勇气》笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/19/%E7%BD%91%E7%BB%9C%E5%A4%9A%E4%BA%BA%E6%B8%B8%E6%88%8F%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%BC%96%E7%A8%8B/">《网络多人游戏架构与编程》笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/07/CPython%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">CPython学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/12/13/%E6%B5%81%E7%95%85%E7%9A%84python/">《流畅的python》笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="footer-outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 WenZhou<br>
+      Construido por <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+<!-- 处理mermaid流程图 -->
+
+  <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'base'});
+    }
+  </script>
+
+  </div>
+</body>
+</html>

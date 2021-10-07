@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>《编写高质量代码改善python程序的91个建议》笔记 | Wenzhou&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="最近在阅读《编写高质量代码改善python程序的91个建议》，感觉挺有帮助，做些笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《编写高质量代码改善python程序的91个建议》笔记">
+<meta property="og:url" content="http://yoursite.com/2018/03/29/%E7%BC%96%E5%86%99%E9%AB%98%E8%B4%A8%E9%87%8F%E4%BB%A3%E7%A0%81%E6%94%B9%E5%96%84python%E7%A8%8B%E5%BA%8F%E7%9A%8491%E4%B8%AA%E5%BB%BA%E8%AE%AE/index.html">
+<meta property="og:site_name" content="Wenzhou&#39;s blog">
+<meta property="og:description" content="最近在阅读《编写高质量代码改善python程序的91个建议》，感觉挺有帮助，做些笔记。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-03-29T07:33:31.000Z">
+<meta property="article:modified_time" content="2021-09-21T16:27:09.587Z">
+<meta property="article:author" content="WenZhou">
+<meta property="article:tag" content="python笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Wenzhou's blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/wz.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Wenzhou&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Buscar"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Buscar"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-编写高质量代码改善python程序的91个建议" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2018/03/29/%E7%BC%96%E5%86%99%E9%AB%98%E8%B4%A8%E9%87%8F%E4%BB%A3%E7%A0%81%E6%94%B9%E5%96%84python%E7%A8%8B%E5%BA%8F%E7%9A%8491%E4%B8%AA%E5%BB%BA%E8%AE%AE/" class="article-date">
+  <time class="dt-published" datetime="2018-03-29T07:33:31.000Z" itemprop="datePublished">2018-03-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      《编写高质量代码改善python程序的91个建议》笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <!-- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-text">目录</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E5%88%A9%E7%94%A8str-fromat-%E8%BF%9B%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A0%BC%E5%BC%8F%E5%8C%96"><span class="toc-text">1. 利用str.fromat()进行字符串格式化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E4%B8%89%E5%85%83%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="toc-text">2. 三元操作符?:</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%B8%B8%E9%87%8F%E7%AE%A1%E7%90%86"><span class="toc-text">3. 常量管理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%88%A9%E7%94%A8lazy-evaluation%E7%89%B9%E6%80%A7"><span class="toc-text">4. 利用lazy evaluation特性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-%E6%9E%9A%E4%B8%BE%E7%9A%84%E6%9B%BF%E4%BB%A3%E5%AE%9E%E7%8E%B0"><span class="toc-text">5. 枚举的替代实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-%E4%B8%8D%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8type-%E6%9D%A5%E8%BF%9B%E8%A1%8C%E7%B1%BB%E5%9E%8B%E6%A3%80%E6%9F%A5"><span class="toc-text">6. 不推荐使用type()来进行类型检查</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-eval-%E5%87%BD%E6%95%B0%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-text">7. eval()函数的使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-%E4%BD%BF%E7%94%A8enumerate-%E8%8E%B7%E5%8F%96%E5%BA%8F%E5%88%97%E8%BF%AD%E4%BB%A3%E7%9A%84%E7%B4%A2%E5%BC%95%E5%92%8C%E5%80%BC"><span class="toc-text">8. 使用enumerate()获取序列迭代的索引和值</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9-%E4%BD%BF%E7%94%A8with%E8%87%AA%E5%8A%A8%E5%85%B3%E9%97%AD%E8%B5%84%E6%BA%90"><span class="toc-text">9. 使用with自动关闭资源</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10-else%E5%AD%90%E5%8F%A5%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-text">10. else子句的使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-%E4%BC%98%E5%85%88%E4%BD%BF%E7%94%A8join%E8%80%8C%E4%B8%8D%E6%98%AF-%E8%BF%9E%E6%8E%A5%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">11. 优先使用join而不是+连接字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12-%E5%88%97%E8%A1%A8%E8%A7%A3%E6%9E%90"><span class="toc-text">12. 列表解析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13-%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92"><span class="toc-text">13. 参数传递</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#14-str-%E5%92%8Crepr-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">14. str()和repr()的区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#15-%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="toc-text">15. 字符串的基本用法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#16-sort-%E5%92%8Csorted-%E7%9A%84%E7%94%A8%E6%B3%95"><span class="toc-text">16. sort()和sorted()的用法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#17-%E6%B5%85%E6%8B%B7%E8%B4%9D%E4%B8%8E%E6%B7%B1%E6%8B%B7%E8%B4%9D"><span class="toc-text">17. 浅拷贝与深拷贝</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#18-init-%E4%B8%8D%E6%98%AF%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="toc-text">18. __init__()不是构造方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#19-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81self%E5%8F%82%E6%95%B0"><span class="toc-text">19.为什么需要self参数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#20-%E6%8E%8C%E6%8F%A1%E5%BE%AA%E7%8E%AF%E4%BC%98%E5%8C%96%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%8A%80%E5%B7%A7"><span class="toc-text">20. 掌握循环优化的基本技巧</span></a></li></ol></li></ol></li></ol> -->
+        <p>最近在阅读《编写高质量代码改善python程序的91个建议》，感觉挺有帮助，做些笔记。  </p>
+<span id="more"></span>
+
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ul>
+<li>利用<code>str.fromat()</code>进行字符串格式化  </li>
+<li>三元操作符<code>?:</code>  </li>
+<li>常量管理  </li>
+<li>利用lazy evaluation特性  </li>
+<li>枚举的替代实现  </li>
+<li>不推荐使用<code>type()</code>来进行类型检查  </li>
+<li><code>eval()</code>函数的使用  </li>
+<li>使用<code>enumerate()</code>获取序列迭代的索引和值  </li>
+<li>使用<code>with</code>自动关闭资源  </li>
+<li><code>else</code>子句的使用  </li>
+<li>优先使用<code>join</code>而不是<code>+</code>连接字符串  </li>
+<li>列表解析  </li>
+<li>参数传递  </li>
+<li><code>str()</code>和<code>repr()</code>的区别  </li>
+<li>字符串的基本用法  </li>
+<li><code>sort()</code>和<code>sorted()</code>的用法  </li>
+<li>浅拷贝与深拷贝  </li>
+<li><code>__init__()</code>不是构造方法  </li>
+<li>为什么需要<code>self</code>参数  </li>
+<li>掌握循环优化的基本技巧   </li>
+</ul>
+<hr>
+<h4 id="1-利用str-fromat-进行字符串格式化"><a href="#1-利用str-fromat-进行字符串格式化" class="headerlink" title="1. 利用str.fromat()进行字符串格式化"></a>1. 利用<code>str.fromat()</code>进行字符串格式化</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">print</span> <span class="string">&#x27;&#123;greet&#125; from &#123;language&#125;.&#x27;</span>.format(greet = <span class="string">&#x27;Hello world&#x27;</span>, language = <span class="string">&#x27;Python&#x27;</span>)</span><br><span class="line"></span><br><span class="line">point = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">s = <span class="string">&#x27;x:&#123;0[0]&#125;;y:&#123;0[1]&#125;;z:&#123;0[2]&#125;&#x27;</span>.format(point)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="2-三元操作符"><a href="#2-三元操作符" class="headerlink" title="2. 三元操作符?:"></a>2. 三元操作符<code>?:</code></h4><p>在传统c/c++/java中支持的三元操作符<code>?:</code>可以用<code>if...else...</code>形式实现。</p>
+<p>C/C++/JAVA形式  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C?X:Y</span><br></pre></td></tr></table></figure>
+
+<p>python中实现  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X <span class="keyword">if</span> C <span class="keyword">else</span> Y</span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<h4 id="3-常量管理"><a href="#3-常量管理" class="headerlink" title="3. 常量管理"></a>3. 常量管理</h4><ul>
+<li><ol>
+<li><p><strong>通过命名风格来表示其含义</strong></p>
+<p>例如常量名所有字母大写，用下划线链接各个单词。<br><code>MAX_OVERFLOW</code></p>
+</li>
+</ol>
+</li>
+<li><ol start="2">
+<li><p><strong>通过自定义类实现常量功能</strong></p>
+<p>要求：“命名全部为大写”和“值一旦绑定便不可再修改”<br>思路为 当命名不符合规范时抛出异常。</p>
+</li>
+</ol>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">_onst</span>:</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">ConstError</span>(<span class="params">TypeError</span>):</span> <span class="keyword">pass</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">ConstCaseError</span>(<span class="params">ConstError</span>):</span> <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__setattr__</span>(<span class="params">self, name, value</span>)</span></span><br><span class="line"><span class="function">		<span class="title">if</span> <span class="title">self</span>.<span class="title">__dict__</span>.<span class="title">has_key</span>(<span class="params">name</span>):</span></span><br><span class="line">            <span class="keyword">raise</span> self.ConstError, <span class="string">&quot;Can&#x27;t change const.%s&quot;</span> % name</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> name.isupper():</span><br><span class="line">            <span class="keyword">raise</span> self.ConstCaseError, \</span><br><span class="line">                <span class="string">&#x27;const name &quot;%s&quot; is not all uppercase&#x27;</span> %name</span><br><span class="line">        self.__dict__[name] = value</span><br><span class="line">    </span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.modules[__name__] = _const()</span><br><span class="line"><span class="keyword">import</span> const</span><br><span class="line">const.MY_CONSTANT = <span class="number">1</span></span><br><span class="line">const.MY_SECOND_CONSTANT = <span class="string">&#x27;a&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>当在其他模块中引用这些常量时，按照如下方式进行即可：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> constant <span class="keyword">import</span> const</span><br><span class="line"><span class="keyword">print</span> const.MY_CONSTANT</span><br><span class="line"><span class="keyword">print</span> const.MY_SECOND_CONSTANT*<span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="4-利用lazy-evaluation特性"><a href="#4-利用lazy-evaluation特性" class="headerlink" title="4. 利用lazy evaluation特性"></a>4. 利用lazy evaluation特性</h4><p><strong>好处</strong>  </p>
+<ul>
+<li><ol>
+<li>避免不必要的计算，带来性能的提升  </li>
+</ol>
+</li>
+<li><ol start="2">
+<li>节省空间  </li>
+</ol>
+</li>
+</ul>
+<p>例：生成器表达式实现斐波那契数列  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fib</span>():</span></span><br><span class="line">    a, b = <span class="number">0</span>, <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">yield</span> a</span><br><span class="line">        a, b = b, a+b</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> itertools <span class="keyword">import</span> islice</span><br><span class="line"><span class="keyword">print</span> list(islice(fib(), <span class="number">5</span>))</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="5-枚举的替代实现"><a href="#5-枚举的替代实现" class="headerlink" title="5. 枚举的替代实现"></a>5. 枚举的替代实现</h4><ul>
+<li><ol>
+<li><strong>使用类属性</strong>  </li>
+</ol>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Seasons</span>:</span></span><br><span class="line">    spring = <span class="number">0</span></span><br><span class="line">    Summer = <span class="number">1</span></span><br><span class="line">    Autumn = <span class="number">2</span></span><br><span class="line">    Winter = <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p> 也可以写成  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Seasons</span>:</span></span><br><span class="line">    spring, summer, autumn, winter = range(<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><ol start="2">
+<li><strong>借助函数</strong>  </li>
+</ol>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">enum</span>(<span class="params">*posarg, **keysarg</span>):</span></span><br><span class="line">    <span class="keyword">return</span> type(<span class="string">&quot;Enum&quot;</span>, (object,), dict(zip(posarg, range(len(posarg))), **keysarg))</span><br><span class="line"></span><br><span class="line">Seasons = enum(<span class="string">&quot;Spring&quot;</span>, <span class="string">&quot;Summer&quot;</span>, <span class="string">&quot;Autumn&quot;</span>, Winter = <span class="number">1</span>)</span><br><span class="line">Seasons.Spring  </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><ol start="3">
+<li><strong>使用<code>collections.nameduple</code></strong>  </li>
+</ol>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Seasons = nameduple(<span class="string">&#x27;Seasons&#x27;</span>,<span class="string">&#x27;Spring Summer Autumn Winter&#x27;</span>)._make(range(<span class="number">4</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> Seasons.Spring</span><br></pre></td></tr></table></figure>
+
+<p><strong>不合理之处</strong>  </p>
+<ul>
+<li><ol>
+<li>允许枚举值重复  </li>
+</ol>
+</li>
+<li><ol start="2">
+<li>支持无意义的操作  </li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="6-不推荐使用type-来进行类型检查"><a href="#6-不推荐使用type-来进行类型检查" class="headerlink" title="6. 不推荐使用type()来进行类型检查"></a>6. 不推荐使用<code>type()</code>来进行类型检查</h4><p><strong>原因：</strong>   </p>
+<ul>
+<li><ol>
+<li>基于内建类型扩展的用户自定义类型，type函数并不能准确返回结果。  </li>
+</ol>
+</li>
+<li><ol start="2">
+<li>在古典类中，任意类的实例的type()返回结果都是<code>&lt;type &#39;instance&#39;&gt;</code>。  </li>
+</ol>
+</li>
+</ul>
+<p><strong>如何约束用户的输入类型：</strong>  </p>
+<ul>
+<li><ol>
+<li>利用工厂函数对类型做相应的转换:<code>str(name)</code>  </li>
+</ol>
+</li>
+<li><ol start="2">
+<li>使用<code>isinstance()</code>函数来检测:<code>isinstance(object, classinfo)</code>。  </li>
+</ol>
+</li>
+</ul>
+<hr>
+<h4 id="7-eval-函数的使用"><a href="#7-eval-函数的使用" class="headerlink" title="7. eval()函数的使用"></a>7. <code>eval()</code>函数的使用</h4><p><code>eval()</code>函数将字符串str当成有效的表达式来求值并返回计算结果。  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval(expression[, globals[, lacals]])</span><br></pre></td></tr></table></figure>
+
+<p><strong>存在问题：</strong> 可能会被有不良目的的人恶意利用。<br><strong>解决方法：</strong>如果使用对象不是信任源，避免使用eval，在需要使用的地方用安全性更好的<code>ast.literal_eval</code>替代。  </p>
+<hr>
+<h4 id="8-使用enumerate-获取序列迭代的索引和值"><a href="#8-使用enumerate-获取序列迭代的索引和值" class="headerlink" title="8. 使用enumerate()获取序列迭代的索引和值"></a>8. 使用<code>enumerate()</code>获取序列迭代的索引和值</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">li = [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;d&#x27;</span>, <span class="string">&#x27;e&#x27;</span>]</span><br><span class="line"><span class="keyword">for</span> i, e <span class="keyword">in</span> enumerate(li):</span><br><span class="line">    <span class="keyword">print</span> <span class="string">&quot;index:&quot;</span>, i, <span class="string">&quot;element:&quot;</span>, e</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>enumerate()</code>可使代码清晰简洁，可读性最好，具有一定的惰性。（获取索引以及对应值）  </p>
+<p><code>enumerate(sequence, start = 0)</code>函数的内部实现:  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">enumerate</span>(<span class="params">sequence, start = <span class="number">0</span></span>)</span></span><br><span class="line">    n = start</span><br><span class="line">    <span class="keyword">for</span> elem <span class="keyword">in</span> sequence:</span><br><span class="line">        <span class="keyword">yield</span> n, elem</span><br><span class="line">        n += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>对于字典的迭代循环，<code>enumerate()</code>函数并不适合（默认转换成了序列进行处理）。<br>要获取迭代过程中字典的key和value，应该使用<code>iteritems()</code>方法。  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> k, v <span class="keyword">in</span> personinfo.iteritems():</span><br><span class="line">    <span class="keyword">print</span> k, <span class="string">&quot;:&quot;</span>, v</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="9-使用with自动关闭资源"><a href="#9-使用with自动关闭资源" class="headerlink" title="9. 使用with自动关闭资源"></a>9. 使用<code>with</code>自动关闭资源</h4><p><code>with</code>语句的语法：  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> 表达式 [<span class="keyword">as</span> 目标]:</span><br><span class="line">    代码块</span><br></pre></td></tr></table></figure>
+
+<p><code>with</code>语句可以在代码块执行完毕后还原进入该代码块时的现场。其执行过程如下：  </p>
+<ol>
+<li>计算表达式的值，返回一个上下文管理器对象。</li>
+<li>加载上下文管理器对象的<code>__exit__()</code>方法以备后用。</li>
+<li>调用上下文管理器对象的<code>__enter__()</code>方法。</li>
+<li>如果<code>with</code>语句中设置了目标对象，则将<code>__enter__()</code>方法的返回值赋值给目标对象。</li>
+<li>执行<code>with</code>中的代码块。</li>
+<li>如果步骤5中代码正常结束，调用上下文管理器对象的<code>__exit__()</code>方法，其返回值直接忽略。</li>
+<li>如果步骤5中代码执行过程中发生异常，调用上下文管理器对象的<code>__exit__()</code>方法，并将异常类型、值及traceback信息作为参数传递给<code>__exit__()</code>方法。如果<code>__exit__()</code>返回值为false，则异常会被重新抛出；如果返回值为true,异常值被挂起，程序继续执行。  </li>
+</ol>
+<p>利用<code>with</code>语句自动关闭文件：  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> open(<span class="string">&#x27;test.txt&#x27;</span>, <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">    f.write(<span class="string">&quot;test&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>上下文管理器：</strong>  </p>
+<p>它定义程序运行时需要建立的上下文，处理程序的进入和退出，实现了上下文管理协议，即在对象中定义<code>__enter__()</code>和<code>__exit__()</code>方法。  </p>
+<p>用户可以定义子集的上下文管理器来控制程序的运行，只需要实现上下文协议便能够和<code>with</code>语句一起使用。  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyContextManager</span>(<span class="params">object</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__enter__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;entering...&quot;</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__exit__</span>(<span class="params">self, exception_type, exception_value, traceback</span>):</span></span><br><span class="line">        <span class="keyword">print</span> <span class="string">&quot;leaving...&quot;</span></span><br><span class="line">        <span class="keyword">if</span> exception_type <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">&quot;no exceptions!&quot;</span></span><br><span class="line">            <span class="keyword">return</span> Fasle</span><br><span class="line">        <span class="keyword">elif</span> exception_type <span class="keyword">is</span> ValueError:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">&quot;value error!&quot;</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">        <span class="keyword">else</span>：</span><br><span class="line">            <span class="keyword">print</span> <span class="string">&quot;other error&quot;</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> MyContextManger():</span><br><span class="line">    <span class="keyword">print</span> <span class="string">&quot;Testing...&quot;</span></span><br><span class="line">    <span class="keyword">raise</span>(ValueError)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="10-else子句的使用"><a href="#10-else子句的使用" class="headerlink" title="10. else子句的使用"></a>10. <code>else</code>子句的使用</h4><ul>
+<li><strong>循环中的<code>else</code>:</strong><br>当循环“自然”终结时，<code>else</code>从句会被执行一次，而当循环是由<code>break</code>语句中断时，<code>else</code>子句就不会被执行。<br>例：查找素数</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_prime2</span>(<span class="params">n</span>):</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">2</span>, n):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">2</span>, i):</span><br><span class="line">            <span class="keyword">if</span> i % j == <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">&#x27;%d is a prime number&#x27;</span>%i</span><br></pre></td></tr></table></figure>
+
+<p><code>while</code>语句中的<code>else</code>子句语意一致。</p>
+<ul>
+<li><strong>异常处理中的<code>else</code>:</strong><br><code>try</code>块没有抛出任何一异常时，执行<code>else</code>块。<br>例：写数据入文件 </li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">save</span>(<span class="params">db, obj</span>):</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="comment"># save attr1</span></span><br><span class="line">        db.execute(<span class="string">&#x27;a aql stmt&#x27;</span>, obj.attr1)</span><br><span class="line">        <span class="comment"># save attr2</span></span><br><span class="line">        db.execute(<span class="string">&#x27;another sql stmt&#x27;</span>, obj.attr2)</span><br><span class="line">    <span class="keyword">except</span> DBError:</span><br><span class="line">        db.rollback()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        db.commit()</span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<h4 id="11-优先使用join而不是-连接字符串"><a href="#11-优先使用join而不是-连接字符串" class="headerlink" title="11. 优先使用join而不是+连接字符串"></a>11. 优先使用<code>join</code>而不是<code>+</code>连接字符串</h4><ul>
+<li><p>当用操作符<code>+</code>连接字符串时，由于字符串时不可变对象，执行一次<code>+</code>操作便会在内存中申请一块新的内存空间，并将上一次操作的结果和本次操作的右操作数复制到新申请的内存空间。所以字符串的连接时间复杂度近似为O(n^2)。</p>
+</li>
+<li><p>而当用<code>join()</code>方法连接字符串的时候，会首先计算需要申请的总的内存空间，然后一次性申请所需的内存并将序列中的每一个元素复制到内存中去。所以<code>join()</code>操作的时间复杂度近似为O(n)。  </p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">str1, str2, str3 = <span class="string">&#x27;testing &#x27;</span>, <span class="string">&#x27;string &#x27;</span>, <span class="string">&#x27;concatenation &#x27;</span></span><br><span class="line">str1 + str2 + str3</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">str1, str2, str3 = <span class="string">&#x27;testing &#x27;</span>, <span class="string">&#x27;string &#x27;</span>, <span class="string">&#x27;concatenation &#x27;</span></span><br><span class="line"><span class="string">&#x27;&#x27;</span>.join([str1, str2, str3])</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4 id="12-列表解析"><a href="#12-列表解析" class="headerlink" title="12. 列表解析"></a>12. 列表解析</h4><p>列表解析的语法为： <code>[expr for iter_item in iterable if cond_expr]</code><br>它迭代<code>iterable</code>中的每一个元素，当条件满足时便根据表达式<code>expr</code>计算的内容生成一个元素并放入新的列表中，依次类推，并最终返回整个列表。<br>如果没有条件表达式，就直接将<code>expr</code>中计算出的元素加入<code>List</code>中。  </p>
+<ol>
+<li><p><strong>支持多重嵌套</strong>  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nested_list = [[<span class="string">&#x27;Hello&#x27;</span>, <span class="string">&#x27;World&#x27;</span>], [<span class="string">&#x27;Goodbye&#x27;</span>, <span class="string">&#x27;World&#x27;</span>]]</span><br><span class="line">nested_list = [[s.upper() <span class="keyword">for</span> s <span class="keyword">in</span> xs] <span class="keyword">for</span> xi <span class="keyword">in</span> nested_list]</span><br><span class="line">print(nested_list)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[<span class="string">&#x27;HELLO&#x27;</span>, <span class="string">&#x27;WORLD&#x27;</span>], [<span class="string">&#x27;GOODBYE&#x27;</span>, <span class="string">&#x27;WORLD&#x27;</span>]]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>支持多重迭代</strong>  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[(a, b) <span class="keyword">for</span> a <span class="keyword">in</span> [<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="number">1</span>, <span class="number">2</span>] <span class="keyword">for</span> b <span class="keyword">in</span> [<span class="string">&#x27;1&#x27;</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="string">&#x27;b&#x27;</span>] <span class="keyword">if</span> a != b]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;1&#x27;</span>), (<span class="string">&#x27;a&#x27;</span>, <span class="number">3</span>), (<span class="string">&#x27;a&#x27;</span>, <span class="number">4</span>), (<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>), (<span class="string">&#x27;1&#x27;</span>, <span class="number">3</span>), (<span class="string">&#x27;1&#x27;</span>, <span class="number">4</span>), (<span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;b&#x27;</span>), \</span><br><span class="line">    (<span class="number">1</span>, <span class="string">&#x27;1&#x27;</span>), (<span class="number">1</span>, <span class="number">3</span>), (<span class="number">1</span>, <span class="number">4</span>), (<span class="number">1</span>, <span class="string">&#x27;b&#x27;</span>), (<span class="number">2</span>, <span class="string">&#x27;1&#x27;</span>), (<span class="number">2</span>, <span class="number">3</span>), (<span class="number">2</span>, <span class="number">4</span>), (<span class="number">2</span>, <span class="string">&#x27;b&#x27;</span>)]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>列表解析语法中的表达式可以是简单表达式，复杂表达式，函数</strong>  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span>(<span class="params">v</span>):</span></span><br><span class="line">    <span class="keyword">if</span> v%<span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">        v = v ** <span class="number">2</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        v = v + <span class="number">1</span></span><br><span class="line">[f(v) <span class="keyword">for</span> v <span class="keyword">in</span> [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">-1</span>] <span class="keyword">if</span> v&gt;<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[v**<span class="number">2</span> <span class="keyword">if</span> v%<span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> v+<span class="number">1</span> <span class="keyword">for</span> v <span class="keyword">in</span> [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">-1</span>] <span class="keyword">if</span> v &gt; <span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>列表解析语法中的<code>iterable</code>可以是任意可迭代对象</strong>  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fh = open(<span class="string">&quot;test.txt&quot;</span>, <span class="string">&quot;r&quot;</span>)</span><br><span class="line">result = [i <span class="keyword">for</span> i <span class="keyword">in</span> fh <span class="keyword">if</span> <span class="string">&quot;abc&quot;</span> <span class="keyword">in</span> i]</span><br><span class="line">print(result)</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p><strong>优势</strong>  </p>
+<ul>
+<li>使用列表解析更为直观清晰，代码更为简洁  </li>
+<li>列表解析的效率更高  </li>
+</ul>
+<p>除了列表以外，其他几种内置的数据结构也支持，比如：元组，集合，字典等。</p>
+<hr>
+<h4 id="13-参数传递"><a href="#13-参数传递" class="headerlink" title="13. 参数传递"></a>13. 参数传递</h4><p>python函数参数传递为<strong>对象</strong>或<strong>对象的引用</strong>。<br>可变对象的修改在函数外部以及内部都可见，调用者和被调用者之间共享这个对象。<br>不可变对象，由于并不能真正被修改，因此，修改往往是通过生成一个新对象然后赋值来实现的。  </p>
+<hr>
+<h4 id="14-str-和repr-的区别"><a href="#14-str-和repr-的区别" class="headerlink" title="14. str()和repr()的区别"></a>14. <code>str()</code>和<code>repr()</code>的区别</h4><ol>
+<li><p><strong>两者之间目标不同：</strong>  </p>
+<ul>
+<li><code>str()</code>主要面向用户，其目的性是可读性，返回形式为用户友好性和可读性都较强的字符串类型；</li>
+<li><code>repr()</code>面向的是python解释器，或者说开发人员，其目的是准确性，其返回值表示python解释器内部的含义常作为编程人员debug用途。</li>
+</ul>
+</li>
+<li><p>在解释器中直接输入a时默认调用<code>repr()</code>函数，而<code>print(a)</code>则调用<code>str()</code>函数。</p>
+</li>
+<li><p><code>repr()</code>的返回值一般可以用<code>eval()</code>函数来还原对象，通常来说有如下等式。<br><code>obj == eval(repr(obj))</code></p>
+</li>
+<li><p>这两个方法分别调用内建的<code>__str__()</code>和<code>__repr__()</code>方法，<code>__str__()</code>方法可选，当可读性比准确性更为重要的时候应该考虑定义<code>__str__()</code>方法。</p>
+</li>
+</ol>
+<hr>
+<h4 id="15-字符串的基本用法"><a href="#15-字符串的基本用法" class="headerlink" title="15. 字符串的基本用法"></a>15. 字符串的基本用法</h4><p><strong>判定是否包含字串</strong><br>可以用<code>find()</code>方法，推荐使用<code>in</code>和<code>not in</code>操作符。  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">str = <span class="string">&quot;Test if a string contains some special substrings&quot;</span></span><br><span class="line"><span class="keyword">if</span> str.find(<span class="string">&quot;some&quot;</span>) != <span class="number">-1</span>: <span class="comment"># 使用find方法进行判断</span></span><br><span class="line">    print(<span class="string">&quot;Yes, it contains&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="string">&quot;some&quot;</span> <span class="keyword">in</span> str: <span class="comment"># 使用in方法也可以判断</span></span><br><span class="line">    print(Yes, it contains using <span class="keyword">in</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong><code>split()</code>的使用</strong><br><code>split([sep [,maxsplit]])</code>，参数<code>maxsplit</code>是最大分切次数。  </p>
+<p>对于字符串<code>s</code>，<code>s.split()</code>、<code>s.split(&#39;&#39;)</code>的返回值是不同的。<br><code>s.split()</code>先去除字符串两端的空白符，然后以任意长度的空白符串作为界定符分切字符串。<br><code>s.split(&#39;&#39;)</code>认为两个连续的<code>sep</code>之间存在一个空字符串。  </p>
+<hr>
+<h4 id="16-sort-和sorted-的用法"><a href="#16-sort-和sorted-的用法" class="headerlink" title="16. sort()和sorted()的用法"></a>16. <code>sort()</code>和<code>sorted()</code>的用法</h4><p>两者的<strong>函数形式</strong>：  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sorted(iterable[, cmp[, key[, reverse]]])</span><br><span class="line">s.sort([cmp[, key[, reverse]]])</span><br></pre></td></tr></table></figure>
+
+<p><strong>参数</strong>  </p>
+<ul>
+<li><code>cmp</code>为用户定义比较函数  </li>
+<li><code>key</code>是带一个参数的函数，用来为每个元素提取比较直。</li>
+<li><code>reverse</code>表示排序结果是否反转</li>
+</ul>
+<p><strong><code>sort()</code>和<code>sorted()</code>的不同之处：</strong>  </p>
+<ol>
+<li><p>相比于<code>sort()</code>,<code>sorted()</code>使用的范围更为广泛。</p>
+</li>
+<li><p>当排序对象为列表的时候，两者适合的场景不同。<br><code>sorted()</code>函数会返回一个排序后的列表。<br><code>sort()</code>函数会直接修改原有列表。但消耗的内存较少，效率较高。  </p>
+</li>
+<li><p>无论是<code>sort()</code>还是<code>sorted()</code>函数，传入参数<code>key</code>比传入参数<code>cmp</code>效率要高。</p>
+</li>
+<li><p><code>sorted()</code>函数功能非常强大，使用它可以方便地针对不同的数据结构进行排序。</p>
+<ul>
+<li><p>对字典进行排序  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">phonebook = &#123;<span class="string">&#x27;Li&#x27;</span>: <span class="string">&#x27;77&#x27;</span>, <span class="string">&#x27;Bo&#x27;</span>: <span class="string">&#x27;93&#x27;</span>, <span class="string">&#x27;Ca&#x27;</span>: <span class="string">&#x27;58&#x27;</span>&#125;</span><br><span class="line"><span class="keyword">from</span> operator <span class="keyword">import</span> itemgetter</span><br><span class="line">sorted_pd = sorted(phonebook.items(), key=itemgetter(<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>多维<code>list</code>排序  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> operator improt itemgetter</span><br><span class="line">gameresult = [[<span class="string">&#x27;Bob&#x27;</span>,<span class="number">95.00</span>,<span class="string">&#x27;A&#x27;</span>],[<span class="string">&#x27;Alan&#x27;</span>,<span class="number">86.0</span>,<span class="string">&#x27;C&#x27;</span>], \</span><br><span class="line">    [<span class="string">&#x27;Mandy&#x27;</span>,<span class="number">82.5</span>,<span class="string">&#x27;A&#x27;</span>],[<span class="string">&#x27;Rob&#x27;</span>,<span class="number">86</span>,<span class="string">&#x27;E&#x27;</span>]]</span><br><span class="line">print(sorted(gamersult, key=itemgetter(<span class="number">2</span>, <span class="number">1</span>)))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>字典中混合<code>list</code>排序  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">dict = &#123;<span class="string">&#x27;Li&#x27;</span>:[<span class="string">&#x27;M&#x27;</span>,<span class="number">7</span>],</span><br><span class="line"><span class="string">&#x27;Zhang&#x27;</span>:[<span class="string">&#x27;E&#x27;</span>,<span class="number">2</span>],</span><br><span class="line"><span class="string">&#x27;Wang&#x27;</span>:[<span class="string">&#x27;P&#x27;</span>,<span class="number">3</span>],</span><br><span class="line"><span class="string">&#x27;Du&#x27;</span>:[<span class="string">&#x27;C&#x27;</span>,<span class="number">2</span>],</span><br><span class="line"><span class="string">&#x27;Ma&#x27;</span>:[<span class="string">&#x27;C&#x27;</span>,<span class="number">9</span>],</span><br><span class="line"><span class="string">&#x27;Zhe&#x27;</span>:[<span class="string">&#x27;H&#x27;</span>,<span class="number">7</span>]&#125;</span><br><span class="line">print(sorted(dict.items(), key=<span class="keyword">lambda</span> k: k[<span class="number">1</span>][<span class="number">0</span>]))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>List</code>中混合字典排序</p>
+<p><code>lue</code></p>
+</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h4 id="17-浅拷贝与深拷贝"><a href="#17-浅拷贝与深拷贝" class="headerlink" title="17. 浅拷贝与深拷贝"></a>17. 浅拷贝与深拷贝</h4><p><strong>浅拷贝</strong>：构造一个新的符合对象并将从原对象中发现的引用插入该对象中。如工厂函数、切片操作、<code>copy</code>操作。  </p>
+<p><strong>深拷贝</strong>：构造一个新的符合对象，但是遇到引用会继续递归拷贝其所指向的具体内容，也就是说它会针对引用所指向的对象继续执行拷贝，因此产生的对象不受其他应用对象操作的影响。  </p>
+<p>简单而言：浅拷贝直接拷贝原对象中包含的引用，而深拷贝会继续对引用指向的对象进行拷贝。</p>
+<hr>
+<hr>
+<p>本书中还涉及到许多其他关于设计模式、多线程、网络编程等相关的知识，由于本人暂时<del>（看不懂）</del>不需要用到，所以没有多深究，详见原书。以后对python有了更深入理解后再详细阅读。</p>
+<h4 id="18-init-不是构造方法"><a href="#18-init-不是构造方法" class="headerlink" title="18. __init__()不是构造方法"></a>18. <code>__init__()</code>不是构造方法</h4><p><strong>真正的构造方法其实是<code>__new__()</code></strong></p>
+<p><code>__init__()</code>方法所做的工作是在类的对象创建好之后进行变量的初始化，<code>__new__()</code>方法才会真正的创建实例，是类的构造方法。<br>这两个方法都是<code>object</code>类中默认的方法，继承自<code>object</code>的新式类，如果不覆盖这两个方法会默认调用<code>object</code>中对应的方法。</p>
+<p><strong>这两个方法之间不同点：</strong>  </p>
+<ul>
+<li><code>__new__()</code>方法是静态方法，而<code>__init__()</code>为实例方法。  </li>
+<li><code>__new__()</code>方法一般需要返回类的对象，当返回类的对象时将会自动调用<code>__init__()</code>方法进行初始化，如果没有对象返回，则<code>__init__()</code>方法不会被调用。<code>__init__()</code>方法需要显示返回，默认为<code>None</code>,否则会在运行时抛出<code>TypeError</code>。  </li>
+<li>当需要控制实例创建的时候可使用<code>__new__()</code>方法，而控制实例初始化的时候使用<code>__init__()</code>方法。  </li>
+<li>一般情况下不需要覆盖<code>__new__()</code>方法，但当子类继承自不可变类型，如<code>str</code>、<code>int</code>、<code>unicode</code>或者<code>tuple</code>的时候，往往需要覆盖该方法。  </li>
+<li>当需要覆盖<code>__new__()</code>和<code>__init__()</code>方法的时候这两个方法的参数必须保持一致，如果不一致将导致异常。  </li>
+</ul>
+<p><strong>在什么特殊情况下需要覆盖<code>__new__()</code>方法</strong>  </p>
+<ul>
+<li>当类继承自不可变类型且默认的<code>__new__()</code>方法不能满足需求的时候。  </li>
+<li>用来实现工厂模式或者单例模式或者进行元类编程的时候。</li>
+<li>作为用来初始化的<code>__init__()</code>方法在多继承的情况下，子类的<code>__init()__</code>方法如果不显式调用父类的<code>__inti__()</code>方法，则父类的<code>__init__()</code>方法不会被调用。</li>
+</ul>
+<hr>
+<h4 id="19-为什么需要self参数"><a href="#19-为什么需要self参数" class="headerlink" title="19.为什么需要self参数"></a>19.为什么需要<code>self</code>参数</h4><ol>
+<li><p>python再当初设计的时候借鉴了其他语言的一些特性，如Moudla-3中方法会显式地再参数列表中传入<code>self</code>  </p>
+</li>
+<li><p>python语言本身的动态性决定了使用<code>self</code>能狗带来一些便利。<br>例：  </p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">len</span>(<span class="params">point</span>):</span></span><br><span class="line">    <span class="keyword">return</span> math.sqrt(point.X **<span class="number">2</span> + point.Y **<span class="number">2</span>)</span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RTriangle</span>(<span class="params">object</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, right_angle_sideX, right_angle_sideY</span>):</span></span><br><span class="line">        self.right_angle_sideX = right_angle_sideX</span><br><span class="line">        self.right_angle_sideY = right_angle_sideY</span><br><span class="line"></span><br><span class="line">RTriangle.len = len</span><br><span class="line">rt = RTriangle(<span class="number">3</span>, <span class="number">4</span>)</span><br><span class="line">rt.len()  </span><br></pre></td></tr></table></figure></li>
+<li><p>在存在同名的局部变量以及实例变量的情况下，使用<code>self</code>使得实例变量更容易被区分。  </p>
+</li>
+</ol>
+<hr>
+<h4 id="20-掌握循环优化的基本技巧"><a href="#20-掌握循环优化的基本技巧" class="headerlink" title="20. 掌握循环优化的基本技巧"></a>20. 掌握循环优化的基本技巧</h4><ol>
+<li>减少内部循环的计算。  </li>
+<li>将显式循环改为隐式循环。<br>例：求等差数列1,2,…,n的和 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sum = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(n+<span class="number">1</span>):</span><br><span class="line">    sum = sum+i  </span><br></pre></td></tr></table></figure>
+也可以直接计算：<code>n*(n+1)/2</code>  </li>
+<li>在循环中尽量引用局部变量。 （因为在命名空间中局部变量优先搜索）  </li>
+<li>关注内层嵌套循环。 （尽量将内层循环的计算往上层移）  </li>
+</ol>
+<hr>
+<p>全剧终~</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/03/29/%E7%BC%96%E5%86%99%E9%AB%98%E8%B4%A8%E9%87%8F%E4%BB%A3%E7%A0%81%E6%94%B9%E5%96%84python%E7%A8%8B%E5%BA%8F%E7%9A%8491%E4%B8%AA%E5%BB%BA%E8%AE%AE/" data-id="cktvhfl9r0010ji9s6moq02ew" data-title="《编写高质量代码改善python程序的91个建议》笔记" class="article-share-link">Compartir</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python%E7%AC%94%E8%AE%B0/" rel="tag">python笔记</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2018/07/10/python%E9%AB%98%E6%89%8B%E4%B9%8B%E8%B7%AF/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          《python高手之路》笔记
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/03/25/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Hello World</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CS%E7%AC%94%E8%AE%B0/" rel="tag">CS笔记</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python%E7%AC%94%E8%AE%B0/" rel="tag">python笔记</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%B6%E4%BB%96/" rel="tag">其他</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A9%E6%96%87%E7%89%A9%E7%90%86%E5%AD%A6%E7%AC%94%E8%AE%B0/" rel="tag">天文物理学笔记</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91/" rel="tag">服务端开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="tag">游戏开发</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Nube de Tags</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CS%E7%AC%94%E8%AE%B0/" style="font-size: 16.67px;">CS笔记</a> <a href="/tags/python%E7%AC%94%E8%AE%B0/" style="font-size: 13.33px;">python笔记</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 10px;">其他</a> <a href="/tags/%E5%A4%A9%E6%96%87%E7%89%A9%E7%90%86%E5%AD%A6%E7%AC%94%E8%AE%B0/" style="font-size: 20px;">天文物理学笔记</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 10px;">数据库</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91/" style="font-size: 10px;">服务端开发</a> <a href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" style="font-size: 10px;">游戏开发</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archivos</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Posts recientes</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/08/07/mongo%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">mongo学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/05/%E8%A2%AB%E8%AE%A8%E5%8E%8C%E7%9A%84%E5%8B%87%E6%B0%94/">《被讨厌的勇气》笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/19/%E7%BD%91%E7%BB%9C%E5%A4%9A%E4%BA%BA%E6%B8%B8%E6%88%8F%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%BC%96%E7%A8%8B/">《网络多人游戏架构与编程》笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/07/CPython%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">CPython学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/12/13/%E6%B5%81%E7%95%85%E7%9A%84python/">《流畅的python》笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="footer-outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 WenZhou<br>
+      Construido por <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+<!-- 处理mermaid流程图 -->
+
+  <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'base'});
+    }
+  </script>
+
+  </div>
+</body>
+</html>

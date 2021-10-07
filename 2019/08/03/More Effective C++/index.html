@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>《More Effective C++》笔记 | Wenzhou&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="这是《More Effective C++》一书的笔记，好书啊！虽然是为找工作准备的，但不得不说，看这些书比自己摸索不要快太多，最近几天学了不少。以后还是值得继续深入阅读的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《More Effective C++》笔记">
+<meta property="og:url" content="http://yoursite.com/2019/08/03/More%20Effective%20C++/index.html">
+<meta property="og:site_name" content="Wenzhou&#39;s blog">
+<meta property="og:description" content="这是《More Effective C++》一书的笔记，好书啊！虽然是为找工作准备的，但不得不说，看这些书比自己摸索不要快太多，最近几天学了不少。以后还是值得继续深入阅读的。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-08-02T16:04:59.000Z">
+<meta property="article:modified_time" content="2021-09-21T16:27:09.584Z">
+<meta property="article:author" content="WenZhou">
+<meta property="article:tag" content="CS笔记">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Wenzhou's blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/wz.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Wenzhou&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Buscar"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Buscar"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-More Effective C++" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/08/03/More%20Effective%20C++/" class="article-date">
+  <time class="dt-published" datetime="2019-08-02T16:04:59.000Z" itemprop="datePublished">2019-08-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      《More Effective C++》笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <!-- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Intruction"><span class="toc-text">Intruction</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Operators"><span class="toc-text">Operators</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Efficiency"><span class="toc-text">Efficiency</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Techniques"><span class="toc-text">Techniques</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#C-%E7%9A%84%E6%96%B0%E7%89%B9%E6%80%A7"><span class="toc-text">C++的新特性</span></a></li></ol> -->
+        <p>这是《More Effective C++》一书的笔记，好书啊！<br>虽然是为找工作准备的，但不得不说，看这些书比自己摸索不要快太多，最近几天学了不少。<br>以后还是值得继续深入阅读的。</p>
+<span id="more"></span>
+
+<h1 id="Intruction"><a href="#Intruction" class="headerlink" title="Intruction"></a>Intruction</h1><ol>
+<li>STL包含<code>bitset</code>s, <code>vector</code>s, <code>list</code>s, <code>queue</code>s, <code>stack</code>s, <code>map</code>s, <code>set</code>s等。更多细节详见《STL源码剖析》。</li>
+<li>在C++的继承机制中，指针和引用拥有动态类型和静态类型，静态类型指声明时候的类型，动态类型指得是由它们实际所指的对象来决定。</li>
+<li>内存泄漏：在生成对象时，会自动调用构造函数，调用构造函数本身也会分配资源，并且还有可能对象中存在其他的系统资源，例如文件描述符，windows句柄，锁，套接字等，会造成<strong>资源泄漏</strong>。</li>
+<li><strong>指针和引用</strong><ul>
+<li>引用不能为空，初始化时必须指向一个对象，指针可以为空。</li>
+<li>引用是变量的别名，操作它就和操作原变量本身一致，而指针本身是一个变量，它存储着指向对应类型的地址，可以用‘*’操作符对变量内容进行修改，也可以将指针内容指向其他地址。</li>
+<li>对局部变量返回引用是有很大隐患的，在栈上分配的内存会未定义，堆上分配的对象容易造成内存泄漏，一般只有某些运算符重载时才会返回引用。在某些运算符重载时返回引用会导致操作很奇怪。</li>
+<li>如果我们需要一个不会变化的指向某个对象的某种能力，那么我们就该使用引用，而且它的效率更高。</li>
+</ul>
+</li>
+<li>转型操作符<ul>
+<li>针对C语言的强制类型转换的不足弥补并扩充了一些功能。主要有4中转型方法<code>static_cast</code>，<code>dynamic_cast</code>，<code>const_cast</code>，<code>reinterpret_cast</code>，使用方法就是<code>static_cast&lt;type&gt;(expression)</code>。看起来也非常直观，容易进行分析。</li>
+<li>最常用的就是静态转型了，它首先就可以取代C语言中强制类型转换，除此之外，它也可以用在多态场景下的向下转换等。以前C语言中不能做的它也不能做。</li>
+<li>常量转换主要是针对于常量性事物和volatileness的变量进行转换，可以常量的常量性去掉，也就可以进行修改之类的了。</li>
+<li>动态转换主要用于涉及继承基址的转换，可以将父类对象强行转换成一个子类对象，也就是向下转换，转换失败会返回null或抛出异常。</li>
+<li>重解释类型转换，功能比较强大，但是可移植性很差，适具体的应用场景而定。比如可以对函数指针转型等。</li>
+</ul>
+</li>
+<li>数组中的多态<ul>
+<li>所谓多态，就是根据指针指向的对象动态决定<strong>指向的类的内容</strong>，我们如果把一个父类对象数组名（指针）指向一个子类对象数组，在进行索引或者对指针加上偏移值时，编译器是根据父类对象大小计算地址偏移的，但是实际却是计算的子类对象大小，访问的行为就有问题。</li>
+<li>在删除元素，释放内存也是不行的，偏移的计算有问题。</li>
+<li>多态和数组以及指针都不要混用。</li>
+</ul>
+</li>
+<li>如果不提供默认构造函数<ul>
+<li>可以采用no-heap数组。可以用指针数组。</li>
+<li>可以将内存分配和函数构造分开来调用，这儿有两种<code>new</code>操作，<code>operator new</code>和<code>placement new</code>。前一个指显示调用<code>new</code>操作符，形式是就是<code>void *xx = operator new[](many size);</code>，调用这个只会分配最原始的内存，不调用构造函数，释放内存时也要采用类似的显式调用方法。后一个操作就是对已分配的内存调用构造函数，创建对象，形式为<code>new (&amp;xx) class()</code>，在释放内存之前也要手动调用析构函数。</li>
+<li>没有构造函数时，首先<strong>创建数组就很麻烦</strong>，没有那种初始值，其次许多<strong>标准库STL</strong>中提供的模板就不可用了。最后，继承状态下必须要给基类提供初始值。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h1 id="Operators"><a href="#Operators" class="headerlink" title="Operators"></a>Operators</h1><ol>
+<li>类型转换函数<ul>
+<li>在C++中存在着许多的隐式类型转换，除了我们熟知的将低精度向高精度的转换以外，在我们自己定义的类型中，编译器会根据我们提供的函数来作隐式转换之用。</li>
+<li>主要有<strong>两种</strong>转换方式：<strong>只有一个自变量的构造函数</strong>，例如<code>Array(int size)</code>可能会把<code>int</code> 类型转换成<code>Array</code>；<strong>隐式类型转换操作符</strong><code>operator double() const;</code> 会在类型不匹配时自动调用（1.类型转换时，最好显示进行调用，2.利用关键词<code>explicit</code>声明，3.超过两层的类型转换（两次构造函数调用时不行的），定义内部类（代理类），将单变量作为内部类的参数，4.函数重载技术）。</li>
+</ul>
+</li>
+<li><code>++i</code>和<code>i++</code>操作符的前置式和后置式。<ul>
+<li>区分通过运算符重载，后置式有一个<code>int</code>自变量，虽然不用，但可以帮助对象区分调用对应的重载函数。</li>
+<li>函数体内主要的操作就是增加和返回值，后置的需要生成一个临时变量并按值返回，前置返回<code>*this</code>变量的引用。因此前置的运算更佳，不需要产生临时变量。</li>
+<li>为了防止多次后自增加(<code>i++++</code>)操作，一般要声明返回值为常量类型，一是避免产生歧义，二是本身也不对，对后一个操作是对临时变量进行自加操作，三是标准运算中也不合法，但前置的是合法的。</li>
+</ul>
+</li>
+<li>避免重载<code>&amp;&amp;</code>，<code>||</code>和<code>,</code>操作符<ul>
+<li>众所周知，<code>&amp;&amp;</code>和<code>||</code>运算符会有断路操作，也就是如果判断出前部分表达式的结果了，后半部分就不会判断了，但是经过重载之后，该表达式的表现形式是以调用重载函数来实现的，但是，编译器并不会保证表达式的两端到底谁先执行谁后执行，而直接执行后部分很有可能导致程序奔溃，因此不行。</li>
+<li>还有一些操作符是不可以重载的，例如<code>.</code> <code>.*</code> <code>::</code> <code>?:</code> <code>new</code> <code>delete</code> <code>sizeof</code> <code>typeid</code>以及各种类型转换。需要注意的是<code>operateor new</code>和<code>operator new[]</code>等是可以重载的。</li>
+</ul>
+</li>
+<li><code>new</code>和<code>delete</code><ul>
+<li><code>void* operator new(size_t size)</code>可用来负责内存的申请</li>
+<li>placement new可以用来调用构造函数。</li>
+<li>对应的数组版本应该使用<code>operator new[]</code>进行内存分配。</li>
+<li>我们只能对分配释放内存的方式进行修改。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h1 id="Efficiency"><a href="#Efficiency" class="headerlink" title="Efficiency"></a>Efficiency</h1><ol>
+<li>82法则<ul>
+<li>利用分析器分析时间，调用频率，内存等</li>
+<li>重现输入的数据</li>
+</ul>
+</li>
+<li>lazy evaluation<ul>
+<li>缓式做法就是编译器在用拷贝构造函数或赋值函数创建新对象时，可能并不会创建，而是做个记录，并指向那块内存。只有在真正要用的时候，才真正分配内存。</li>
+<li>例如对于读写操作，读的话可以只访问第一份链接的内存，在写的时候再重新分配内存到对应的对象，然而一般情况下我们很难判断<code>operator []</code>到底是在读还是在写（到底是左值还是右值）。然而可以用代理类延迟决定。</li>
+<li>如果我们的程序使用大型对象时，每次从数据库中取一个大对象就非常耗时，并且我们实际应用时可能只用其中的一两个字段，因此，一个更好的做法就是我们并不一次性把整个对象读出来（初始化为空），而是在需要某个字段时，再读出来（<code>mutable</code>声明是指这样的字段可以在任何成员函数中被修改）。</li>
+<li>在计算某个表达式时，比如矩阵运算，我们可以等真正取数的时候再对表达式（就要取的那一项）进行计算，很多情况下大部分数值是用不到的。</li>
+<li>在操作系统中也有非常多的应用，很多进程会共享某些页（创建进程fork），只有在特定进程写某些页时才会进行复制操作（copy-on-write）。</li>
+</ul>
+</li>
+<li>分摊计算成本<ul>
+<li>最常用的就是缓存技术，当我们需要某些功能例如最小值等时，我们可以设计专门的数据结构进行优化，多次查询时也可以用高速缓存完成任务。</li>
+<li>申请内存时可以预先申请一大块内存，节约系统调用分配时间。</li>
+</ul>
+</li>
+<li>临时对象<ul>
+<li>函数调用结束时按值返回某个对象。（如果返回的是一个变量，编译器会自动进行优化，不再创建临时变量，也即是返回值优化<code>return value optimization</code>）。</li>
+<li>调用函数时，按值（或者<code>reference-to-const</code>）传入某个参数。</li>
+<li>隐式类型转换时也会生成临时对象。（在利用函数重载消除隐式类型转换，要注意每个‘重载操作符’必须至少有一个‘用户定制类型’，全是基本类型会导致原始意义改变）。</li>
+</ul>
+</li>
+<li>使用(<code>op=</code>)取代(<code>op</code>)独身操作形式<ul>
+<li>独身版本通常返回一个新对象，因此要调用构造析构函数，而复合版本可以将结果直接写入左值（左端自变量），因此效率更高。</li>
+<li>代码写的好还可以进行返回值优化，匿名对象而且更加容易被消除。</li>
+</ul>
+</li>
+<li>针对自己程序的性能瓶颈，更针对性地调用相应地库。因为许多库的设计是针对某一具体问题，有某种特定优势。</li>
+<li>虚函数，多重继承，虚基类，运行时识别(runtime type identification)<ul>
+<li>上述的东西底层实现都离不开虚表(virtual table; vtbls)和虚表指针(virtual table pointers; vptrs)，每个类继承或声明了虚函数，那么它就会拥有自己的一个虚函数表，里面的内容是各个类实现虚函数体的指针，子类中有重写的类，那么它会用它的函数指针取代父类函数指针的位置。</li>
+<li>一般虚函数表放在定义了虚函数的那个类中，但是，如果将虚函数声明为<code>inline</code>，那么这个虚函数就会在每一个使用了它的目标文件中产生虚函数表，就比较烦。</li>
+<li>每个对象拥有一个虚表指针，用来指向虚标，占内存4字节，也用来在对象调用虚函数时自动指向调用的函数。</li>
+<li>至于动态调用函数，首先根据对象的虚表指针找出虚标的位置，再找出调用函数在虚表中的位置，然后再调用对应的函数。（(<code>*pC1-&gt;vptr[i])(pC1);</code>）它从原理上来说就是和<code>inline</code>相对的，一个时动态，另一个是相对静态。</li>
+<li>虚拟继承出现在多重继承菱形图中。用了虚拟继承之后从此远离歧义，大家都有相同的父亲，在具体的实现中，就是继承的父类可能都拥有一个指针指向相同的虚基类（这就导致了额外的内存开销）。在应用场景下，是先调用虚基类的构造函数，再调用父类的构造函数，（调用成员变量的构造函数），最后再调用自身的构造函数。</li>
+<li>可使用<code>typeid</code>操作符取得某个类相应的<code>type_info</code>对象，这个对象中存储着运行时识别信息，和虚表之间有着某种平行关系，根据<code>class</code>的虚表来实现。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h1 id="Techniques"><a href="#Techniques" class="headerlink" title="Techniques"></a>Techniques</h1><ol>
+<li><p>将构造函数和非成员函数虚化</p>
+<ul>
+<li>为什么要将构造函数虚化呢？情况是这样的，我们可能希望我们动态地根据输入数据，产生不同类型的对象，也就是调用不同的构造函数，而此刻，就需要虚拟构造函数了。</li>
+<li>如何实现呢？很简单，就是在不同的类中（有继承关系），将构造函数封装起来，利用成员函数的动态调用特性，实现构造函数的多态性，这种操作一般被称为<code>virtual copy constructor </code>。动态地调用派生类的拷贝构造函数。（这里利用了父类构造函数的返回值不必和子类的构造函数返回值相等，但要有继承关系。）</li>
+<li>非成员函数虚化，指的是很多函数并不是类中的成员函数，例如输出流运算符(<code>virtual ostream&amp; operator&lt;&lt;(ostream&amp; str) const;</code>)，使用运算符重载时会导致应用不太正常，因此更好的做法是，声名一个虚函数，用作打印之用，这样就不必把运算符重载操作声名为虚函数，可以实现非成员函数的行为虚化。<ol>
+<li>限制某个class能产生的对象数量</li>
+</ol>
+</li>
+<li>允许一个或零个对象，方法就是把构造函数声明为私有类型，然后可以定义一个友员函数声明该类的一个静态对象用于给访问者共享。不用友员函数也可以用静态成员函数，这样也可以防止友员函数占用全局命名空间。为了防止和其他类产生命名冲突，还可以使用<strong>命名空间</strong>。（在函数中定义静态变量，是一种哲学，对象只有在被用到的时候会付出代价。而且，最好不要把有静态变量的函数声名为<code>inline</code>。）</li>
+<li>还有一种方法，定义一个静态成员，用于计算产生的对象个数。（注：静态成员变量应该在类外定义赋值）</li>
+<li>但是，上述方法如果有继承关系或着有父类的成员变量，子类对象若想生成对象，必然会调用父类的构造函数，间接地修改父类中所定义的静态成员变量。（因此我们最好不要继承具体类<code>concret class</code>）。又可是，如果父类的构造函数是私有的，并不能被继承。</li>
+<li>可以用智能指针动态地创建对象并自动释放。还可以创建一个基类专门用来计数。</li>
+</ul>
+</li>
+<li><p>对象和heap</p>
+<ul>
+<li>要求对象产生于堆，也就是说不能不用<code>new</code>来生成对象，一个比较好的方法就是，将析构函数声明成私有函数，因为<code>new</code>出来的对象是需要显式调用析构函数的，封装起来后就是换个名字，但在栈上的对象就不能自动释放了，也就会报错。（可是又会妨碍继承，所以声明为保护型更好。）</li>
+<li>判断某个是否生成在堆上：通过重载<code>operator new</code>是不行的，因为对于数组它只会调用一次。通过地址来判断也是不行的，因为静态变量的地址位通常更低但构造函数却无法判断。还有个想法是在<code>new</code>操作中加入描述符来表示分配的对象。</li>
+<li>禁止对象产生于堆：把<code>operator new</code>和<code>operator delete</code>声明为私有对象。</li>
+</ul>
+</li>
+<li><p>智能指针</p>
+<ul>
+<li>本书中智能指针部分的内容似乎有些过时，因为据我所知（看别人面经），现在的指针都是<code>unique_ptr</code>,<code>share_ptr</code>,<code>weak_ptr</code>之类的了。这儿介绍了三个核心内容：智能指针的构造和析构，赋值和复制，解引（也就是用它）。</li>
+<li>每个智能指针的背后，都有一个智障指针，他们才是故事的主角，构造函数中会为对象调用构造函数，析构函数会释放指针所指向的内存。</li>
+<li>但是！在智能指针中有一个<strong>对象拥有权</strong>的概念，赋值操作会导致对象的拥有权转移，此时，就不能采用按值传递的方式传参之类的，因此对引用的传递应该用<code>pass-by-reference-to-const</code>才是合理的方式。还有，在智能指针的拷贝构造函数和赋值函数中，参数不再是常数类型的了，因为拥有权转移的存在，会对参数的内容进行修改。</li>
+<li>解引操作指的是<code>ptr-&gt;</code>和<code>(*ptr).</code>，要注意一点就是返回值时要返回对象的引用，不能按值返回，按值返回在多态的情况下，会导致对象的切割问题，传入一个派生类的对象，却返回的只有基类的部分。</li>
+</ul>
+</li>
+<li><p>引用计数</p>
+<ul>
+<li>可以用引用计数构建出垃圾回收机制。</li>
+<li>可以节约内存分配，只要判断引用计数是否为0决定是否释放内存。</li>
+<li>例如字符串常量可以用一个类内结构体用作计数，每次调用构造函数时，先通过结构体更新计数信息，如果已经存在该字符串的话就只计数，不分配内存。</li>
+<li>需要引入写时复制操作，也就是如果判断出程序对串中内容进行修改时，就必须要单独辟块内容出来存储作他用，除非他是最后一个指向它的对象。</li>
+<li>在这里就要区别读写操作了，可以引入一个可共享的字段，用来表哦这个字段是否可以被共享，如果被索取<code>operator[]</code>了，就把这个字段修改。</li>
+<li>还可以设计一个虚基类专用来计数。也可以用另一种类（代理类）来用辅助判断是否进行写操作，也就是延迟决策，根据后续的用户函数调用情况来区别。</li>
+</ul>
+<p>省略了好多内容，估计面试碰到的概率很低，总之，好书！</p>
+<hr>
+<h1 id="C-的新特性"><a href="#C-的新特性" class="headerlink" title="C++的新特性"></a>C++的新特性</h1><ul>
+<li>命名空间，<code>bool</code>，<code>mutable</code>，<code>explicit</code>，<code>enums</code>，在类内为常静态变量赋初值。</li>
+<li>模板类的弹性</li>
+<li>异常处理</li>
+<li>内存分配，也就是可重载<code>operator new[]</code>之类的操作符。</li>
+<li>各种转型操作</li>
+<li>支持string</li>
+<li>支持i/o</li>
+<li>各种容器和算法</li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/08/03/More%20Effective%20C++/" data-id="cktvhfl9p000tji9sgj5e09fj" data-title="《More Effective C++》笔记" class="article-share-link">Compartir</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CS%E7%AC%94%E8%AE%B0/" rel="tag">CS笔记</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/08/13/STL%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          《STL源码剖析》笔记
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/03/30/%E4%B8%87%E7%89%A9%E7%AE%80%E5%8F%B2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">《万物简史》摘抄</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CS%E7%AC%94%E8%AE%B0/" rel="tag">CS笔记</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python%E7%AC%94%E8%AE%B0/" rel="tag">python笔记</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%B6%E4%BB%96/" rel="tag">其他</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A9%E6%96%87%E7%89%A9%E7%90%86%E5%AD%A6%E7%AC%94%E8%AE%B0/" rel="tag">天文物理学笔记</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91/" rel="tag">服务端开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="tag">游戏开发</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Nube de Tags</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CS%E7%AC%94%E8%AE%B0/" style="font-size: 16.67px;">CS笔记</a> <a href="/tags/python%E7%AC%94%E8%AE%B0/" style="font-size: 13.33px;">python笔记</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 10px;">其他</a> <a href="/tags/%E5%A4%A9%E6%96%87%E7%89%A9%E7%90%86%E5%AD%A6%E7%AC%94%E8%AE%B0/" style="font-size: 20px;">天文物理学笔记</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 10px;">数据库</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91/" style="font-size: 10px;">服务端开发</a> <a href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" style="font-size: 10px;">游戏开发</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archivos</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Posts recientes</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/08/07/mongo%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">mongo学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/05/%E8%A2%AB%E8%AE%A8%E5%8E%8C%E7%9A%84%E5%8B%87%E6%B0%94/">《被讨厌的勇气》笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/19/%E7%BD%91%E7%BB%9C%E5%A4%9A%E4%BA%BA%E6%B8%B8%E6%88%8F%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%BC%96%E7%A8%8B/">《网络多人游戏架构与编程》笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/07/CPython%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">CPython学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/12/13/%E6%B5%81%E7%95%85%E7%9A%84python/">《流畅的python》笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="footer-outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 WenZhou<br>
+      Construido por <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+<!-- 处理mermaid流程图 -->
+
+  <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'base'});
+    }
+  </script>
+
+  </div>
+</body>
+</html>

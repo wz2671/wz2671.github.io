@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>《STL源码剖析》笔记 | Wenzhou&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="求一个好offer！ 继续加油！！">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《STL源码剖析》笔记">
+<meta property="og:url" content="http://yoursite.com/2019/08/13/STL%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/index.html">
+<meta property="og:site_name" content="Wenzhou&#39;s blog">
+<meta property="og:description" content="求一个好offer！ 继续加油！！">
+<meta property="og:locale">
+<meta property="og:image" content="http://yoursite.com/images/cover/good_offer.jpg">
+<meta property="article:published_time" content="2019-08-13T15:49:33.000Z">
+<meta property="article:modified_time" content="2021-09-22T14:17:42.203Z">
+<meta property="article:author" content="WenZhou">
+<meta property="article:tag" content="CS笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/cover/good_offer.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Wenzhou's blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/wz.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Wenzhou&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Buscar"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Buscar"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-STL源码剖析" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2019/08/13/STL%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" class="article-date">
+  <time class="dt-published" datetime="2019-08-13T15:49:33.000Z" itemprop="datePublished">2019-08-13</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      《STL源码剖析》笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <!-- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B3%9B%E5%9E%8B%E7%BC%96%E7%A8%8B%E5%92%8C%E6%A8%A1%E6%9D%BF"><span class="toc-text">泛型编程和模板</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#STL%E6%A6%82%E8%AE%BA"><span class="toc-text">STL概论</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%A9%BA%E9%97%B4%E9%85%8D%E7%BD%AE%E5%99%A8"><span class="toc-text">空间配置器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="toc-text">迭代器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%BC%8F%E5%AE%B9%E5%99%A8"><span class="toc-text">序列式容器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#vector"><span class="toc-text">vector</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#list"><span class="toc-text">list</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#deque"><span class="toc-text">deque</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#stack"><span class="toc-text">stack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#queue"><span class="toc-text">queue</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#heap"><span class="toc-text">heap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%98%E5%85%88%E9%98%9F%E5%88%97"><span class="toc-text">优先队列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#slist"><span class="toc-text">slist</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%B3%E8%81%94%E5%BC%8F%E5%AE%B9%E5%99%A8"><span class="toc-text">关联式容器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="toc-text">平衡二叉树</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BA%A2%E9%BB%91%E6%A0%91"><span class="toc-text">红黑树</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#set"><span class="toc-text">set</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#map"><span class="toc-text">map</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hashtable"><span class="toc-text">hashtable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hash-set%EF%BC%9Bhash-multiset"><span class="toc-text">hash_set；hash_multiset</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hash-map-hash-multimap"><span class="toc-text">hash_map; hash_multimap</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AE%97%E6%B3%95"><span class="toc-text">算法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%BF%E5%87%BD%E6%95%B0"><span class="toc-text">仿函数</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%85%8D%E6%8E%A5%E5%99%A8"><span class="toc-text">配接器</span></a></li></ol> -->
+        <p>求一个好offer！ 继续加油！！</p>
+<p><img src="/images/cover/good_offer.jpg" alt="good_offer"></p>
+<span id="more"></span>
+
+
+<h1 id="泛型编程和模板"><a href="#泛型编程和模板" class="headerlink" title="泛型编程和模板"></a>泛型编程和模板</h1><ol>
+<li>据说这是本书的基础知识，在这儿就非常简单地温习和说明一下。</li>
+<li>在C++中特别的一个部分是函数重载技术，它可以让函数根据不同的参数或返回类型执行不同函数体，很多情况下只有参数的类型不同，此时会导致大量的重复劳动，因此出现了泛型编程思想，其实现一般由函数模板和类模板来实现。我们可以利用<code>template &lt;typename T&gt;</code>来声明使用模板。在调用函数时，编译器就会自动地生成新的函数，转化成对应的类型。</li>
+<li>编译器无法推导出返回值类型，因此必须指定返回值模板类型。同时函数模板不接受隐式转换。（优先普通函数，再隐式转换，最后再匹配模板）</li>
+<li>类模板常应用于数据结构方面，使得类的实现更关注于功能，不关注于数据类型，声名等方式与函数类似。类模板可以通过<strong>特化的方式</strong>实现特殊情况，所谓特化的方式，分为部分特化和完全特化，部分特化 要指定模板类型和参数（类似于类重载思想），完全特化的类模板，就是参数都是<code>void*</code>类型。特化也称偏特化（Partial_specialization）。</li>
+<li>在看书时遇到的一个疑惑，拷贝构造函数和赋值构造函数的区别，拷贝构造函数调用情况<code>A a = b</code>和<code>A a(b)</code>；而赋值构造函数调用情况<code>a=b</code>。关键是看对象有没有已经被创建。</li>
+</ol>
+<h1 id="STL概论"><a href="#STL概论" class="headerlink" title="STL概论"></a>STL概论</h1><ol>
+<li>六大组件 ：容器，迭代器，算法，配置器（allocator），仿函数（functors），配接器（adapters）</li>
+<li>组态：<strong>参数推导</strong>（就是不必显式声名参数类型，根据调用时传递的形参，自动调用对应的模板类）；<strong>偏特化</strong>（类似于重载，就是定义多个类模板，在类前面声名模板，在类名后面也要声名，还有种叫全特化，只需要声名<code>template&lt;&gt;</code>）</li>
+<li>在使用仿函数时经常使用<strong>临时对象</strong>进行调用对应的重载函数‘()’。之前采用的一般是函数指针，但是函数指针无法拥有自己的状态？？，但放函数可以。</li>
+<li>迭代器的设计为前闭后开的区间，last元素表示的是最后一个元素的下一个位置。</li>
+</ol>
+<h1 id="空间配置器"><a href="#空间配置器" class="headerlink" title="空间配置器"></a>空间配置器</h1><ol>
+<li>指的就是allocator，用来为STL容器中的元素分配内存，包含的操作有：allocate; deallocate; construct; destroy。分别对应着分配内存，释放内存，调用构造函数，析构函数。</li>
+<li>构造函数<code>construct()</code>是一般情况下是调用<code>placement new</code>运算符，接受一个指针和一个初始值，在指针指向的空间内构造对应的对象并用初始值进行初始化。</li>
+<li>析构函数<code>destroy()</code>有两种实现，对于单个指针的参数，直接调用析构函数，对于是两个指针范围，会判断一下数据的类型，如果对象的析构函数是无关痛痒的实现，就什么也不做就结束，否则，就挨个调用对应的析构函数。（其中判断对象是否是无关紧要的，通过<code>__type_traits</code>实现）</li>
+<li>内存分配<code>allocate()</code>采用了双层级配置器（还有一层包装<code>simple_alloc</code>），第一层直接使用<code>malloc()</code>和<code>free()</code>，第二层采用了不同的策略来分配内存，两种情况，申请内存大于128k和小于128k，大于128就直接用一层的内存分配器，<strong>小于128k时</strong>，为了降低额外的分配负担和内存碎片等问题，使用内存池技术。所谓内存池，是16个自由链表，每8个字节对应一个链表，实际分配时按8的倍数向上取整，（那个区块还采用了联合体来节约指针的内存），在16个free_list中寻找最合适的那个。</li>
+<li><code>free_list</code>中内存不足时，就从heap中进行分配，为内存池注入活水。还有个函数，用于初始化<code>uninitialized_fill_n()</code>函数，会根据对象是不是<strong>POD</strong>基本数据类型，来用二进制拷贝或者调用构造函数进行初始化。</li>
+</ol>
+<h1 id="迭代器"><a href="#迭代器" class="headerlink" title="迭代器"></a>迭代器</h1><ol>
+<li>在STL库中，算法<code>algorithm</code>和<code>containers</code>是彼此互相独立的，但是，<code>iterator</code>充当了算法和容器的胶合剂。</li>
+<li>迭代器的底层实现是智能指针，也就是对原始指针进行封装，智能指针的话主要是解决内存泄漏问题（一般采用列表初始化去初始化智能指针对象）。对于迭代器而言，最重要的操作就是<code>dereference</code>和<code>member access</code>，也就是<code>-&gt;</code>；<code>*</code>和<code>.</code>操作。</li>
+<li>也要对迭代器对象实现<code>operator++</code>等操作，为了不暴露对应的型别，利用参数推导机制，把这些操作的工作用一个模版类实现，在这个模板类中调用对应的类的实现。也就是<code>Traits</code>编程技法，主要解决的一个问题是推测返回类型，这个问题的解决方法是通过在结构体对返回值的类型做<strong>内嵌型别声名</strong>，也就是用<code>typedef T value_type</code>对返回值的类型进行声名，除此之外，还采用偏特化技术来处理调用该模板的元素是不能用型别声名来处理的情况（一般指的是普通的指针）。通过种种操作，<code>traits</code>就可以萃取出真实的<code>value type</code>，自动确定返回的数据类型。因此这玩意也被称为“特性萃取机”。</li>
+<li>总结一下上述，每个迭代器都应该定义自己的<code>associated type</code>，<code>traits</code>可以利用<strong>偏特化</strong>和<strong>参数推导</strong>机制自动确定迭代器的类型和返回类型。</li>
+<li>迭代的相应型别（我觉得就是各种运算符重载的实现而已）包括：<code>value type</code>，<code>difference type</code>，<code>reference type</code>，<code>pointer type</code>，<code>iterator_category</code>。</li>
+</ol>
+<h1 id="序列式容器"><a href="#序列式容器" class="headerlink" title="序列式容器"></a>序列式容器</h1><ol>
+<li>序列式容器包括<code>vector</code>，<code>list</code>，<code>deque</code>，<code>stack</code>，<code>queue</code>，<code>priority-queue</code>。其中<code>stack</code>和<code>queue</code>的实现是对<code>deque</code>的封装，因此它也被称为配接器<code>adapter</code>。</li>
+</ol>
+<h3 id="vector"><a href="#vector" class="headerlink" title="vector"></a>vector</h3><ol>
+<li>向量，和数组<code>array</code>非常相似，向量的空间运用更加灵活。<code>vector</code>是动态空间，会随着元素的加入，内部机制会自行扩充空间以容纳新元素。</li>
+<li><code>vector</code>的迭代器也支持随机存取。所以要重载<code>operator[]</code>操作，好多迭代器返回的都是引用。<code>capacity()</code>函数返回容量（已经存储的个数）。</li>
+<li>扩容的过程是，“重新配置、元素移动、释放原空间”等过程。扩充的容量为<code>old_size + max(old_size, n)</code>。</li>
+<li>在尾部操作的效率较高<code>push_back()</code>，<code>pop_back()</code>。但是在头节点附近插入删除的效率极低。<h3 id="list"><a href="#list" class="headerlink" title="list"></a>list</h3></li>
+<li>底层实现是双向链表，对空间的运用极为精准，没有一丝浪费，对于任何位置的元素插入和删除，<code>list</code>永远是常数时间。</li>
+<li><code>list</code>的迭代器也要支持正常的递增，递减，取值，成员存取等操作。并且插入等操作也不会使迭代器失效。为了实现迭代器前闭后开的要求，list节点中还在尾端放置来一个空白节点。<strong>插入元素</strong>一般是在插入位置之前。</li>
+<li>元素的操作包括：<code>push_front, push_back, erase, pop_front, pop_back, clear, remove, unique, splice, merge, reverse, sort</code>。</li>
+<li><code>unique</code>只能去除相邻相同元素。它的内部有一个<code>transfer</code>操作，也就是将<code>[first, last)</code>内的所有元素迁移到<code>position</code>之前。对外开放的是<code>splice</code>操作。</li>
+</ol>
+<h3 id="deque"><a href="#deque" class="headerlink" title="deque"></a>deque</h3><ol>
+<li><code>deque</code>是一种双向开口的连续分段线性空间。可以在头尾两端分别做元素的插入和删除操作。它具有动态分段的连续空间，没必要提前预留一大段空间。它的迭代器复杂度较高，效率较低。对<code>deque</code>进行排序也是很低效的，可以先完整的复制到<code>vector</code>中，在进行排序复制回来。</li>
+<li>在复杂的迭代器架构代价下，<code>deque</code>实现了在其前端或尾端增加空间，避免了<code>vector</code>的“重新配置、复制、释放”。整体连续只是假象。</li>
+<li>具体实现：它有一个二重指针<code>map</code>用来指向类型为<code>T*</code>的一个指针数组。每个元素是一个<code>T*</code>类型的指针，默认采用<em>512字节</em>缓冲区。</li>
+<li>迭代器具有四个指针，分别为<code>cur</code>，<code>first</code>，<code>last</code>，<code>node</code>。<code>cur</code>指向缓冲区中的当前元素位置，<code>first</code>指向缓冲区的头节点，<code>last</code>指向缓冲区的尾节点，<code>node</code>节点指向<code>map</code>中元素的对应位置。</li>
+<li>实现迭代器运算符重载时，要注意对于边缘区域，要视前进后退情况而定，要解决不在同一缓存区的问题。</li>
+<li>除此之外，<code>deque</code>还要维护两个<code>start</code>和<code>finish</code>指针，分别指向第一个缓冲区第一个元素和最后一个缓冲区的最后一个元素。</li>
+<li>当内存不够时，要扩充内存，这个过程稍微复杂，如果缓冲区只剩一个备用元素是，再调用<code>push_back()</code>会调用<code>push_back_aux()</code>，然后再分配一块缓冲区。</li>
+<li>删除元素时，也有<code>pop_back_aux()</code>操作，就是删除最后一个缓冲区，只有当这个缓冲区不用了。但至少也会有一个缓冲区。</li>
+</ol>
+<h3 id="stack"><a href="#stack" class="headerlink" title="stack"></a>stack</h3><ol>
+<li><code>stack</code>缺省以<code>deque</code>作为底部结构并封闭其头端开口，实现非常简单。这类容器也被称为配接器<code>adapter</code>。</li>
+<li>它没有迭代器，不能被遍历，只能访问顶端的元素。</li>
+<li>也可以以其他元素为底层容器，例如: <code>list</code>。</li>
+</ol>
+<h3 id="queue"><a href="#queue" class="headerlink" title="queue"></a>queue</h3><ol>
+<li>也是以<code>deque</code>作为底部结构，封闭其底端的出口和前端的入口。</li>
+<li>也没有迭代器，不能便利。</li>
+</ol>
+<h3 id="heap"><a href="#heap" class="headerlink" title="heap"></a>heap</h3><ol>
+<li>鼎鼎有名的堆（本科时从来没想去搞明白，现在被逼着随手就是个堆排序😑），本质上就是个完全二叉树，大顶堆的要求是父亲节点比子节点都大，小顶堆反之。在STL中，堆用来做优先队列<code>priority queue</code>的底层机制。它的复杂度最好间于<code>queue</code>和<code>binary search tree</code>之间。</li>
+<li>完全二叉树可以用一个array表示，把0号元素留空，那么第i个元素的左子树和右子树分别是2i和2i+1。<code>heap</code>还需要动态扩展，其一般用<code>vector</code>实现，新加入的元素就在<code>vector</code>的<code>end()</code>处。</li>
+<li>其核心操作就是<strong>调整</strong>过程，除此之外还有<code>push_heap</code>，<code>pop_heap</code>，<code>sort_heap</code>，<code>make_heap</code>操作。</li>
+</ol>
+<h3 id="优先队列"><a href="#优先队列" class="headerlink" title="优先队列"></a>优先队列</h3><ol>
+<li>优先队列就是有权重观念的队列，权重高的优先出来，缺省情况下优先队列利用一个<code>max_heap</code>完成。它的底层是<code>heap</code>，因此也属于<code>adapter</code>。</li>
+<li>它也没有迭代器，不提供遍历功能。</li>
+</ol>
+<h3 id="slist"><a href="#slist" class="headerlink" title="slist"></a>slist</h3><ol>
+<li>它是前向的单向链表，所耗用的空间更小，操作更快。它的插入等操作不会使原迭代器失效。</li>
+<li>它要访问任何元素，都必须从头访问，因此只有在头节点处的操作才比较高效。也正因此，它只提供<code>push_front()</code>操作。</li>
+<li>它的迭代器的结构是这样的：首先有一个节点的结构体基类<code>struct __slist_node_base</code>，它的迭代器基类<code>struct __slist_iterator_base</code>有一个节点元素（节点基类指针），然后迭代器和节点分别继承自节点基结构体和迭代器基结构体。</li>
+<li>需要注意的是，它迭代器的尾端是<code>0</code>，因为它的源码是<code>iterator end() &#123;return iterator(0);&#125;</code>。</li>
+</ol>
+<h1 id="关联式容器"><a href="#关联式容器" class="headerlink" title="关联式容器"></a>关联式容器</h1><ol>
+<li>分为两大类：<code>set</code>和<code>map</code>映射表。他们的底层是以红黑树实现的（<code>multiset</code>，<code>multimap</code>）。除此之外，还有散列表<code>hash table</code>，以它为底层机制完成的<code>hash_set</code>、<code>hash_map</code>、<code>hash_multiset</code>、<code>hash_multimap</code>。</li>
+<li>关联式容器的意思就是每个元素都有一个键值<code>key</code>和一个实值<code>value</code>，当元素被插入到关联式容器中时，容器的内部结构会依照其键值将元素值放置到合适的位置。</li>
+<li>为了获得良好的搜索效率，其内部结构一般用查找树实现，其种类有<code>AVL-tree</code>，<code>RB-tree</code>，<code>AA-tree</code>，应用最广泛的是红黑树。</li>
+<li>在二叉搜索树中寻找值比较简单，比较麻烦的是元素的插入和删除。<strong>删除节点</strong>：若无右子树则用左子树节点，若有则用右子树最左节点代替。</li>
+<li>平衡二叉树就是没有哪一端节点的深度过大，这样可以保证查找的效率比较高，利用平衡二叉树，元素的搜索时间平均而言，可以节省25%。</li>
+</ol>
+<h3 id="平衡二叉树"><a href="#平衡二叉树" class="headerlink" title="平衡二叉树"></a>平衡二叉树</h3><ol>
+<li>要求任何节点的左右子树高度相差最多1。</li>
+<li>根据插入的情况可以将情况分为4种，<ul>
+<li>左子节点的左子树（一次单旋转，将父节点调到爷爷辈）</li>
+<li>左子节点的右子树（两次单旋转，将左子节点调到爷爷辈）</li>
+<li>右子节点的左子树</li>
+<li>右子节点的右子树</li>
+</ul>
+</li>
+<li>说来抽象又复杂，如果回忆不起来记得取补补书本啊（p204-207）</li>
+</ol>
+<h3 id="红黑树"><a href="#红黑树" class="headerlink" title="红黑树"></a>红黑树</h3><ol>
+<li>四个特性：<ul>
+<li>每个节点不是黑色就是红色</li>
+<li>父亲节点为黑</li>
+<li>红节点不可以连续出现</li>
+<li>任意一条路径上经过的黑节点个数相同</li>
+</ul>
+</li>
+<li>插入节点，有些时候要旋转1-2次再加上变色，有些时候只要变色。个人简单小总结一下。其实就是在平衡二叉树的情况下再进行了细分，并不是一定要旋转，什么情况下不用旋转呢？以上述的平衡二叉树情况1为例，如果插入为左节点的左子树，那么当有右子树存在时，就只需要变色，没有右子树就要旋转。<strong>综上</strong>，只要判断节点的兄弟节点是否存在就可以决定是否要旋转了，旋转的方式也和平衡二叉树一致。</li>
+<li>迭代器是继承自节点的结构体，对运算符进行了重载，每个节点有一个指向父亲节点的指针，可以比较方便地找到下一个节点。具体怎么找呢？其实就是中序遍历的下一个节点，<strong>右子树的最左节点</strong> 或者 <strong>左子节点的父亲节点</strong> 或者 ** 一直向上找父亲直到自己不是右子节点**。递减的操作类似。</li>
+<li>为了简化走到根节点的情况，STL实现时还定义了一个<code>header</code>节点，其中存储了<code>begin()</code>和<code>end()</code>对应树的头和尾。</li>
+</ol>
+<h3 id="set"><a href="#set" class="headerlink" title="set"></a>set</h3><ol>
+<li>底层时用红黑树作为<code>key</code>，有非常好的自动排序效果，它的元素值就是键值，因此不允许修改元素的值。</li>
+<li>STL还提供了和元素集合相关的操作，包括求交集<code>set_intersection</code>，并集<code>set_union</code>，差集<code>set_difference</code>，对称差集<code>set_symmetric_difference</code>。</li>
+<li><code>multiset</code>的用法和<code>set</code>完全相同，唯一的差别就是允许键值重复。</li>
+</ol>
+<h3 id="map"><a href="#map" class="headerlink" title="map"></a>map</h3><ol>
+<li>它的元素是<code>pair</code>，同时拥有实值(<code>value</code>)和键值(<code>key</code>)，名为<code>first</code>和<code>second</code>。</li>
+<li>可以修改实值，但不可以修改键值。</li>
+<li>除此之外，它还重载了下标操作符，也就是<code>operator[]</code>，返回实值引用。</li>
+<li>键值可以重复的<code>map</code>就是<code>multimap</code>。</li>
+</ol>
+<h3 id="hashtable"><a href="#hashtable" class="headerlink" title="hashtable"></a>hashtable</h3><ol>
+<li>散列表，它在插入，删除，搜索等操作上具有”常数平均时间”的表现。也成为了STL中<code>set</code>和<code>map</code>的标准底层机制。它的基本思想就是把值映射成为地址。</li>
+<li>用某种映射函数将大数映射成为小数（这样的函数也被称为<code>hash function</code>），对于元素碰撞问题，可以采用的解决方法包括：线性探测<code>linear probing</code>、二次探测<code>quadratic probing</code>、开链<code>separate chaining</code>等做法。有个负载系数的概念，指元素个数除以表格的大小。</li>
+<li>解决碰撞：<ul>
+<li>线性探测：元素删除时只是先做个标记，整理的时候再删。该方法最主要的问题是会产生主集团问题<code>primary clustering</code>，也就是大量的元素聚集在一起，导致效率下降。</li>
+<li>二次探测：主要是用来解决主集团问题，它在产生冲突时，会一次加上1，4，9…；假设表格的大小为质数，并且保持负载系数在0.5下，平均访问次数不超过两次。而且这个操作可以转换成更高效的做法，在新扩展表格时，要为每个元素重新计算它在新表格中的位置。 它的主要问题是会造成<code>secondary clustering</code>的问题，可以用<code>double hashing</code>的方法。</li>
+<li>开链，也就是为表格元素维护一个<code>list</code>，当有冲突时，就在<code>list</code>上完成插入、搜索、删除等操作。</li>
+</ul>
+</li>
+<li>开链的实现：<code>hash table</code>表格内的元素为桶<code>bucket</code>，每个桶维护一个<code>linked list</code>，在这儿的实现时自行维护了<code>hash table node</code>节点。桶的聚合体采用<code>vector</code>进行实现，可以动态扩充。</li>
+<li>迭代器：前进的操作是先在<code>list</code>里面遍历，到链表尾端时跳到下一个桶。没有后退的操作。</li>
+<li>在<code>stl_hash_fun.h</code>中定义了现成的<code>hash function</code>。</li>
+<li>桶的大小也是以素数来设计的，STL中预先存储了28个素数用来作为桶的大小依据。</li>
+<li>桶向量的大小和每个桶中最大元素个数相等。</li>
+<li>对于一些类型的变量（例如:<code>string</code>，<code>double</code>，<code>float</code>需要用户自己撰写哈希函数），还需要用进行一些转换，才可以进行取模。</li>
+</ol>
+<h3 id="hash-set；hash-multiset"><a href="#hash-set；hash-multiset" class="headerlink" title="hash_set；hash_multiset"></a>hash_set；hash_multiset</h3><ol>
+<li>转调<code>hash table</code>中的操作只不过没有自动排序的功能。</li>
+</ol>
+<h3 id="hash-map-hash-multimap"><a href="#hash-map-hash-multimap" class="headerlink" title="hash_map; hash_multimap"></a>hash_map; hash_multimap</h3><ol>
+<li>同上，不能自动排序。</li>
+</ol>
+<h1 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h1><p>略</p>
+<h1 id="仿函数"><a href="#仿函数" class="headerlink" title="仿函数"></a>仿函数</h1><p>略</p>
+<h1 id="配接器"><a href="#配接器" class="headerlink" title="配接器"></a>配接器</h1><p>同略</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/08/13/STL%E6%BA%90%E7%A0%81%E5%89%96%E6%9E%90/" data-id="cktvhfl9o000rji9sds1f5s28" data-title="《STL源码剖析》笔记" class="article-share-link">Compartir</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CS%E7%AC%94%E8%AE%B0/" rel="tag">CS笔记</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/08/20/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9C%9F%E8%B1%A1%E8%BF%98%E5%8E%9F/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          《操作系统真象还原》笔记
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/08/03/More%20Effective%20C++/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">《More Effective C++》笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CS%E7%AC%94%E8%AE%B0/" rel="tag">CS笔记</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python%E7%AC%94%E8%AE%B0/" rel="tag">python笔记</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%B6%E4%BB%96/" rel="tag">其他</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A9%E6%96%87%E7%89%A9%E7%90%86%E5%AD%A6%E7%AC%94%E8%AE%B0/" rel="tag">天文物理学笔记</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91/" rel="tag">服务端开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="tag">游戏开发</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Nube de Tags</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CS%E7%AC%94%E8%AE%B0/" style="font-size: 16.67px;">CS笔记</a> <a href="/tags/python%E7%AC%94%E8%AE%B0/" style="font-size: 13.33px;">python笔记</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 10px;">其他</a> <a href="/tags/%E5%A4%A9%E6%96%87%E7%89%A9%E7%90%86%E5%AD%A6%E7%AC%94%E8%AE%B0/" style="font-size: 20px;">天文物理学笔记</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 10px;">数据库</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91/" style="font-size: 10px;">服务端开发</a> <a href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" style="font-size: 10px;">游戏开发</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archivos</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Posts recientes</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/08/07/mongo%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">mongo学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/05/%E8%A2%AB%E8%AE%A8%E5%8E%8C%E7%9A%84%E5%8B%87%E6%B0%94/">《被讨厌的勇气》笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/19/%E7%BD%91%E7%BB%9C%E5%A4%9A%E4%BA%BA%E6%B8%B8%E6%88%8F%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%BC%96%E7%A8%8B/">《网络多人游戏架构与编程》笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/07/CPython%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">CPython学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/12/13/%E6%B5%81%E7%95%85%E7%9A%84python/">《流畅的python》笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="footer-outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 WenZhou<br>
+      Construido por <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+<!-- 处理mermaid流程图 -->
+
+  <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'base'});
+    }
+  </script>
+
+  </div>
+</body>
+</html>

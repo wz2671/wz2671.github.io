@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>mongo学习笔记 | Wenzhou&#39;s blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="参考书籍：MongoDB实战 这本书是一本快速上手的手册，简单，直接，内容全面。MongoDB权威指南深入学习MongoDB 包含两部分：MongoDB扩展技术和MongoDB开发技巧50例，前者主要是介绍如何部署分布式的数据库，后者介绍了开发中种种需要注意的地方 每本书的只有一百页左右，太棒惹。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mongo学习笔记">
+<meta property="og:url" content="http://yoursite.com/2021/08/07/mongo%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Wenzhou&#39;s blog">
+<meta property="og:description" content="参考书籍：MongoDB实战 这本书是一本快速上手的手册，简单，直接，内容全面。MongoDB权威指南深入学习MongoDB 包含两部分：MongoDB扩展技术和MongoDB开发技巧50例，前者主要是介绍如何部署分布式的数据库，后者介绍了开发中种种需要注意的地方 每本书的只有一百页左右，太棒惹。">
+<meta property="og:locale">
+<meta property="og:image" content="http://yoursite.com/images/cover/mongodb.png">
+<meta property="article:published_time" content="2021-08-07T04:08:27.000Z">
+<meta property="article:modified_time" content="2021-10-07T08:48:50.735Z">
+<meta property="article:author" content="WenZhou">
+<meta property="article:tag" content="服务端开发">
+<meta property="article:tag" content="数据库">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/images/cover/mongodb.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Wenzhou's blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/images/wz.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Wenzhou&#39;s blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Buscar"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Buscar"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-mongo学习笔记" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/07/mongo%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" class="article-date">
+  <time class="dt-published" datetime="2021-08-07T04:08:27.000Z" itemprop="datePublished">2021-08-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      mongo学习笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <!-- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MongoDB%E5%BC%80%E5%8F%91%E6%8A%80%E5%B7%A750%E4%BE%8B"><span class="toc-text">MongoDB开发技巧50例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%B8%80%E8%87%B4%E6%80%A7%E5%92%8C%E9%80%9F%E5%BA%A6%E6%8A%98%E4%B8%AD"><span class="toc-text">1. 一致性和速度折中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%B0%BD%E9%87%8F%E5%8D%95%E4%B8%AA%E6%9F%A5%E8%AF%A2%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-text">2. 尽量单个查询获取数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%8D%E8%A6%81%E5%B5%8C%E5%85%A5%E4%B8%8D%E6%96%AD%E5%A2%9E%E5%8A%A0%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="toc-text">3. 不要嵌入不断增加的数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%A2%84%E5%85%88%E5%88%86%E9%85%8D%E7%A9%BA%E9%97%B4"><span class="toc-text">4. 预先分配空间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%95%B0%E7%BB%84%E5%92%8C%E5%AD%90%E6%96%87%E6%A1%A3%E5%AD%98%E5%82%A8%E6%9D%83%E8%A1%A1"><span class="toc-text">5. 数组和子文档存储权衡</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-MongoDB%E5%BA%94%E5%8F%AA%E5%AD%98%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="toc-text">6. MongoDB应只存取数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-where%E7%90%86%E8%A7%A3"><span class="toc-text">7. $where理解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E6%95%B0%E6%8D%AE%E9%97%AE%E9%A2%98"><span class="toc-text">8. 数据问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-%E7%94%A8%E6%AD%A3%E7%A1%AE%E7%9A%84%E7%B1%BB%E5%9E%8B%E5%AD%98%E6%94%BE%E6%95%B0%E6%8D%AE"><span class="toc-text">9. 用正确的类型存放数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-%E4%B8%8D%E8%A6%81%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%95%E7%94%A8"><span class="toc-text">10. 不要用数据库引用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E4%B8%8D%E8%A6%81%E4%BD%BF%E7%94%A8GridFS%E5%A4%84%E7%90%86%E5%B0%8F%E7%9A%84%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%95%B0%E6%8D%AE"><span class="toc-text">11. 不要使用GridFS处理小的二进制数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E5%A4%84%E7%90%86%E6%95%85%E9%9A%9C"><span class="toc-text">12. 处理故障</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-%E4%BC%98%E5%8C%96"><span class="toc-text">13. 优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-%E7%B4%A2%E5%BC%95%E4%BD%BF%E7%94%A8"><span class="toc-text">14. 索引使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15-%E6%96%87%E6%A1%A3%E5%92%8C%E6%9F%A5%E8%AF%A2%E7%9A%84%E8%AE%BE%E8%AE%A1"><span class="toc-text">15: 文档和查询的设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16-%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E6%80%A7%E5%92%8C%E4%B8%80%E8%87%B4%E6%80%A7"><span class="toc-text">16. 数据安全性和一致性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#17-%E7%AE%A1%E7%90%86%E6%8A%80%E5%B7%A7"><span class="toc-text">17. 管理技巧</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#18-%E5%AD%A6%E4%B9%A0JavaScript"><span class="toc-text">18. 学习JavaScript</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MongoDB%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97"><span class="toc-text">MongoDB权威指南</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="toc-text">1. 数据类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%88%9B%E5%BB%BA%E3%80%81%E6%9B%B4%E6%96%B0%E5%8F%8A%E5%88%A0%E9%99%A4%E6%96%87%E6%A1%A3"><span class="toc-text">2. 创建、更新及删除文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9F%A5%E8%AF%A2"><span class="toc-text">3. 查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%B4%A2%E5%BC%95"><span class="toc-text">4. 索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%81%9A%E5%90%88"><span class="toc-text">5. 聚合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E8%BF%9B%E9%98%B6%E6%8C%87%E5%8D%97"><span class="toc-text">6. 进阶指南</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E7%AE%A1%E7%90%86"><span class="toc-text">7. 管理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E5%A4%8D%E5%88%B6"><span class="toc-text">8. 复制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-%E5%88%86%E7%89%87"><span class="toc-text">9. 分片</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-%E6%B7%B1%E5%85%A5MongoDB%E5%86%85%E9%83%A8"><span class="toc-text">10. 深入MongoDB内部</span></a></li></ol></li></ol></li></ol> -->
+        <p>参考书籍：<br><a href="/doc/MongoDB%E5%AE%9E%E6%88%98.pdf">MongoDB实战</a> 这本书是一本快速上手的手册，简单，直接，内容全面。<br><a target="_blank" rel="noopener" href="https://gitee.com/kadys/developer-books-01/raw/master/MongoDB/MongoDB%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97.pdf">MongoDB权威指南</a><br><a target="_blank" rel="noopener" href="https://gitee.com/kadys/developer-books-01/raw/master/MongoDB/%E6%B7%B1%E5%85%A5%E5%AD%A6%E4%B9%A0MongoDB.pdf">深入学习MongoDB</a> 包含两部分：MongoDB扩展技术和MongoDB开发技巧50例，前者主要是介绍如何部署分布式的数据库，后者介绍了开发中种种需要注意的地方</p>
+<p>每本书的只有一百页左右，太棒惹。</p>
+<p><img src="/images/cover/mongodb.png" alt="封面"></p>
+<span id="more"></span>
+
+<h1 id="MongoDB开发技巧50例"><a href="#MongoDB开发技巧50例" class="headerlink" title="MongoDB开发技巧50例"></a>MongoDB开发技巧50例</h1><h3 id="1-一致性和速度折中"><a href="#1-一致性和速度折中" class="headerlink" title="1. 一致性和速度折中"></a>1. 一致性和速度折中</h3><ul>
+<li><p>针对的问题是，多个文档关联时，是使用冗余（反范式化）的方式还是使用引用（范式化）的方式存储。</p>
+</li>
+<li><p>例如，有订单里有商品的信息，商品有单独的集合，那么订单中应该存储商品的id，还是商品的数据？</p>
+  <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 商品</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;_id&quot;</span>: productId,</span><br><span class="line">    <span class="attr">&quot;name&quot;</span>: name,</span><br><span class="line">    <span class="attr">&quot;price&quot;</span>: price,</span><br><span class="line">    <span class="attr">&quot;desc&quot;</span>: description</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 订单</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;_id&quot;</span>: orderId,</span><br><span class="line">    <span class="attr">&quot;user&quot;</span>: userInfo,</span><br><span class="line">    <span class="attr">&quot;items&quot;</span>: [</span><br><span class="line">        productId1,     <span class="comment">// 是存储商品id还是完整的数据条目</span></span><br><span class="line">        productId2,</span><br><span class="line">        productId3,</span><br><span class="line">    ],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>如果采用范式化，每次读订单信息的时候，都需要额外再读取商品信息。</p>
+</li>
+<li><p>如果采用反范式化，那么可能会有不一致的情况。</p>
+</li>
+<li><p>实践中，商品的信息改变频率很低，且不必更新到所有订单，因此最佳选择是将订单反范式化（就存完整的商品信息）</p>
+</li>
+<li><p><strong>范式化可使数据可用性更长久</strong></p>
+</li>
+</ul>
+<h3 id="2-尽量单个查询获取数据"><a href="#2-尽量单个查询获取数据" class="headerlink" title="2. 尽量单个查询获取数据"></a>2. 尽量单个查询获取数据</h3><ul>
+<li>尽量将需要一块获取的数据存到一起，这样可以一次查询。</li>
+<li>如果要获取多条数据，也尽量就返回多条数据，避免多次查询。</li>
+<li>如果某些信息只在一个文档中使用，就应该嵌入这个文档</li>
+<li>只有一个键或一个值的也应嵌入</li>
+</ul>
+<h3 id="3-不要嵌入不断增加的数据"><a href="#3-不要嵌入不断增加的数据" class="headerlink" title="3. 不要嵌入不断增加的数据"></a>3. 不要嵌入不断增加的数据</h3><ul>
+<li>对数据追加数据很低效，正常使用中数据和对象大小应当相对固定</li>
+<li>会不断增加的数据，作为单独的文档处理比较合适</li>
+</ul>
+<h3 id="4-预先分配空间"><a href="#4-预先分配空间" class="headerlink" title="4. 预先分配空间"></a>4. 预先分配空间</h3><ul>
+<li>如果知道未来要用到那些字段和数据，可以预先填充数据，更新值比插入值快的多</li>
+<li>如果确定未来文档的大小，可以先用辣鸡数据填充，再重置字段，可以预分配足够的空间</li>
+</ul>
+<h3 id="5-数组和子文档存储权衡"><a href="#5-数组和子文档存储权衡" class="headerlink" title="5. 数组和子文档存储权衡"></a>5. 数组和子文档存储权衡</h3><p>(TODO: 补充例子)</p>
+<ul>
+<li>如果想无需标识符就获取某项的信息，就要用数组存储</li>
+<li>如果明确知道查讯的属性，就可以采用文档存储</li>
+</ul>
+<h3 id="6-MongoDB应只存取数据"><a href="#6-MongoDB应只存取数据" class="headerlink" title="6. MongoDB应只存取数据"></a>6. MongoDB应只存取数据</h3><p>(TODO: 补充例子)</p>
+<ul>
+<li>尽量通过优化文档结构，使得信息可以直接从文档中获得，避免让MongoDB使用JavaScript计算</li>
+<li>如果在更新文档时，不确定某些字段是否需要更改，可以用两种修改：<ol>
+<li>硬改，让后台任务或客户端校验修复不一致的情况</li>
+<li>使用<code>findAndModify</code>锁住文档直至修改完毕</li>
+</ol>
+</li>
+</ul>
+<h3 id="7-where理解"><a href="#7-where理解" class="headerlink" title="7. $where理解"></a>7. <code>$where</code>理解</h3><ul>
+<li>可以在查询中使用<code>$where</code>自子句来执行JavaScript代码。灵活但低效  <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; db.members.find(&#123;<span class="string">&quot;$where&quot;</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.member[<span class="number">0</span>].age == <span class="built_in">this</span>.member[<span class="number">1</span>].age;</span><br><span class="line">&#125;&#125;)</span><br></pre></td></tr></table></figure></li>
+<li>使用普通查询会转换成<code>BSON</code>格式与MongoDB中进行数据对比。使用<code>$where</code>会将文档转为js对象并执行对应脚本</li>
+<li>使用<code>$where</code>时可以通过条件减少要匹配的文档，以减少性能消耗。</li>
+</ul>
+<h3 id="8-数据问题"><a href="#8-数据问题" class="headerlink" title="8. 数据问题"></a>8. 数据问题</h3><ul>
+<li>系统奔溃，MongoDB更新可能会导致数据不一致</li>
+<li>可以通过建立<code>cron</code>任务进行修复<ul>
+<li>一致性修复器：核对计算，检查重复数据，确保数据一致性</li>
+<li>预分配器：创建今后要用到的文档</li>
+<li>聚合器：更新文档内部的聚合数据，使之为最新数据</li>
+<li>结构校验器：确保当前所有的文档都有指定的字段，否则就自动校正或发送通知。</li>
+<li>备份任务：定期对数据库做<code>fsync</code>，加锁和到处操作</li>
+</ul>
+</li>
+</ul>
+<h3 id="9-用正确的类型存放数据"><a href="#9-用正确的类型存放数据" class="headerlink" title="9. 用正确的类型存放数据"></a>9. 用正确的类型存放数据</h3><ul>
+<li>数字：<code>AND</code>和<code>OR</code>操作只适用于整数，不能是双精度浮点数。数据库会自动转化溢出的32位浮点数，将其变成64位的。</li>
+<li>日期：是<strong>精确</strong>的日期就要存成日期的类型，不精确的可以存成<code>yyyy-mm-dd</code>形式的字符串ISO格式的日期。</li>
+<li>字符串：都是utf-8编码的，或者以二进制形式存储</li>
+<li><code>ObjectId</code>：<font color=red> 就以<code>ObjectId</code>存储，不要存成字符串 </font>。<ul>
+<li>字符串无法与<code>ObejctId</code>相匹配，方便查询</li>
+<li><code>ObjectId</code>中包含文档的创建日期等，（听一个分享说是：[创建时间 : 主机号 : 进程号 : 序号]）</li>
+<li>字符串要比<code>ObjectId</code>多占用两倍空间</li>
+</ul>
+</li>
+<li>如果数据本身具有唯一的字段，可用来做_id，但是要<strong>确保其唯一性</strong>，要留意<strong>索引的树结构，保证插入顺序是有序的</strong></li>
+<li>不要用文档作为<code>_id</code>，以下是书中的说明，（然而并没有很懂：<blockquote>
+<p>除了不可避免地情况（如MapReduce）地输出，通常都不应该将文档作为<code>_id</code>。问题就在于索引一个文档中的字段和索引文档完全不一样，如果没有每次查询整个子文档的计划，最后会有多个索引，如<code>_id</code>，<code>_id.foo</code>，<code>_id.bar</code>等。<br>  更改<code>_id</code>必须得覆盖整个文档，所以若子文档的字段有变化则更新非常不便。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="10-不要用数据库引用"><a href="#10-不要用数据库引用" class="headerlink" title="10. 不要用数据库引用"></a>10. 不要用数据库引用</h3><ul>
+<li>数据库引用如下，它表示该文档引用了<code>dbName</code>数据库中<code>dcollectionName</code>集合的<code>identifier</code>文档。  <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">$id</span>: identifier, <span class="attr">$ref</span>: collectionName, <span class="attr">$db</span>: dbName&#125;</span><br></pre></td></tr></table></figure></li>
+<li>它仅仅是一个普普通通的子文档，并没有什么神奇之处，依旧要进行一次额外的查询。</li>
+<li>例如系统中的用户可以系统中的任意一件事情，可以通过数据库引用来存储对应的集合。</li>
+</ul>
+<h3 id="11-不要使用GridFS处理小的二进制数据"><a href="#11-不要使用GridFS处理小的二进制数据" class="headerlink" title="11. 不要使用GridFS处理小的二进制数据"></a>11. 不要使用<code>GridFS</code>处理小的二进制数据</h3><ul>
+<li>查询<code>GridFS</code>需要查询两次，一次获取文件的元信息，另一次获取其内容。</li>
+<li>它是用来将大的二进制对象切成小片存放到数据库中的。</li>
+</ul>
+<h3 id="12-处理故障"><a href="#12-处理故障" class="headerlink" title="12. 处理故障"></a>12. 处理故障</h3><ul>
+<li>MongoDB在进行无缝的故障切换时，可能会抛出网络错误和异常，需要用户自行处理</li>
+<li>主节点异常时，可能会出现各种错误，此时也需要多多注意各种问题的处理</li>
+</ul>
+<h3 id="13-优化"><a href="#13-优化" class="headerlink" title="13. 优化"></a>13. 优化</h3><ul>
+<li>尽量减少磁盘访问</li>
+<li>使用索引减少内存占用</li>
+<li>如果要大约返回集合的一半数据的时候，就不要使用索引了。</li>
+<li>每次插入删除文档时，需要同步更新索引，因此索引会增加很多额外的写入。</li>
+</ul>
+<h3 id="14-索引使用"><a href="#14-索引使用" class="headerlink" title="14. 索引使用"></a>14. 索引使用</h3><ul>
+<li>如果索引覆盖了整个查询的字段，那么这种查询会直接用索引的数据返回结果，不再访问文档;<br>  例如当前有如下索引：<code>db.foo.ensureIndex(&#123;&quot;x&quot;: 1, &quot;y&quot;: 1, &quot;z&quot;: 1&#125;)</code>，在进行查询<code>db.foo.find(&#123;&quot;x&quot;: criteria, &quot;y&quot;: criteria&#125;, &#123;&quot;x: 1, &quot;y&quot;: 1, &quot;z&quot;: 1, &quot;_id&quot;: 0&#125;)</code>查询时，会之访问索引的数据，不访问整个集合的数据</li>
+<li>尽量建立能被多个查询利用的复合索引。只要索引开头部分匹配就能利用索引。</li>
+</ul>
+<h3 id="15-文档和查询的设计"><a href="#15-文档和查询的设计" class="headerlink" title="15: 文档和查询的设计"></a>15: 文档和查询的设计</h3><ul>
+<li>如果属性平铺在了整个文档中时，查询时会不得不遍历每个字段，内嵌文档可以减少字段的访问。</li>
+<li><code>AND</code>类型的查询，尽量先将过滤条件严格的放在前面，这样后面的查询搜索空间就小了很多。</li>
+<li><code>OR</code>类型的查询，和上面的相反，应将匹配结果较多的放在界面，这样后续的查询搜索空间会少很多</li>
+</ul>
+<h3 id="16-数据安全性和一致性"><a href="#16-数据安全性和一致性" class="headerlink" title="16. 数据安全性和一致性"></a>16. 数据安全性和一致性</h3><ul>
+<li>单机做日志，多机则复制，或者两者兼用</li>
+<li>数据库崩溃了，并且没有日志，运行<code>repair</code>的修复时有限甚至无法修复的，比较推荐的做法时从备份快速回复，或者从头开始同步。<strong>但一定要清除所有损坏的数据</strong></li>
+<li>对于某些重要的操作，可以通过设置<code>w</code>发送<code>getlasterror</code>到服务器等待<code>w-1</code>个节点完成才当作写入成功；如<code>db.runCommand(&#123;&quot;getlasterror&quot;: 1, &quot;w&quot;: num， &quot;wtimeout&quot;: 100&#125;)</code>来保证数据的安全性。同时一定要给<code>w</code>设置超时。</li>
+<li><code>fsync</code>选项可以保证日志中有记录，但会让应用程序暂停直至写入磁盘，会特别影响性能，而且绝不要在未开启日志时使用<code>fsync</code>。</li>
+<li>在有日志的情况下，数据库奔溃后重启时，会自动修复数据才开始接受连接，但比repair节省很多时间，日志千万不要删除。</li>
+<li>备份文件时，使用<code>fsync</code>和锁配合，然后到处数据，不能没有执行<code>fsync</code>和上锁就直接复制所有文件，可能会损坏数据文件。</li>
+</ul>
+<h3 id="17-管理技巧"><a href="#17-管理技巧" class="headerlink" title="17. 管理技巧"></a>17. 管理技巧</h3><ul>
+<li>手动清理块集合，也就是<code>GridFs</code>文件。</li>
+<li>不要改变复制组成员投票的权值。</li>
+<li>无活跃节点时可重置复制组</li>
+<li>不必指定<code>--shardsvr</code>和<code>--configsvr</code>参数<ul>
+<li><code>--configsvr</code>会默认更改端口为<code>27019</code>和开启<code>diaglog</code></li>
+<li><code>--shardsvr</code>会将端口默认修改为<code>27019</code></li>
+</ul>
+</li>
+<li>开发时使用<code>--notablescan</code>会在查询做全表扫描时返回错误，只能使用索引进行查询</li>
+<li>在shell中管理所有服务器和数据库，它可以连各个服务器，一个shell管理所有的。</li>
+<li>创建启动文件，也就是写个js文件，启动时执行好了</li>
+<li>自定义全局函数<br>  例如添加一个<code>getOplogLength</code>的函数到数据库类中，那么可以在初始化之前执行：  <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DB.prototype.getOplogLength = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> local = <span class="built_in">this</span>.getSisterDB(<span class="string">&quot;local&quot;</span>);</span><br><span class="line">    <span class="keyword">var</span> first = local.oplog.rs.find().sort(&#123;<span class="attr">$natural</span>: <span class="number">1</span>&#125;).limit(<span class="number">1</span>).next();</span><br><span class="line">    <span class="keyword">var</span> last = local.oplog.rs.find().sort(&#123;<span class="attr">$natural</span>: <span class="number">-1</span>&#125;).limit(<span class="number">1</span>).next();</span><br><span class="line">    print(<span class="string">&quot;total time: &quot;</span> + (last.ts.t - first.ts.t) + <span class="string">&quot; secs&quot;</span>);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+  对于已经在使用的数据库，就需要逐个添加属性到实例对象里</li>
+<li>使用单个连接读取自身写入，这样可以保证写入和读取的顺序一直。</li>
+</ul>
+<h3 id="18-学习JavaScript"><a href="#18-学习JavaScript" class="headerlink" title="18. 学习JavaScript"></a>18. 学习JavaScript</h3><ul>
+<li>推荐了《JavaScript语言精粹》</li>
+</ul>
+<hr>
+<h1 id="MongoDB权威指南"><a href="#MongoDB权威指南" class="headerlink" title="MongoDB权威指南"></a>MongoDB权威指南</h1><h3 id="1-数据类型"><a href="#1-数据类型" class="headerlink" title="1. 数据类型"></a>1. 数据类型</h3><ul>
+<li>MongoDB支持如下的数据类型：<br>  null, 布尔，32位整数，64位整数，64位浮点数，字符串，符号，对象id，日期，正则表达式，js代码，二进制数据，最大值，最小值，未定义，数组，内嵌文档。</li>
+<li>在MongoDB中有3种数字类型(32位整数，64位整数和64位浮点数)，但是JavaScript只有一种数字类型（64位浮点数），如果在shell种进行修改的化，都会被存成该种类型，问题就会很大。shell显示的时候，会用一种近似的表现方式</li>
+<li><code>ObjectId</code>，它设计成轻量型的，不同的机器都能用全局唯一的同种做法方便地生成它。<ul>
+<li>它使用12字节地存储空间，每两个字节两位十六进制数字，是一个24位长地字符串</li>
+<li>还比较推荐在客户端生成该值  
+    <table border="1" cellspacing="0" bordercolor="#000000" width = "80%">
+        <tr>
+            <td> 0 </td> <td> 1 </td> <td> 2 </td> <td> 3 </td> <td> 4 </td>
+            <td> 5 </td> <td> 6 </td> <td> 7 </td> <td> 8 </td> <td> 9 </td>
+            <td> 10 </td> <td> 11 </td> <td> 12 </td>
+        </tr>
+        <tr>
+            <th colspan="4"> 时间戳 </th> <th colspan="4"> 机器 </th>
+            <th colspan="2"> PID </th> <th colspan="3"> 计数器 </th>
+        </tr>
+    </table>
+    
+
+
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-创建、更新及删除文档"><a href="#2-创建、更新及删除文档" class="headerlink" title="2. 创建、更新及删除文档"></a>2. 创建、更新及删除文档</h3><ul>
+<li>批量插入可以避免零碎请求所带来的开销。消息长度最大是16MB。</li>
+<li>当执行插入的时候，驱动程序会将数据转换成<code>BSON</code>的形式，然后将其送入数据库。数据库解析<code>BSON</code>，检验是否包含<code>_id</code>键并且文档不超过4MB，然后将文档原样存入数据库中。</li>
+<li>当使用<code>update</code>更新整个文档时，<code>_id</code>的值是可以被改变的，但使用修改器时，<code>_id</code>的值不能改变。</li>
+<li><code>$set</code>和<code>$unset</code>可以用来更新值，添加键等，<code>$inc</code>可以用来修改数值(整数，长整数，双精度浮点数)，不存在时会创建。</li>
+<li><strong>插入，删除和更新</strong>操作，都是瞬时完成的，他们不需要等待数据库相应。</li>
+<li>在<code>shell</code>中可以使用<code>getLastError</code>来检查操作是否执行成功</li>
+</ul>
+<p><strong>数组修改器</strong></p>
+<ul>
+<li><code>$push$</code>会向已有的数组末尾加入一个元素，要是没有就会创建一个新的数组。</li>
+<li><code>$ne</code>可以实现，如果一个值不在数组中，就把它加进入，例如：如果<code>Richie</code>不在作者列表里，就把它加进去<code>db.papers.update(&#123;&quot;authors cited&quot;: &#123;&quot;$ne&quot;: &quot;Richie&quot;&#125;&#125;, &#123;&quot;$push:&#123; &quot;authors cited&quot;: &quot;Richie&quot;&#125;&#125;)</code></li>
+<li><code>$addToSet</code>可以在加入数组的同时，避免重复。配合<code>$each</code>可以一次添加多个元素<code>db.papers.update(&#123;&quot;_id&quot;: ObjectId(&quot;xxxxxxxxxxx&quot;)&#125;, &#123;&quot;$addToSet: &#123; &quot;authors cited&quot;: &#123;&quot;$each&quot;: [&quot;Richie&quot;, &quot;Joe&quot;]&#125;&#125;&#125;)</code></li>
+<li><code>$pop</code>可以从数组任意一端删除元素，<code>&#123;$pop: &#123;key: 1&#125;&#125;</code>从数组末尾删除一个元素，<code>&#123;$pop: &#123;key: -1&#125;&#125;</code>从头部删除。</li>
+<li><code>$pull</code>可以删掉匹配部分的所有元素。</li>
+<li>如果想要修改列表中元素的值，可以通过下标来直接选择元素，例如<code>db.blog.update(&#123;&quot;post&quot;: post_id&#125;, &#123;&quot;$inc&quot;: &#123;&quot;comments.0.votes&quot;: 1&#125;&#125;&#125;)</code>会给第0条<code>comments</code>的投票数+1。</li>
+<li>也可以使用<code>$</code>用来定位查询文档已经匹配的元素。但它只会更新第一个匹配的元素。</li>
+<li><code>upsert</code>可以在没有文档符合更新条件，就会以这个条件和更新文档为基础创建一个新的文档。</li>
+<li>更新多个文档，据说<code>update</code>的第四个参数的功能</li>
+<li><code>findAndModify</code>，对需要取值和赋值风格的原子性操作来说比较好，可以避免线程的竞态条件</li>
+</ul>
+<h3 id="3-查询"><a href="#3-查询" class="headerlink" title="3. 查询"></a>3. 查询</h3><ul>
+<li>查询的时候，不能引用文档中其他键的值，只能是常量。</li>
+<li>查询条件包括：<code>$lt</code>, <code>$lte</code>, <code>$gt</code>和<code>$gte</code>。</li>
+<li>OR查询，可以使用<code>$in</code>来查询一个键的多个值，可以使用<code>$or</code>不同键的多个值</li>
+<li><code>$not</code>可以用在任何其他条件上。</li>
+<li>一般修改器是外层文档的键，条件语句是内层文档的键。</li>
+</ul>
+<p><strong>查询数组</strong></p>
+<ul>
+<li>每一个元素都是整个键的值。</li>
+<li>使用<code>$all</code>通过多个元素来匹配数组<code>db.food.find(&#123;fruit: &#123;$all: [&quot;apple&quot;, &quot;banana&quot;]&#125;&#125;)</code>。它可以进行模糊的匹配，不用<code>$all</code>就是精确匹配</li>
+<li>使用<code>$size</code>可以用来查询指定长度的数组。查询范围建议加字段维护大小。</li>
+<li>使用<code>$slice</code>可以返回数组的一个子集合，但是该文档中其他键值也会被返回。</li>
+<li>内嵌文档查询，对于单个子文档键，直接用<code>.</code>即可。</li>
+<li>如果要对内嵌文档的多个键进行查询，要指定一组条件，需要使用<code>$elemMatch</code>来匹配，如<code>db.blog.find(&#123;&quot;comments&quot;: &#123;&quot;$elemMatch&quot; &#123;&quot;author&quot;: &quot;joe&quot;, &quot;score&quot;: &#123;&quot;$gte&quot;: 5&#125;&#125;&#125;&#125;)</code></li>
+<li><code>$where</code>可以执行任意js作为查询的一部分。但巨慢，不推荐</li>
+<li><code>limit</code>，<code>skip</code>和<code>sort</code>。</li>
+<li>处理大量文档时，可能会由于空间不足，更新的文档被移动到末尾，导致游标遍历会出现问题，返回已经处理过的文档。对于这个问题可以对查询进行快照，也就是使用<code>$snapshot</code>选项。</li>
+<li>服务端游标，会消耗内存和其他资源，游标遍历结束，客户端要求终止，客户端游标不在作用域，超时等情况下，服务端的数据库游标会自动销毁，可以使用<code>immportal</code>的机制，来不让数据库超时。</li>
+</ul>
+<h3 id="4-索引"><a href="#4-索引" class="headerlink" title="4. 索引"></a>4. 索引</h3><ul>
+<li>用于加速查询</li>
+<li>索引可以用<code>1</code>和<code>-1</code>表示方向，单个键的索引方向无关紧要，若是有多个键，就需要考虑方向问题了。</li>
+<li>创建索引后，每次插入，更新和删除时都会产生额外的开销。</li>
+<li>建立索引时，要考虑如下问题：<ul>
+<li>会做什么样的查询？其中哪些键需要索引？</li>
+<li>每个键的索引方向是什么样的？</li>
+<li>如何应对扩展？有没有中不同的键的排列可以使常用数据更多地保留在内存中?</li>
+</ul>
+</li>
+<li>也可以对内嵌文档中的键家索引。</li>
+<li>索引都有一个字符串类型的名字，来标识唯一索引，类似<code>keyname1_dir1_keyname2_dir2...</code>，但是有字符个数限制，特别复杂的索引应当使用自定义的名字。</li>
+<li><code>explain</code>会返回查询使用的索引情况，耗时及扫描文档数的统计信息，例如<code>db.foo.find().explain()</code></li>
+<li>使用<code>hint</code>可以强制使用某个索引，但说是一般没什么必要，MongoDB的查询优化器很智能。</li>
+</ul>
+<p><strong>索引管理</strong></p>
+<ul>
+<li>索引的元信息存储在每个数据库的<code>system.indexes</code>集合中，不能对其插入删除，只能通过<code>ensureIndex</code>和<code>dropIndexes</code>进行操作。</li>
+<li>同时<code>system.namespaces</code>集合也含有索引的名字。</li>
+<li>使用<code>&#123;&quot;background&quot;: true&#125;</code>可以使建立索引在后台完成。</li>
+<li>地理空间索引，可以创建参数为<code>2d</code>的索引，如<code>db.map.ensureIndex(&#123;&quot;gps&quot;: &quot;2d&quot;&#125;)</code>，挺高级的，但感觉应该用不到。</li>
+</ul>
+<h3 id="5-聚合"><a href="#5-聚合" class="headerlink" title="5. 聚合"></a>5. 聚合</h3><ul>
+<li><code>count</code>用于返回集合中的文档数量，传递查询可以计算查询结果的数量。</li>
+<li><code>distinct</code>也就是投影，必须指定集合和键。</li>
+<li><code>group</code>用起来感觉挺麻烦的，要用再查吧。主要解决和分组相关的需求。</li>
+<li><code>finalizer</code>完成器，用以精简从数据库传到用户的数据。</li>
+<li><code>$keyf</code>可以用于定义分组函数来确定文档分组所依据的键。</li>
+<li><code>MapReduce</code>是一个可以轻松并行化到多个服务器的聚合方法。比较慢，要作为后台任务来运行，结果保存到集合中。</li>
+<li>花了很多篇幅介绍<code>MapReduce</code>，感觉目前不是很有必要深入学习。</li>
+</ul>
+<h3 id="6-进阶指南"><a href="#6-进阶指南" class="headerlink" title="6. 进阶指南"></a>6. 进阶指南</h3><p><strong>数据库命令</strong></p>
+<ul>
+<li>删除数据库的函数调用<code>db.test.drop()</code>，实际上是运行了<code>drop</code>命令，等价于<code>db.runCommand(&#123;&quot;drop&quot;: &quot;test&quot;&#125;)</code>。</li>
+<li>MongoDB中的命令其实是作为一种特殊类型的查询来实现的，这些查询针对<code>$cmd</code>集合来执行。<code>runCommand</code>是接受命令文档执行等价查询，删除集合操作又等价于<code>db.$cmd.findone(&#123;&quot;drop&quot;: &quot;test&quot;&#125;)</code></li>
+<li>这些命令时用一套特殊的逻辑来处理，有些命令需要管理员权限，必须在<code>admin</code>数据库里面运行。</li>
+<li>在shell中运行<code>db.listCommands()</code>可以获得所有命令的最新列表。</li>
+<li>常用命令：<ul>
+<li><code>bulildInfo</code>查看MongoDB服务器的版本号和主机的操作系统。</li>
+<li><code>collStats</code>返回指定集合的统计信息，包括数据大小，已分配的存储空间和索引的大小。</li>
+<li><code>getLastError</code>查看对本级和执行的最后一次操作的错误信息或者其他状态信息。</li>
+<li><code>isMaster</code>检查本服务器是主服务器还是从服务器。</li>
+<li><code>serverStatus</code>返回这台服务器的管理统计信息。</li>
+</ul>
+</li>
+</ul>
+<p><strong>固定集合</strong></p>
+<ul>
+<li>大小固定的集合，类似于一个环形队列，默认情况下没有索引。</li>
+<li>不能删除文档，更新不得导致文档移动。</li>
+<li>特性：1. 插入速度极快（就是一个简单的<code>memcpy</code>）。2. 按照插入顺序输出的查询速度极快。3. 能够在性数据插入时，自动淘汰最早的数据。</li>
+<li>比较适合存储日志，缓存少量文档的场景。</li>
+<li><strong>创建</strong><code>db.createCollection(&quot;my_collection&quot;, &#123;capped: true, size: 100000&#125;)</code>，这个命令会创建一个大小为100000字节的固定集合，</li>
+<li>可以将已有的文档通过命令<code>convertToCapped</code>命令来转换成固定集合。</li>
+<li><strong>自然排序</strong>，按照文档在磁盘上的顺序，对于固定集合而言，在磁盘上的顺序是和插入顺序一致的。例如按反向插入的顺序查询<code>db.my_collection.find().sort(&#123;&quot;$natural&quot;: -1&#125;)</code></li>
+</ul>
+<p><strong>GridFS</strong></p>
+<ul>
+<li>介绍了一下<code>GridFS</code>。（TODO: 虽然应该不用，但可以看下其实现源码）</li>
+<li>原理：将一大文件分成很多块，每块单独作为一个文档存储。另外还有一个单独的文档用来存储分快的信息和文件的元数据。</li>
+</ul>
+<p><strong>服务端脚本</strong></p>
+<ul>
+<li><code>db.eval</code>可以在服务端执行任意的<code>JavaScript</code>脚本。例如<code>db.eval(&quot;print(&#39;Hello, world&#39;);&quot;);</code>。</li>
+<li><code>system.js</code>可以用来<strong>存储JavaScript</strong>，可以在任何的<code>JavaScript</code>上下文中调用。</li>
+<li>执行JS代码时，需要谨慎考虑MongoDB的安全性。需要使用<font color=red>限定作用域</font></li>
+</ul>
+<p><strong>数据库引用</strong></p>
+<ul>
+<li><code>DBRef</code>唯一确定到一个文档的引用。如下所示，<code>$ref</code>表示集合，<code>$id</code>表示对应文档的键值，<code>$db</code>可选，表示其他数据库，这三者的顺序不能改变。  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;$ref&quot;: collection,</span><br><span class="line">    &quot;$id&quot;: id_value,</span><br><span class="line">    &quot;$db&quot;: database,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>部分驱动陈故乡可以将其自动和普通文档相互转换。</li>
+<li>直接存储对应文档的<code>_id</code>键也是可以的，不是非<code>DBRef</code>不可，如果需要存储一些对不同过集合的文档的引用时，就比较适合。</li>
+</ul>
+<h3 id="7-管理"><a href="#7-管理" class="headerlink" title="7. 管理"></a>7. 管理</h3><p><strong>启动和停止MongoDB</strong></p>
+<ul>
+<li><strong>启动</strong>：MongoDB使用<code>mongod</code>启动，可以用命令或配置文件添加参数启动。</li>
+<li><strong>停止</strong>：在服务端可以直接使用<code>Ctrl-C</code>停止，可以使用<code>kill -2 pid</code>或者<code>kill pid</code>来停止，会等到当前的一些任务结束后，才停止，<font color=red>不要使用<code>kill -9</code>来停止</font>，可能会导致文件损坏，若损坏就需要进行修复。</li>
+</ul>
+<p><strong>监控</strong></p>
+<ul>
+<li><code>mongod</code>会在大1000的端口启动一个http服务器，可以查看部分信息，例如MongoDB启动在了27017端口上，那么管理端口就在28017上。</li>
+<li><code>serverStatus</code>可以查看MongoDB服务器的统计信息。使用<code>mongostat</code>可以输出其中的一些重要信息，并且每秒钟输出新的一行。</li>
+</ul>
+<p><strong>认证</strong></p>
+<p><strong>备份和恢复</strong></p>
+<ul>
+<li>数据文件备份<code>mongodump</code>和<code>mongorestore</code>，能够在运行时备份</li>
+<li><code>fsync</code>可以为数据库加写入锁，能在MongoDB运行时复制数据目录并且不会损坏数据，对于有快照功能的文件系统非常好用</li>
+<li>从属备份</li>
+<li>修复</li>
+</ul>
+<h3 id="8-复制"><a href="#8-复制" class="headerlink" title="8. 复制"></a>8. 复制</h3><ul>
+<li>主从复制: 所有从节点都从主节点复制内容，从节点并不保存自己的oplog。</li>
+<li>副本集: 是有自动故障恢复功能的主从集群，整个集群会选举出一个“主节点”，当其不能工作时则变更到其他节点。</li>
+<li>从节点很适合用来做读扩展和数据处理。</li>
+<li><code>oplog</code>包含的键有: <code>ts</code>操作的时间戳，<code>op</code>操作类型，<code>ns</code>执行操作的命名空间，<code>o</code>进一步制定要执行的操作的文档。</li>
+<li><code>oplog</code>只记录改变数据库状态的操作。它是作为从节点与主节点保持数据同步的机制。</li>
+<li>日志是使用<code>固定集合</code>实现的，如果从节点跟不上同步时（已经过了一圈），复制就会停下，从节点需要重新做完整的同步<code>&#123;&quot;resync&quot;: 1&#125;</code>。</li>
+<li><code>local</code>时MongoDB服务器上的本地数据库，用来存放内部复制状态，主节点和从节点都有，其内容不会被复制。</li>
+<li>可以使用<code>geLastErrorl</code>的<code>w</code>参数来确保数据的同步性。</li>
+</ul>
+<h3 id="9-分片"><a href="#9-分片" class="headerlink" title="9. 分片"></a>9. 分片</h3><ul>
+<li>MongoDB支持自动分片，要在分片之前运行一个路由进程，名为<code>mongos</code>。路由器知道数据和片的对应关系，从中进行转发。</li>
+<li>设置分片时，需要选择一个键来作为数据拆分的一句，成为<code>shard key</code>片键。</li>
+<li>分片建立，配置，管理，分片命令。等等</li>
+</ul>
+<h3 id="10-深入MongoDB内部"><a href="#10-深入MongoDB内部" class="headerlink" title="10. 深入MongoDB内部"></a>10. 深入MongoDB内部</h3><ul>
+<li>BSON(Binary JSON)是MongoDB里文档的表达方式。</li>
+<li>Mongo传输协议，是在TCP/IP上简单封装。是一个简单封装的BSON数据。</li>
+<li>数据文件默认在<code>/data/db/</code>中，每个数据库包含一个<code>.ns</code>文件和若干数据文件，它还会预分配数据文件，皮面文件分配所产生的阻塞。</li>
+<li>在数据文件内部，每个数据库都是按照命名空间组织的，一种类别的数据与其他类别的分开存放。每个集合的文档都有自己的命名空间。其元数据存储在了数据库中的<code>.ns</code>文件中。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2021/08/07/mongo%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-id="cktvhfl9a0003ji9sff1haceb" data-title="mongo学习笔记" class="article-share-link">Compartir</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91/" rel="tag">服务端开发</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/07/05/%E8%A2%AB%E8%AE%A8%E5%8E%8C%E7%9A%84%E5%8B%87%E6%B0%94/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">《被讨厌的勇气》笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/CS%E7%AC%94%E8%AE%B0/" rel="tag">CS笔记</a><span class="tag-list-count">5</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python%E7%AC%94%E8%AE%B0/" rel="tag">python笔记</a><span class="tag-list-count">4</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%B6%E4%BB%96/" rel="tag">其他</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A9%E6%96%87%E7%89%A9%E7%90%86%E5%AD%A6%E7%AC%94%E8%AE%B0/" rel="tag">天文物理学笔记</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91/" rel="tag">服务端开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="tag">游戏开发</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Nube de Tags</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CS%E7%AC%94%E8%AE%B0/" style="font-size: 16.67px;">CS笔记</a> <a href="/tags/python%E7%AC%94%E8%AE%B0/" style="font-size: 13.33px;">python笔记</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 10px;">其他</a> <a href="/tags/%E5%A4%A9%E6%96%87%E7%89%A9%E7%90%86%E5%AD%A6%E7%AC%94%E8%AE%B0/" style="font-size: 20px;">天文物理学笔记</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 10px;">数据库</a> <a href="/tags/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%BC%80%E5%8F%91/" style="font-size: 10px;">服务端开发</a> <a href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" style="font-size: 10px;">游戏开发</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archivos</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/07/">July 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Posts recientes</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/08/07/mongo%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">mongo学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/05/%E8%A2%AB%E8%AE%A8%E5%8E%8C%E7%9A%84%E5%8B%87%E6%B0%94/">《被讨厌的勇气》笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/05/19/%E7%BD%91%E7%BB%9C%E5%A4%9A%E4%BA%BA%E6%B8%B8%E6%88%8F%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%BC%96%E7%A8%8B/">《网络多人游戏架构与编程》笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/07/CPython%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">CPython学习笔记</a>
+          </li>
+        
+          <li>
+            <a href="/2020/12/13/%E6%B5%81%E7%95%85%E7%9A%84python/">《流畅的python》笔记</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="footer-outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 WenZhou<br>
+      Construido por <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+<!-- 处理mermaid流程图 -->
+
+  <script src='https://unpkg.com/mermaid@7.1.2/dist/mermaid.min.js'></script>
+  <script>
+    if (window.mermaid) {
+      mermaid.initialize({theme: 'base'});
+    }
+  </script>
+
+  </div>
+</body>
+</html>
