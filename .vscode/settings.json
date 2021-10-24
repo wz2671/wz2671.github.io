@@ -1,9 +1,9 @@
 {
     "background.enabled": true,
     "background.customImages": [
-        "file://.vscode/vscode_background.jpg",
         "file://.vscode/leimu.jpg",
-        "file://.vscode/lamu.jpg",
+        "file://.vscode/vscode_background.jpg",
+        // "file://.vscode/lamu.jpg",
     ],
     "background.style": {
         "content":"''",
@@ -21,7 +21,6 @@
     },
     "background.useFront": true,
     "background.useDefault": false,
-    "background.loop": true,
     "editor.scrollBeyondLastColumn": 100,
     "vim.vimrc.enable": true,
     "editor.smoothScrolling": true,

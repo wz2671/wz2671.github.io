@@ -1,3 +1,17 @@
+---
+title: hexo环境搭建
+date: 2021-10-24 12:58:26
+tags: 
+---
+
+参考：  
+
+摘要：
+
+![封面]()
+
+<!--more -->
+
 # HEXO 主题制作
 
 [hexo](https://hexo.io/zh-cn/docs/index.html) 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（或其他渲染引擎）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。  
@@ -91,59 +105,3 @@ $ hexo server --drafts  # 可预览草稿
 ```
 
 ***
-
-# 整理`Kindle`的笔记
-- [ ] 编写整理摘抄的脚本（替代 clipping.io）
-
-使用 [clippings](https://my.clippings.io/#/) 先对文章做个过滤。
-再使用自己编写的转成 `markdown` 的脚本。
-
-```python
-# -*- coding: utf-8 -*-
-
-# txt2markdown.py
-# 这个脚本是用来将https://my.clippings.io/# 导出的txt转换成本博客所用md辅助工具，也方便后续的修改格式及调整之类
-
-import os
-import sys
-
-
-def adjust_format(line, lines):
-    #print lines
-    if author is not None:
-        # 读到引文
-        if line.startswith(author):
-            line = '***\n\n* ' + line
-            for i, l in enumerate(lines):
-                if len(l)>3 and not l.startswith('Notes:'):
-                    lines[i] = '>' + l
-                    lines[i-1] = line
-                    break
-            return True
-        else:
-            lines.append(line)
-    return False
-            
-
-if __name__ == "__main__":
-    lines = list()
-
-    if len(sys.argv) < 1:
-        exit()
-    # 第一个参数为文件名
-    file_name = sys.argv[1]
-    file_path = file_name
-    author = None
-    if not file_path.endswith('.txt'):
-        file_path += '.txt'
-    else:
-		file_name = file_name[:-4]
-    with open(file_path, 'r') as f1, open(file_name+'.md','w') as f2:
-        first_line = f1.readline()
-        author = first_line.split(',')[-1].strip()
-        for line in f1.readlines():
-            if adjust_format(line, lines):
-                #print lines
-                f2.writelines(lines)
-                lines = list()
-```
