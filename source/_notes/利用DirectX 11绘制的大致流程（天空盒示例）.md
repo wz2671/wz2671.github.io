@@ -4,11 +4,7 @@ date: 2020-02-27 12:58:26
 tags: 
 ---
 
-参考：  
-
-摘要：
-
-![封面]()
+[原文连接](https://blog.csdn.net/wz2671/article/details/104482570) 
 
 <!--more -->
 
@@ -26,7 +22,7 @@ tags:
 至于天空盒，是利用立方体映射技术将一个贴着天空纹理的立方体映射到一个球面上，然后通过将天空盒的圆心位置和摄像机坐标同时移动形成天空效果。
 
 效果图如下所示：
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200225163738209.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3d6MjY3MQ==,size_16,color_FFFFFF,t_70)
+![天空盒示意图](/images/d3dskybox.pnd)
 ***
 ### 二、项目创建和Direct3D初始化
 **首先应当创建一个桌面应用**或者空项目但子系统指定为窗口（而不是控制台应用），之后只需要少量的Win32代码就可以创建出一个窗口，在处理消息的循环中，我们的程序会不断更新。更新的具体方法可以在`MsgProc`函数中进行定义。
