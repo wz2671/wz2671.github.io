@@ -1,9 +1,7 @@
 {
     "background.enabled": true,
     "background.customImages": [
-        "file://.vscode/leimu.jpg",
-        "file://.vscode/vscode_background.jpg",
-        // "file://.vscode/lamu.jpg",
+        "file:///Users/zhangwenzhou/Documents/images/vscode_background.jpg",
     ],
     "background.style": {
         "content":"''",
