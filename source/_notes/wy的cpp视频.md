@@ -13,46 +13,20 @@
 // Pseu code in c
 struct BaseInC {};
 struct AtomInC: public BaseInC 
-    struct AtomInC: public BaseInC 
-struct AtomInC: public BaseInC 
-{     
-    {     
 {     
     struct Cell { int m_data; };     
-        struct Cell { int m_data; };     
-    struct Cell { int m_data; };     
-    Cell m_c1;     
-        Cell m_c1;     
     Cell m_c1;     
     Cell m_c2;     
-        Cell m_c2;     
-    Cell m_c2;     
-    int m_i; 
-        int m_i; 
     int m_i; 
 };  
 // Pseu code in c 
-    // Pseu code in c 
-// Pseu code in c 
 void AtomInC__Construct(AtomInC* this_) 
-    void AtomInC__Construct(AtomInC* this_) 
-void AtomInC__Construct(AtomInC* this_) 
-{     
-    {     
 {     
     // 调用基类的构造函数
     BaseInC__Construct(this_);     
-        BaseInC__Construct(this_);     
-    BaseInC__Construct(this_);     
     // setting vtable ptr if need.设置虚表和虚指针
     // call member constructor by defined order 调用成员变量的构造函数  
-        // call member constructor by defined order 调用成员变量的构造函数  
-    // call member constructor by defined order 调用成员变量的构造函数  
     CellInC__Construct(&this_->m_c1);     
-        CellInC__Construct(&this_->m_c1);     
-    CellInC__Construct(&this_->m_c1);     
-    CellInC__Construct(&this_->m_c2);     
-        CellInC__Construct(&this_->m_c2);     
     CellInC__Construct(&this_->m_c2);     
     // m_i is trivial type, leave it uninitialized  不初始化m_i
 } 
@@ -63,48 +37,20 @@ void AtomInC__Construct(AtomInC* this_)
 2. `memberwise`拷贝，是逐成员变量拷贝，如果我们不实现具体的功能(直接空函数体{})，它就是默认的操作
 ```c++
 // bitwise copy constructor 
-    // bitwise copy constructor 
-// bitwise copy constructor 
 void AtomInC__Copy(AtomInC* this_, AtomInC* src) 
-    void AtomInC__Copy(AtomInC* this_, AtomInC* src) 
-void AtomInC__Copy(AtomInC* this_, AtomInC* src) 
-{     
-    {     
 {     
     memcpy(this_, src, sizeof(*this_));
 } 
 // memberwise copy constructor 
-    // memberwise copy constructor 
-// memberwise copy constructor 
-void AtomInC__Copy(AtomInC* this_, AtomInC* src) 
-    void AtomInC__Copy(AtomInC* this_, AtomInC* src) 
 void AtomInC__Copy(AtomInC* this_, AtomInC* src) 
 {     
-    {     
-{     
-    // call base class copy contructor.     
-        // call base class copy contructor.     
     // call base class copy contructor.     
     BaseInC__Copy((BaseInC*)this_, (BaseInC*)src);     
-        BaseInC__Copy((BaseInC*)this_, (BaseInC*)src);     
-    BaseInC__Copy((BaseInC*)this_, (BaseInC*)src);     
-    // setting vtable ptr if need.     
-        // setting vtable ptr if need.     
     // setting vtable ptr if need.     
     // call member functions by defined order.     
-        // call member functions by defined order.     
-    // call member functions by defined order.     
-    CellInC__Copy(&this_->m_c1, &src->m_c1);     
-        CellInC__Copy(&this_->m_c1, &src->m_c1);     
     CellInC__Copy(&this_->m_c1, &src->m_c1);     
     CellInC__Copy(&this_->m_c2, &src->m_c2);     
-        CellInC__Copy(&this_->m_c2, &src->m_c2);     
-    CellInC__Copy(&this_->m_c2, &src->m_c2);     
     // rough annotation     
-        // rough annotation     
-    // rough annotation     
-    this_->m_i = src->m_i; 
-        this_->m_i = src->m_i; 
     this_->m_i = src->m_i; 
 } 
 ```
@@ -228,8 +174,8 @@ struct BitField {
 
 ### 名字查找（Name Lookup）
 * [参考链接](https://en.cppreference.com/w/cpp/language/lookup)
-* 当解析函数调用时：首先进行**名字查找(Name Lookup)**，再进行**重载解析(Overload Resolution)**，若有多个匹配会报**模糊调用(ambiguous)**错误。  
-    * `NameLookup`类型：namespace/function/class/typdef/var
+* 当解析函数调用时：首先进行**名字查找(Name Lookup)**，再进行**重载决议(Overload Resolution)**，若有多个匹配会报**模糊调用(ambiguous)**错误。  
+    * 会进行`NameLookup`的类型有：namespace, function, class, typdef, var
     * Unqualified（未添加描述符）：`cout << "xxx";`
     * Qualified（添加了描述符的）：`::std::cout << "xxx";`
 * 未指定命名空间的查找(Unqualified Name Lookup)
@@ -280,7 +226,7 @@ struct BitField {
     * 对于类静态变量定义，或者定义类函数时，本质上还是在类的命名空间，是一种语法糖。
 * Qualified Name Lookup
     使用`::`指定了命名空间的方式，对于`std::cout`，其实是先执行了一次不具名的查找`std`，才进行qualified查找`cout`
-* 名字查找和重载解析，是不同概念，重载解析是在查找结果之后，匹配对应的参数，若有多组可选项，会报模糊调用的错误。
+* 名字查找和重载决议，是不同概念，重载决议是在查找结果之后，匹配对应的参数，若有多组可选项，会报模糊调用的错误。
 
 
 
@@ -421,7 +367,7 @@ struct BitField {
     * 转型失败，如果类型为指针会返回空指针，如果是引用会抛出`bad_cast`
     * 基于虚表来做，向上转型在编译时检查，非共有继承转型会失败
 4. 花了较大篇幅介绍`dynamic_cast`，由于过于庞杂而且吹牛感觉用处不大，就简略记下
-    * 在VC的实现里，上述`CompleteObjectLocator`里的`pClassDescriptor`中包含一个`ClassDescriptorArray`，里面记录了当前所有类的继承体系以及地址偏移，类型转换的操作大致如下: 1. 获取对象的虚表，2. 从虚表-1的位置取出定位符COL，3. 遍历定位符里的继承表，寻找类型描述`pTypeDescriptor`和目标一致的类型。4. 移动指针并返回或者抛出异常。
+    * 在MSVC的实现里，上述`CompleteObjectLocator`里的`pClassDescriptor`中包含一个`ClassDescriptorArray`，里面记录了当前所有类的继承体系以及地址偏移，类型转换的操作大致如下: 1. 获取对象的虚表，2. 从虚表-1的位置取出定位符COL，3. 遍历定位符里的继承表，寻找类型描述`pTypeDescriptor`和目标一致的类型。4. 移动指针并返回或者抛出异常。
     * 对于虚继承结构：基类都是平铺开来的。如果基类没有虚函数，派生类没有COL，不能进行交叉转型
     * 虚继承小结：1. 类似于数据层面的多态，根据运行时取到对应的位置，2. 访问虚基类的成员需要重定向子类，有一定开销，3. 没有rtti信息，只做了数据兼容
 
@@ -742,3 +688,320 @@ struct BitField {
     f(nullptr);
     ```
 
+### TMP模板元变成
+
+#### 优势
+1. 部分计算可以转到编译时，减少运行时的开销
+2. 可以操作类型，类似`typeof(var) == int`的操作
+3. 使代码简洁优雅，例如`boost::python`导出c++类
+4. 到处都在用
+
+#### 模板定义目前大致包含5种
+```c++
+// declarations 
+template<typename T> struct class_tmpl;             // 类模板
+template<typename T> void function_tmpl(T);         // 函数模板
+template<typename T> T variable_tmpl;               // since c++14  变量模板
+template<typename T> using alias_tmpl = T;          // since c++11  别名
+template<typename T> concept no_constraint = true;  // since c++20  概念，可以对模板参数添加约束，帮助进行选择
+
+```
+
+#### 模板参数
+```c++
+template <int n>                                    // 无类型模板形参，接收确定常量
+template <typename T>                               // 类型模板形参，接收一个类型
+template <template <typename T> typename Tmpl>      // 模板模板形参 在c++17 之前 最后的typename只能class，接收一个模板为参数
+```
+
+#### 模板形参
+1. 无类型的模板形参，不能传入栈上的局部变量
+    ```c++
+    template<float &f> void foo() { std::cout << f << endl; }
+
+    int main()
+    {
+        static float f1 = 1.0f;
+        float f2 = 1.0f;
+        foo<f1>();
+        // foo<f2>();   // 无法通过编译
+    }
+    ```
+2. 模板模板形参，只接受类模板，并且 参数的个数和声明 需要和 模板模板参数 的一致
+    ```c++
+    template <template <typename T> typename Tmpl> struct S {}; 
+
+    template <typename T>               void foo() {} 
+    template <typename T>               struct Bar1 {}; 
+    template <typename T, typename U>   struct Bar2 {};
+    S<foo>(); // error:  must be a class template or type alias template，需要为类模板
+    S<Bar1>(); // ok
+    S<Bar2>(); // error: 参数不一致
+    ```
+3. 可变参数，可以接收0个或多个参数模板
+    ```c++
+    template<typename T, typename... Types> struct test {};
+    // 可以接收多个参数，多余的参数会打包到Types中，等待拆包
+    ```
+4. 可以给模板参数声明默认参数`template <typename T=int>`
+5. 一般生成的模板函数都是隐式的，但可以显示指定生成模板实例`template void foo<int>()`
+6. c++11后可以显示实例化模板，以减少在不同文件中定义时浪费的编译时间`extern template void foo<int>(int)`
+7. c++17后，模板参数类型推断`std::pair(1, 1.0f)`无需声明`pair<int, float>`
+8. 可以定义特化，偏特化，全特化的模板版本`template<> void foo<int>`这样子就是全特化了
+9. 函数模板重载，可以指定不同的模板参数，和函数参数，实现重载
+
+
+#### 模板推导
+1. 函数模板参数推导，发生在名字查找`Name Lookup`之后，重载决议`Overload Resolution`之前，然后从重载集`Overload Set`中进行匹配最合适的。**如果同时有函数重载和特化模板满足参数规则，会优先调用函数重载版本**
+    ```c++
+    template<typename T>
+    void foo(T t) { cout << "template T: " << t << endl; }
+
+    template<>
+    void foo(int t) { cout << "template int: " << t << endl; }
+
+    void foo(int t) { cout << "int t: " << t << endl; }
+
+    int main()
+    {
+        foo(2);     // int t: 2
+        return 0;
+    }
+    ```
+2. 类模板参数推导，名字查找类型只能找到一个，1. 会根据主模板的声明推导参数类型，2. 再根据参数类型匹配最合适的特化模板，3. 编译器对特化模板类型进行替换完成创建
+3. 特化选择：1. 匹配所有参数满足的模板，2. 选择特化程度最高的模板（假如有多个匹配），3. 没有特化满足的话选主模板。 
+4. 模板偏序规则`partial ordering rule`
+5. 模板重载`Template Overloads` 模板特化`Template Specializations`，先进行重载决议，再进行特化模板选择
+6. `Substitution Failure Is Not An Error`(SFINAE)，替换失败不是错误；简而言之，如果匹配后在立即上下文`immediate context`中有错误，会移除特化模板候选集，不会抛出错误
+    ```c++
+    template<typename T>
+    typename T::value_type foo(T t)     // 立即上下文错误，这儿不会报错，而是将该模板移除候选集
+    {
+        T::value_type i;       // 在模板的定义体里面，无法在声明中得知，不属于立即上下文，编译器会报错
+    }
+    foo(1);
+    ```
+7. `tuple`示例
+    ```c++
+    // 主模板，当参数为空时，会匹配到这个模板
+    template<typename... Args>
+    struct mytuple
+    {
+    };
+
+    // 递归继承的特化模板
+    template<typename T, typename... Args>
+    struct mytuple<T, Args...>: mytuple<Args...>
+    {
+        mytuple(T t, Args... params): value_(t), mytuple<Args...>(params...) {};
+        T value_;              // 每次递归时，都是元素对应的类型
+
+        T getValue() { return value_; }
+        mytuple<Args...>& pre() { return *this; }       // 直接用父类引用接收
+    };
+
+    auto myv = mytuple<int, double ,float>(0, 1.1, 2.2f);
+    cout << myv.getValue() << " " << myv.pre().getValue()  << " " << myv.pre().pre().getValue() << endl;
+
+    ```
+8. `get`的实现，`tuple<int, float> t(0, 1.1); float v = get<1>t;`
+    ```c++
+    // 不会写啊。。。 TODO
+    ```
+
+
+### Compling and Linking（编译链接）
+参考书籍：《深入理解计算机系统》CSAPP
+#### 编译的步骤
+1. 预处理(Preprocessor) -> .i, .ii 打开后的头文件，编译后的输入
+2. 编译(Compiler) gcc, g++ -> .s 汇编语言文件
+3. 汇编(Assemble) as  -> .o 可重定向文件
+4. 链接(Linking) ld  -> .exe 可执行文件                        
+
+#### 几个小工具
+1. objdump  可以展示二进制文件的信息，汇编代码
+    ```c++
+    int add(int x, int y) { return x + y; }
+
+    // 汇编代码如下
+    objdump -dx a.out
+    /*
+    ...
+    0000000000001125 <_Z3addii>:
+        1125:       55                      push   %rbp
+        1126:       48 89 e5                mov    %rsp,%rbp
+        1129:       89 7d fc                mov    %edi,-0x4(%rbp)
+        112c:       89 75 f8                mov    %esi,-0x8(%rbp)
+        112f:       8b 55 fc                mov    -0x4(%rbp),%edx
+        1132:       8b 45 f8                mov    -0x8(%rbp),%eax
+        1135:       01 d0                   add    %edx,%eax
+        1137:       5d                      pop    %rbp
+        1138:       c3                      retq
+    ...
+    */
+    ```
+
+2. readelf，可以展示ELF文件的信息（Executable and Linkable Format）
+    ```c++
+    // readelf -a a.out
+    /*
+    ...
+    48: 0000000000001139    11 FUNC    GLOBAL DEFAULT   13 main
+    49: 0000000000004020     0 OBJECT  GLOBAL HIDDEN    23 __dso_handle
+    50: 00000000000011b4     0 FUNC    GLOBAL HIDDEN    14 _fini
+    51: 0000000000001125    20 FUNC    GLOBAL DEFAULT   13 _Z3addii     // 只看的懂GLOBAL是个全局空间
+    ...
+    */
+    ```
+3. nm，查看二进制文件的所有符号信息
+    ```c++
+    // nm a.out
+    /*
+    ...
+    0000000000001139 T main
+    00000000000010a0 t register_tm_clones
+    0000000000001040 T _start
+    0000000000004028 D __TMC_END__
+    0000000000001125 T _Z3addii
+    */
+    ```
+
+#### 测试代码
+simple_test.cpp
+```c++
+int add(int x, int y)
+{
+    return x + y;
+}
+
+
+int main()
+{
+    return 0;
+}
+```
+
+#### 编译：把高级语言转成机器语言的步骤
+1. 预处理
+    拷贝头文件，替换常量，展开宏定义(-E)，条件中的宏展开`#if`
+    `g++ -E -P simple_test.cpp -o sp_test.i & cat sp_test.i`可以看到头文件的内容都被塞进去了
+    * `#include`的技巧
+        • Don't abuse #include, just include what you need 
+        • Include Guard to avoid redundant include problem 
+        • Organize your structure 
+        • Tips and tricks (forward declarations,  module(c++20) etc.) 
+        • Avoid "heavy" headers 
+        • Precompiled Header (PCH)
+2. 语言分析
+3. 汇编
+    使用命令`g++ -S simple_test.cpp`，可以看到汇编代码`simple_test.s`
+    也会将一些全局变量，函数名之类的导出来
+    ```c++
+    /*
+    _Z3addii:
+    .LFB1518:
+        .cfi_startproc
+        pushq   %rbp
+        .cfi_def_cfa_offset 16
+        .cfi_offset 6, -16
+        movq    %rsp, %rbp
+        .cfi_def_cfa_register 6
+        movl    %edi, -4(%rbp)
+        movl    %esi, -8(%rbp)
+        movl    -4(%rbp), %edx
+        movl    -8(%rbp), %eax
+        addl    %edx, %eax
+        popq    %rbp
+        .cfi_def_cfa 7, 8
+        ret
+        .cfi_endproc
+    .LFE1518:
+        .size   _Z3addii, .-_Z3addii
+        .globl  main
+        .type   main, @function
+    */
+    ```
+4. 优化
+    编译器会做一些优化
+    `g++ -O1 simple_test.cpp -o simple_test.out`
+    ```c++
+    /*
+    o0000000000001125 <_Z3addii>:
+    1125:       8d 04 37                lea    (%rdi,%rsi,1),%eax
+    1128:       c3                      retq
+
+    0000000000001129 <main>:
+        1129:       b8 00 00 00 00          mov    $0x0,%eax
+        112e:       c3                      retq
+        112f:       90                      nop
+    */
+    ```
+5. 机器码，最终都会把定义的名字之类，转成符号`symbols`供链接器使用
+
+
+#### 链接
+主要分为符号决议和重定向
+
+关联模块之间，把不同对象链接起来生成可执行对象，把全局引用，函数调用 等重排后的地址导出来
+* 符号决议`Symbols Resolution`
+    把每个符号绑定到唯一的定义上去（同一个符号不可以有多个定义）
+    * Global Symbols 定义在模块里的全局符号
+    * Global Symbols Reference 引用的外部全局符号，加上`extern`声明 或者`function`, `template`, `variable`, `namespace`, `enumeration`等
+    * Local Symbols 本地符号，只能在本地模块中使用； 如`static`，`const`, `constexpr`, `typealias`
+
+* 全局符号分为以下，有冲突时优选选择强符号，
+    * 强符号，有初始化的变量，函数定义
+    * 弱符号，无初始化的变量，函数声明
+
+* 如果使用外部的`inline`函数，会没啥用
+* 模板定义属于一种弱符号
+* Static Library，打包过后的.o文件
+    加上`-c`可以生成.o文件`g++ -c simple_test.cpp`
+    `ar rcs libdemo simple_test.o`打包成`libdemo`静态库
+    `nm libdemo`可以查看其中暴露的函数
+    ```c++
+    /*
+    simple_test.o:
+    0000000000000014 T main
+    0000000000000000 T _Z3addii
+    */
+    ```
+    假设有一个main.o的可重定向文件，可以用`g++ -o main.out main.o libdemo`引用libdemo中的接口
+    需要小心依赖关系，和引入顺序
+
+* 重定向`Relocation`
+    1. Merge of Sections 将地址为0的可重定向文件都合并起来，合并所有必要的模块，将数据段和代码段分别聚合放一块
+    2. Relocating Symbold 将引用的外部模块都重新用正确的地址替代
+
+
+### 共享库(Shared Libraries)
+1. Loading Stage 可执行文件需要加载到内存里，例如代码和数据需要加载到数据段，代码段之类
+2. 一个程序的内存布局，在运行时大致为: 1. 内核虚拟内存区（进程相关的数据结构，物理内存，内核代码数据） 2. 用户数据栈 3. 共享库映射区 4. 堆 5. 未初始化数据段`.bss` 6. 初始化后数据`.data` 7. 代码段`.code`，![内存布局](/images/process_memory.png)
+3. 静态链接库(Static Library)
+    编译时实际链接到了对应可执行文件中，会影响可执行文件的大小；
+    在不同的进程中，会有两份不同的拷贝，在内存中也占有不同的页；
+    链接库里的函数，在编译后的可执行文件中，地址已经使固定写死的了，其加载到内存中的位置也是固定的。
+4. 共享库
+    只会共享代码段，不会共享数据段，数据段采用copyOnWrite的技术
+    链接之后，会生成一个全局偏移表`Global Offset Table`，里面记录了各个变量的地址，和函数的地址
+    还会有一个`Procedure Link Table`用来寻找从GOT中查找
+5. 需要解决：同一段代码，地址需要被不同的模块使用
+    1. Load Time Relocation，模块加载进来的时候，代码中的地址进行重定向；只支持x86
+    2. Position Independent Code，位置无关代码，使用相对地址
+        `g++ -fPIC -shared -o libtest.so simple_test.cpp`编译成动态链接库
+        `g++ -c test.cpp`将代码先编译成可重定向文件
+        `g++ -o test.out test.o libtest.so`再编译成可执行文件
+        有点小插曲，编译之后运行会说找不到动态链接库`libtest.so`，需要先将库所在目录加到`/etc/ld.so.conf`文件中，再使用`sudo ldconfig`命令使配置生效，这样就ok了
+6. 获取动态链接库中 变量 时，会通过查`Global Offset Table(GOT)`表寻找到变量的真实地址
+7. 调用外部的 函数 时，会执行`Procedure Link Table(PLT)`表中代码，这段代码会查`GOT`表找到最终要执行的函数地址，才做真是的函数跳转
+8. 动态链接（dynamic linker）
+9. 懒绑定（lazy binding）不会直接查GOT表，而是通过PLT表执行查表代码，修正目标函数的地址后才进行函数跳转
+    为什么采用这种机制：可能用到的函数少，避免每次不必要的重定向，只要查表就行，减少可执行文件大小。
+
+### 共享库(shared)、动态链接(dynamic)
+1. 区别
+    共享库：可被加载到内存中，供多个其他进程共享使用的技术
+    动态链接：只是对地址和数据进行修正的操作，一般配合共享库使用
+2. 模式(mode)
+    运行时动态链接()：例如使用`dlopen`
+    静态链接(statically aware linking)：使用gcc编译时就指定链接的库
