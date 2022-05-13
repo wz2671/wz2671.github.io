@@ -119,17 +119,9 @@ g_patch_sys::ctor() // 调用了g_render_sys的方法
     struct FileSys {
         static FileSys& getInstance() {
             if (!p_fs) 
-                if (!p_fs) 
-            if (!p_fs) 
             {   
                 static std::mutex mtx;   
-                    static std::mutex mtx;   
-                static std::mutex mtx;   
                 std::lock_guard<std::mutex> lck(mtx);   
-                    std::lock_guard<std::mutex> lck(mtx);   
-                std::lock_guard<std::mutex> lck(mtx);   
-                p_fs = new FileSys(); 
-                    p_fs = new FileSys(); 
                 p_fs = new FileSys(); 
             }
             return *p_fs;
@@ -459,7 +451,7 @@ struct BitField {
     * Lvalue：左值；变量，数据成员，函数返回的引用等
     * Rvalue：右值；不能赋值对象的引用或指针给普通的左值（常指针之类的可以）；包含以下两种
         * Prvalue：纯右值；常数，临时对象，函数返回的非引用对象
-        * Xvalue：直接返回右值的一些方法；`static_cast<char&&>(x)`
+        * Xvalue：直接返回右值的一些方法；`static_cast<char&&>(x)`，`std::move(val)`
     ```c++
     T a(static_cast<T&&>(b));   // 调用T的move构造函数
     f(static_cast<T&&>(a));     // 调用move版的f函数
